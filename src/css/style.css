@@ -1,0 +1,98 @@
+/* importacion de GoogleFonts */
+@import url('https://fonts.googleapis.com/css2?family=Cairo+Play:wght@600&display=swap');
+
+* {
+    margin: 0;
+}
+
+.navbar {
+    display: flex;
+    justify-content: center;
+    background-color: #006769;
+    position: sticky;
+    z-index: 1000;
+
+    h1 {
+        font-family: "Cairo Play", sans-serif;
+        font-size: 5rem;
+        color: white;
+    }
+}
+
+.main {
+    background-color: #A7E6FF;
+}
+
+.editor {
+    background-color: #FFDA78;
+    height: auto;
+
+    h2 {
+        font-family: "Cairo Play", sans-serif;
+    }
+}
+
+.editor_text {
+    border: 1px solid #ced4da;
+    padding: 10px;
+    height: 300px;
+    overflow-y: scroll;
+    background-color: #1A2130;
+    color: white;
+    border-radius: 8px;
+}
+
+.editor_terminal {
+    border: 1px solid #ced4da;
+    padding: 10px;
+    height: 300px;
+    overflow-y: scroll;
+    background-color: #222831;
+    color: white;
+    border-radius: 8px;
+}
+
+.editor_group1 {
+    display: flex;
+    flex-direction: row;
+
+    button {
+        background-color: #FFDA78;
+        border: none;
+
+        img {
+            height: 30px;
+        }
+    }
+}
+
+.editor_group2 {
+    display: flex;
+    flex-direction: row;
+
+    button {
+        background-color: #FFDA78;
+        border: none;
+
+        img {
+            height: 30px;
+        }
+    }
+}
+
+.footer {
+    background-color: #373A40;
+    color: white;
+    max-height: 200px;
+    display: flex;
+    justify-content: space-around;
+
+    h2,
+    h3 {
+        font-family: "Cairo Play", sans-serif;
+    }
+
+    img {
+        object-fit: contain;
+    }
+}
