@@ -65,6 +65,11 @@
     }
 }
 
+.btns:hover{
+    background-color: #006769;
+    border-radius: 20px;
+}
+
 #file-input {
     display: none;
 }
