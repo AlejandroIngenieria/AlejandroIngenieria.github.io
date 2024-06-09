@@ -17,15 +17,24 @@ function generateCST(root) {
 }
 
 // Grammar
-s = _ root:linea* _ { return generateCST(root);}
+s = global*_ root:linea* _ { return generateCST(root);}
 
 linea = ins:instruccion { return new Node("instruccion", ins); }
       / comentario 
       / etiq:etiqueta { return new Node("etiqueta", etiq); }
+      / global
+      
+
+global = ".global"_ [a-zA-Z_][a-zA-Z0-9_]* _ 
+        / ".section" _
+        / ".data" _
+        / ".text" _
+        /id ": ." [a-zA-Z_][a-zA-Z0-9_]* _ [0-9]*
 
 etiqueta = ide:id ":" _ { return new Node("etiqueta", ide); }
 
 instruccion = ne:nemonico _ li:listaOp? _ { return new Node("instruccion", ne, li); }
+			  
 
 listaOp = op1:operando op2:("," _ operando)* { return new Node("listaOp", op1, op2); }
 
@@ -33,12 +42,14 @@ operando = regen:registroGen { return new Node("operando", regen); }
          / imd:immediateValue { return new Node("operando", imd); }
          / ident:id { return new Node("identifcador", ident); }
          / "[" op:operando "]" { return new Node("operando", '['+op+']'); }
+         
 
 
 
 id = "MSP" { return new Node("PALABRA RES", "MSP" ); }
        / "PSP" { return new Node("PALABRA RES", "MSP"); }
        / id:[a-zA-Z_][a-zA-Z0-9_]* { return new Node("id", id); }
+       
 
 registroGen = 'x' regigen:[0-3][0-9]* { return new Node("registroGen", 'x'+regigen); }
 
