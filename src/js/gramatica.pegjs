@@ -28,6 +28,12 @@
         dot += "}\n";
         return dot;
     }
+
+    const errors = [];
+  
+    function reportError(message, location, type) {
+        errors.push({ message, location, type });
+    }
 }
 
 s1 = root:e { return generateDot(root);}
@@ -132,5 +138,11 @@ decimal = [0-9]+ "." [0-9]+
 binario = "0b" [01]+
 
 comentario = ("//" / ";") (![\r\n] .)*_
+
+error
+  = . {
+      reportError("Unexpected character: " + text(), location(), "lexico");
+      return { type: "Error", message: "Unexpected character: " + text() };
+    }
 
 _ = [ \t\n\r]*
