@@ -65,6 +65,10 @@
     }
 }
 
+#file-input {
+    display: none;
+}
+
 .editor_group2 {
     display: flex;
     flex-direction: row;

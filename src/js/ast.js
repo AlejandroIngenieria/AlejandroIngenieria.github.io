@@ -1,9 +1,9 @@
 let x;
 
-document.getElementById("play").addEventListener("click", function () {
-
-    x = document.getElementById("editor").textContent;
-    const container = document.getElementById("terminal");
+document.getElementById("ast").addEventListener("click", function () {
+    terminal.innerHTML = ""
+    x = editor.getValue()
+    const container = terminal;
     var cst = PEG.parse(x);
     console.log(cst);
     vt = new VTree(container);
@@ -11,6 +11,20 @@ document.getElementById("play").addEventListener("click", function () {
     var data = reader.read(cst);
     vt.data(data)
       .update();
+
+
+});
+
+playbtn.addEventListener("click", function () {
+
+    x = editor.getValue()
+    terminal.innerHTML= ""
+    try {
+      PEG.parse(x);
+      terminal.innerHTML = "<h2>Analisis terminado sin errores</h2>"
+    } catch (error) {
+      terminal.innerHTML = `<h2>Error:${error}</h2>`
+    }
 
 
 });
