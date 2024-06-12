@@ -1,4 +1,3 @@
-
 {
 class Node {
   constructor(value, left = null, right = null) {
@@ -17,19 +16,21 @@ function generateCST(root) {
 }
 
 // Grammar
-s = global*_ root:linea* _ { return generateCST(root);}
+ s= global*_ root:linea* _ { return generateCST(root);}
 
 linea = ins:instruccion { return new Node("instruccion", ins); }
       / comentario 
       / etiq:etiqueta { return new Node("etiqueta", etiq); }
       / global
+      / id
       
 
 global = ".global"_ [a-zA-Z_][a-zA-Z0-9_]* _ 
         / ".section" _
         / ".data" _
         / ".text" _
-        /id ": ." [a-zA-Z_][a-zA-Z0-9_]* _ [0-9]*
+        / ".bss" _
+        /"." [a-zA-Z_][a-zA-Z0-9_]* _ valor
 
 etiqueta = ide:id ":" _ { return new Node("etiqueta", ide); }
 
@@ -42,27 +43,31 @@ operando = regen:registroGen { return new Node("operando", regen); }
          / imd:immediateValue { return new Node("operando", imd); }
          / ident:id { return new Node("identifcador", ident); }
          / "[" op:operando "]" { return new Node("operando", '['+op+']'); }
+         / "=" id 
+         / valor
          
 
 
 
-id = "MSP" { return new Node("PALABRA RES", "MSP" ); }
-       / "PSP" { return new Node("PALABRA RES", "MSP"); }
-       / id:[a-zA-Z_][a-zA-Z0-9_]* { return new Node("id", id); }
+id =  id:[a-zA-Z_][a-zA-Z0-9_]* { return new Node("id", id); }
        
 
 registroGen = 'x' regigen:[0-3][0-9]* { return new Node("registroGen", 'x'+regigen); }
 
-registroFlo = 'v' regiflo:[0-3][0-9]* { return new Node("registroFlo", 'v'+regiflo); }
+registroFlo = 'W' regiflo:[0-3][0-9]* { return new Node("registroRed", 'w'+regiflo); }
 
 immediateValue = '#' inmval:valor { return new Node("immediateValue", '#',inmval); }
+
+registroPila = "SP" { return new Node ("registroPila","SP");}
 
 valor = decim:[0-9]+ "." [0-9]+ { return new Node("decimal", decim); }
       / "0b" binar:[01]+ { return new Node("binario",'0b'+ binar ); }
       / ente:[0-9]+ { return new Node("entero", ente); }
+      /"'" [A-Za-z]* "'"_
+      /'"'[^"]*'"'_
 
 
-comentario = ("//" / ";") (![\r\n] .)*_ 
+comentario = ("//") (![\r\n] .)*_ 
 
 _ = [ \t\n\r]*
 
@@ -79,8 +84,8 @@ instLoad = ins1:"LDR" { return new Node("instLoad", ins1); }
          / ins2:"LDRB" { return new Node("instLoad", ins2); }
          / ins3:"LDP" { return new Node("instLoad", ins3); }
 
-instStore = inst1:"STR" { return new Node("instStore", inst1); }
-          / inst2:"STRB" { return new Node("instStore", inst2); }
+instStore = inst2:"STRB" { return new Node("instStore", inst2); }
+		  /inst1:"STR" { return new Node("instStore", inst1); }
           / inst3:"STP" { return new Node("instStore", inst3); }
 
 instArit = arit1:"ADD" { return new Node("instArit", arit1); }
@@ -116,4 +121,3 @@ etiquetaEsp = esp1:"CMP" { return new Node("etiquetaEsp",esp1); }
             / esp7:"SVC" { return new Node("etiquetaEsp",esp7 ); }
 
 etiquetaPila = ms:"MSR" { return new Node("etiquetaPila", ms); }
-           
