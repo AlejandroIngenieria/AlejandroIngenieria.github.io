@@ -30,7 +30,16 @@ global = glo:".global"_ [a-zA-Z_][a-zA-Z0-9_]* _  { return new Node("PR", glo); 
         / glo2:".data" _ { return new Node("PR", glo2); }
         / glo3:".text" _ { return new Node("PR", glo3); }
         / glo4:".bss" _ { return new Node("PR", glo4); }
-        /"." id:[a-zA-Z_][a-zA-Z0-9_]* _ valor  { return new Node("GLOBAL", "."+id); }
+        / reservadas _ valor
+
+reservadas = id:".word"   { return new Node("GLOBAL", "."+id); }
+        /id:".half"   { return new Node("GLOBAL", "."+id); }
+        /id:".byte"   { return new Node("GLOBAL", "."+id); }
+        /id:".ascii"   { return new Node("GLOBAL", "."+id); }
+        /id:".asciz"   { return new Node("GLOBAL", "."+id); }
+        /id:".skip"   { return new Node("GLOBAL", "."+id); }
+        /id:".float"   { return new Node("GLOBAL", "."+id); }
+        /id: ".space"
 
 etiqueta = ide:id ":" _ { return new Node("etiqueta", ide); }
 
