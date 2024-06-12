@@ -15,12 +15,29 @@ document.getElementById("ast").addEventListener("click", function () {
 
 });
 
+function isLexicalError(e) {
+  const validIdentifier = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/;
+  const validInteger = /^[0-9]+$/;
+  const validRegister = /^[a-zA-Z][0-9]+$/;
+  const validCharacter = /^[a-zA-Z0-9_$,\[\]#"]$/;
+  if (e.found) {
+    if (!validIdentifier.test(e.found) &&
+      !validInteger.test(e.found) &&
+      !validRegister.test(e.found) &&
+      !validCharacter.test(e.found)) {
+      return true; // Error léxico
+    }
+  }
+  return false; // Error sintáctico
+}
+
 playbtn.addEventListener("click", function () {
 
   terminal.innerHTML = ""
   x = editor.getValue()
+  let result
   try {
-    PEG.parse(x);
+    result = PEG.parse(x);
     terminal.innerHTML = "<h2>Analisis terminado sin errores</h2>"
   } catch (e) {
     let errorHtml = `
@@ -36,9 +53,24 @@ playbtn.addEventListener("click", function () {
                     </thead>
                     <tbody>
                 `;
-
-    if (e.location) {
-      errorHtml += `
+    if (e instanceof PEG.SyntaxError) {
+      if (isLexicalError(e)) {
+        errorHtml += `
+                        <tr>
+                            <td>1</td>
+                            <td>${e.location.start.line}</td>
+                            <td>${e.location.start.column}</td>
+                            <td>Lexico</td>
+                            <td>${e.message}</td>
+                        </tr>
+                    `;
+        errorHtml += `
+                    </tbody>
+                </table>
+                `;
+        terminal.innerHTML = errorHtml;
+      } else {
+        errorHtml += `
                         <tr>
                             <td>1</td>
                             <td>${e.location.start.line}</td>
@@ -47,37 +79,15 @@ playbtn.addEventListener("click", function () {
                             <td>${e.message}</td>
                         </tr>
                     `;
-    } else {
-      errorHtml += `
-                        <tr>
-                            <td>1</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>Lexico</td>
-                            <td>${e.message}</td>
-                        </tr>
-                    `;
-    }
-
-    if (e.errors && e.errors.length) {
-      e.errors.forEach((error, index) => {
         errorHtml += `
-                            <tr>
-                                <td>${index + 2}</td>
-                                <td>${error.location.start.line}</td>
-                                <td>${error.location.start.column}</td>
-                                <td>${error.type}</td>
-                                <td>${error.message}</td>
-                            </tr>
-                        `;
-      });
-    }
-
-    errorHtml += `
                     </tbody>
                 </table>
                 `;
-    terminal.innerHTML = errorHtml;
+        terminal.innerHTML = errorHtml;
+      }
+    } else {
+      terminal.innerHTML = "<h2>Error desconocido</h2>"
+    }
   }
 });
 

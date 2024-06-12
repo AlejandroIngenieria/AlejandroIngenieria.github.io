@@ -65,7 +65,7 @@
     }
 }
 
-.btns:hover{
+.btns:hover {
     background-color: #006769;
     border-radius: 20px;
 }
@@ -103,4 +103,22 @@
     img {
         object-fit: contain;
     }
+}
+
+#tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tab {
+    padding: 5px 10px;
+    background-color: #444;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.tab:hover {
+    background-color: #666;
 }
