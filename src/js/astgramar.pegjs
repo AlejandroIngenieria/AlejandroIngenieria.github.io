@@ -21,16 +21,16 @@ function generateCST(root) {
 linea = ins:instruccion { return new Node("instruccion", ins); }
       / comentario 
       / etiq:etiqueta { return new Node("etiqueta", etiq); }
-      / global
-      / id
+      / glo:global { return new Node("etiqueta", glo); }
+      / ed:id { return new Node("id", id); }
       
 
-global = ".global"_ [a-zA-Z_][a-zA-Z0-9_]* _ 
-        / ".section" _
-        / ".data" _
-        / ".text" _
-        / ".bss" _
-        /"." [a-zA-Z_][a-zA-Z0-9_]* _ valor
+global = glo:".global"_ [a-zA-Z_][a-zA-Z0-9_]* _  { return new Node("PR", glo); }
+        / glo1:".section" _ { return new Node("PR", glo1); }
+        / glo2:".data" _ { return new Node("PR", glo2); }
+        / glo3:".text" _ { return new Node("PR", glo3); }
+        / glo4:".bss" _ { return new Node("PR", glo4); }
+        /"." id:[a-zA-Z_][a-zA-Z0-9_]* _ valor  { return new Node("GLOBAL", "."+id); }
 
 etiqueta = ide:id ":" _ { return new Node("etiqueta", ide); }
 
@@ -42,9 +42,9 @@ listaOp = op1:operando op2:("," _ operando)* { return new Node("listaOp", op1, o
 operando = regen:registroGen { return new Node("operando", regen); }
          / imd:immediateValue { return new Node("operando", imd); }
          / ident:id { return new Node("identifcador", ident); }
-         / "[" op:operando "]" { return new Node("operando", '['+op+']'); }
-         / "=" id 
-         / valor
+         / "[" op:operando "]" { return new Node("operando", op); }
+         / "=" id:id { return new Node("operando", "="+id); }
+         / val:valor { return new Node("operando", val); }
          
 
 
