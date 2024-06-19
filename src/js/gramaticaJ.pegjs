@@ -88,23 +88,23 @@ LDAXRB_inst
 LDAXRH_inst 
     =    "ldaxrh" _* reg32 "," _* "[" reg64 "]"
 LDNP_inst 
-    =   "ldnp" _* reg32 "," _* reg32 "," _* "[" reg64 "]"
-    /   "ldnp" _* reg64 "," _* reg64 "," _* "[" reg64 "]"
+    =   "ldnp" _* reg32 "," _* reg32 "," _* "[" inmediate "]"
+    /   "ldnp" _* reg64 "," _* reg64 "," _* "[" inmediate "]"
 LDTR_inst 
-    =   "ldtr" _* reg32 "," _* "[" reg64 "]"
-    /   "ldtr" _* reg64 "," _* "[" reg64 "]"
+    =   "ldtr" _* reg32 "," _* "[" inmediate "]"
+    /   "ldtr" _* reg64 "," _* "[" inmediate "]"
 LDTRB_inst 
-    =    "ldtrb" _* reg32 "," "[" reg64 "]"
+    =    "ldtrb" _* reg32 "," _* "[" inmediate "]"
 LDTRH_inst 
-    =    "ldtrh" _* reg32 "," "[" reg64 "]"
+    =    "ldtrh" _* reg32 "," _* "[" inmediate "]"
 LDTRSB_inst
-    =    "ldtrsb" _* reg32 "," "[" reg64 "]"
-    /    "ldtrsb" _* reg64 "," "[" reg64 "]"
+    =    "ldtrsb" _* reg32 "," _* "[" inmediate "]"
+    /    "ldtrsb" _* reg64 "," _* "[" inmediate "]"
 LDTRSH_inst
-    =    "ldtrsh" _* reg32 "," "[" reg64 "]"
-    /    "ldtrsh" _* reg64 "," "[" reg64 "]"
+    =    "ldtrsh" _* reg32 "," _* "[" inmediate "]"
+    /    "ldtrsh" _* reg64 "," _* "[" inmediate "]"
 LDTRSW_inst
-    =    "ldtrsw" _* reg64 "," "[" reg64 "]"
+    =    "ldtrsw" _* reg64 "," _* "[" inmediate "]"
 STLR_inst
     =   "stlr" _* reg32 "," _* "[" reg64 "]"
     /   "stlr" _* reg64 "," _* "[" reg64 "]"
@@ -123,15 +123,15 @@ STLXRB_inst
 STLXRH_inst
     =   "stlxrh" _* reg32 "," _* reg32 "," _* "[" reg64 "]"
 STNP_inst
-    =   "stnp" _* reg32 "," _* reg32 "," _* "[" reg64 "]"
-    /   "stnp" _* reg64 "," _* reg64 "," _* "[" reg64 "]"
+    =   "stnp" _* reg32 "," _* reg32 "," _* "[" inmediate "]"
+    /   "stnp" _* reg64 "," _* reg64 "," _* "[" inmediate "]"
 STTR_inst
-    =   "sttr" _* reg32 "," _* "[" reg64 "]"
-    /   "sttr" _* reg64 "," _* "[" reg64 "]"
+    =   "sttr" _* reg32 "," _* "[" inmediate "]"
+    /   "sttr" _* reg64 "," _* "[" inmediate "]"
 STTRB_inst
-    =   "sttrb" _* reg32 "," _* "[" reg64 "]"
+    =   "sttrb" _* reg32 "," _* "[" inmediate "]"
 STTRH_inst
-    =   "sttrh" _* reg32 "," _* "[" reg64 "]"
+    =   "sttrh" _* reg32 "," _* "[" inmediate "]"
 
 reg64 = "x" ("30" / [12][0-9] / [0-9])
 reg32 = "w" ("30" / [12][0-9] / [0-9])
