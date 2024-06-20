@@ -23,6 +23,10 @@ linea = ins:instruccion { return new Node("instruccion", ins); }
 instruccion 
     = arithmetic_inst 
     / bitmanipulation_inst
+    / logica_inst 
+    / atomic_inst
+    / branch_inst
+    /cond_inst
 
 arithmetic_inst 
     = adc_inst
@@ -205,15 +209,255 @@ xt_inst
     = ("s"/"u") "xt" ("b"/"h")? _* reg64 "," _* reg32
     / ("s"/"u") "xt" ("b"/"h")? _* reg32 "," _* reg32
 
+//instrucciones logicas
+logica_inst 
+    = and_inst
+    / asr_inst
+    / bic_inst
+    / eon_inst
+    / eor_inst
+    / lsl_inst
+    / lsr_inst
+    / movk_inst
+    / movn_inst
+    / movz_inst
+    / mov_inst
+    / mvn_inst
+    / orn_inst
+    / orr_inst
+    / ror_inst
+    / tst_inst
+
+and_inst
+    = "and" ("s")? _* reg64 "," _* reg64 "," _* operando
+    / "and" ("s")? _* reg32 "," _* reg32 "," _* operando
+
+asr_inst
+    = "asr" _* reg64 "," _* reg64 "," _* (reg64 / inmediate)
+    / "asr" _* reg32 "," _* reg32 "," _* (reg32 / inmediate)
+
+bic_inst
+    = "bic" ("s")? _* reg64 "," _* reg64 "," _* operando
+    / "bic" ("s")? _* reg32 "," _* reg32 "," _* operando
+
+eon_inst
+    = "eon" _* reg64 "," _* reg64 "," _* operando
+    / "eon" _* reg32 "," _* reg32 "," _* operando
+
+eor_inst
+    = "eor" _* reg64 "," _* reg64 "," _* operando
+    / "eor" _* reg32 "," _* reg32 "," _* operando
+
+lsl_inst
+    = "lsl" _* reg64 "," _* reg64 "," _* (reg64 / inmediate)
+    / "lsl" _* reg32 "," _* reg32 "," _* (reg32 / inmediate)
+
+lsr_inst
+    = "lsr" _* reg64 "," _* reg64 "," _* (reg64 / inmediate)
+    / "lsr" _* reg32 "," _* reg32 "," _* (reg32 / inmediate)
+
+mov_inst
+    = "mov" _* reg64 "," _* (reg64 / inmediate)
+    / "mov" _* reg32 "," _* (reg32 / inmediate)
+
+movk_inst
+    = "movk" _* reg64 "," _* inmediate ("["entero"]"/"{"entero"}")?
+    / "movk" _* reg32 "," _* inmediate ("["entero"]"/"{"entero"}")?
+
+movn_inst
+    = "movn" _* reg64 "," _* inmediate ("["entero"]"/"{"entero"}")?
+    / "movn" _* reg32 "," _* inmediate ("["entero"]"/"{"entero"}")?
+
+movz_inst
+    = "movz" _* reg64 "," _* inmediate ("["entero"]"/"{"entero"}")?
+    / "movz" _* reg32 "," _* inmediate ("["entero"]"/"{"entero"}")?
+
+mvn_inst
+    = "mvn" _* reg64 "," _* operando
+    / "mvn" _* reg32 "," _* operando
+
+orn_inst
+    = "orn" _* reg64 "," _* reg64 "," _* operando
+    / "orn" _* reg32 "," _* reg32 "," _* operando
+
+orr_inst
+    = "orr" _* reg64 "," _* reg64 "," _* operando
+    / "orr" _* reg32 "," _* reg32 "," _* operando   
+
+ror_inst
+    = "ror" _* reg64 "," _* reg64 "," _* (reg64 / inmediate)
+    / "ror" _* reg32 "," _* reg32 "," _* (reg32 / inmediate)
+
+tst_inst
+    = "tst" _* reg64 "," _* reg64 "," _* operando
+    / "tst" _* reg32 "," _* reg32 "," _* operando
+
+
+// instrucciones branch
+branch_inst
+    = bcc_inst
+    / blr_inst 
+    / bl_inst 
+    / br_inst
+    / b_inst
+    / cbnz_inst
+    / cbz_inst
+    / ret_inst
+    / tbnz_inst
+    / tbz_inst
+
+b_inst 
+    = "b" _* rel28
+
+bcc_inst
+    = "bcc" _* rel21
+
+bl_inst 
+    = "bl" _* rel28
+
+blr_inst    
+    = "blr" _* reg64
+
+br_inst 
+    = "br" _* reg64
+
+cbnz_inst
+    = "cbnz" _* reg64 "," _* rel21
+    / "cbnz" _* reg32 "," _* rel21
+
+cbz_inst
+    = "cbz" _* reg64 "," _* rel21
+    / "cbz" _* reg32 "," _* rel21
+
+ret_inst 
+    = "ret" _* "{" reg64 "}"
+
+tbnz_inst
+    = "tbnz" _* reg64 "," _* inmediate "," _* rel16
+    / "tbnz" _* reg32 "," _* inmediate "," _* rel16
+
+tbz_inst
+    = "tbz" _* reg64 "," _* inmediate "," _* rel16
+    / "tbz" _* reg32 "," _* inmediate "," _* rel16
+
+// instrucciones atomic
+atomic_inst
+    = cas_inst
+    / ldao_inst
+    / stao_inst
+    / swp_inst
+
+cas_inst
+    = "cas" ("a"/"l")? ("b"/"h") _* reg32 "," _* reg32 "," _* "["reg64"]"
+    /"cas" ("a"/"l")? "p" _* reg64 "," _* reg64 "," _* reg64 "," _* reg64 "," "["reg64"]"
+    / "cas" ("a"/"l")? "p" _* reg32 "," _* reg32 "," _* reg32 "," _* reg32 "," "["reg64"]"
+    / "cas" ("a"/"l")? _* reg64 "," _* reg64 "," _* "["reg64"]"
+    / "cas" ("a"/"l")? _* reg32 "," _* reg32 "," _* "["reg64"]"
+
+ldao_inst
+    = "ldao" ("a"/"l")? ("b"/"h") _* reg32 "," _* reg32 "," _* "["reg64"]"
+    / "ldao" ("a"/"l")? _* reg64 "," _* reg64 "," _* "["reg64"]"
+    / "ldao" ("a"/"l")? _* reg32 "," _* reg32 "," _* "["reg64"]"
+
+stao_inst
+    = "stao" ("a"/"l")? ("b"/"h") _* reg32 ","  _* "["reg64"]"
+    / "stao" ("a"/"l")? _* reg64 "," _* reg64 "," _* "["reg64"]"
+    / "stao" ("a"/"l")? _* reg32 "," _* reg32 "," _* "["reg64"]"
+
+swp_inst
+    = "swp" ("a"/"l")? ("b"/"h") _* reg32 "," _* reg32 "," _* "["reg64"]"
+    / "swp" ("a"/"l")? _* reg64 "," _* reg64 "," _* "["reg64"]"
+    / "swp" ("a"/"l")? _* reg32 "," _* reg32 "," _* "["reg64"]"
+
+//instrucciones condicionales
+cond_inst
+    = ccmn_inst
+    / ccmp_inst
+    / cinc_inst
+    / cinv_inst
+    / cneg_inst
+    / csel_inst
+    / cset_inst
+    / csetm_inst
+    / csinc_inst
+    / csinv_inst
+    / csneg_inst
+ccmn_inst
+    = "ccmn" _* reg64 "," _* inmediate "," _* inmediate "," _* cc
+    / "ccmn" _* reg64 "," _* reg64 "," _* inmediate "," _* cc
+    / "ccmn" _* reg32 "," _* inmediate "," _* inmediate "," _* cc
+    / "ccmn" _* reg32 "," _* reg32 "," _* inmediate "," _* cc
+
+ccmp_inst
+    = "ccmp" _* reg64 "," _* inmediate "," _* inmediate "," _* cc
+    / "ccmp" _* reg64 "," _* reg64 "," _* inmediate "," _* cc
+    / "ccmp" _* reg32 "," _* inmediate "," _* inmediate "," _* cc
+    / "ccmp" _* reg32 "," _* reg32 "," _* inmediate "," _* cc
+
+cinc_inst
+    = "cinc" _* reg64 "," _* reg64 "," _* cc
+    / "cinc" _* reg32 "," _* reg32 "," _* cc
+
+cinv_inst
+    = "cinv" _* reg64 "," _* reg64 "," _* cc
+    / "cinv" _* reg32 "," _* reg32 "," _* cc
+
+cneg_inst
+    = "cneg" _* reg64 "," _* reg64 "," _* cc
+    / "cneg" _* reg32 "," _* reg32 "," _* cc
+
+csel_inst
+    = "csel" _* reg64 "," _* reg64 "," _* reg64 "," _* cc
+    / "csel" _* reg32 "," _* reg32 "," _* reg32 "," _* cc
+
+cset_inst
+    = "cset" _* reg64 "," _* cc
+    / "cset" _* reg32 "," _* cc
+
+csetm_inst
+    = "csetm" _* reg64 "," _* cc
+    / "csetm" _* reg32 "," _* cc
+
+csinc_inst
+    = "csinc" _* reg64 "," _* reg64 "," _* reg64 "," _* cc
+    / "csinc" _* reg32 "," _* reg32 "," _* reg32 "," _* cc
+
+csinv_inst
+    = "csinv" _* reg64 "," _* reg64 "," _* reg64 "," _* cc
+    / "csinv" _* reg32 "," _* reg32 "," _* reg32 "," _* cc
+
+csneg_inst
+    = "csneg" _* reg64 "," _* reg64 "," _* reg64 "," _* cc
+    / "csneg" _* reg32 "," _* reg32 "," _* reg32 "," _* cc
+
+cc = "eq"
+    / "ne"
+    / "hs"
+    / "lo"
+    / "mi"
+    / "pl"
+    / "vs"
+    / "vc"
+    / "hi"
+    / "ls"
+    / "ge"
+    / "lt"
+    / "gt"
+    / "le"
+    / "al"
+
 reg64 = "x" ("30" / [12][0-9] / [0-9])
 reg32 = "w" ("30" / [12][0-9] / [0-9])
 
 operando = reg64 / reg32 / inmediate
 
+rel16 = sign? [0-9]{1,16}
 rel21 = sign? [0-9]{1,21}
+rel28 = sign? [0-9]{1,28}
 rel33 = sign? [0-9]{1,33}
 sign = ("+" / "-")
 
 inmediate = "#" [0-9]+
+entero = [0-9]+
 
 _ = [ \t\n\r]
