@@ -89,7 +89,8 @@ ldur_inst
     / "ld" ("u")? "r"  _* reg32 "," _* "["addr"]"
 
 prfm_inst
-    = "prfm" prfm "," _* addr
+    = "prfm" reg32 "," _* addr
+    / "prfm" reg64 "," _* addr
 
 sturbh_inst
     = "st" ("u")? "r" ("b"/"h") _* reg64 "," _* "["addr"]"
@@ -104,6 +105,66 @@ stp_inst
 
 
 
+addr 
+    = "=" l:label
+        {
+            l.value = '=' + l.value;
+            return [l];
+        }
+    / "[" _* r:reg32 _* "," _* r2:reg32 _* "," _* s:shift_op _* i2:immediate _* "]"
+
+    / "[" _* r:reg64 _* "," _* r2:reg64 _* "," _* s:shift_op _* i2:immediate _* "]"
+        
+    / "[" _* r:reg64 _* "," _* i:immediate _* "," _* s:shift_op _* i2:immediate _* "]"
+        {
+            return [r, i, s, i2];
+        }
+    / "[" _* r:reg64 _* "," _* i:immediate _* "," _* e:extend_op _* "]" 
+        {
+            return [r, i, e];
+        }
+    / "[" _* r:reg64 _* "," _* i:immediate _* "]"
+        {
+            return [r, i];
+        }
+    / "[" _* r:reg64 _* "]"
+        {
+            return [r];
+        }
+
+
+        // Definición de valores inmediatos
+immediate "Inmediato"
+    = integer
+        {
+            const node = createNode('INMEDIATE_OP', 'Integer');
+            setValue(node, text());
+            return node;
+        }
+    / "#" "'"letter"'"
+        {
+            const node = createNode('INMEDIATE_OP', '#');
+            setValue(node, text());
+            return node;
+        }
+    / "#" "0x" hex_literal
+        {
+            const node = createNode('INMEDIATE_OP', '#');
+            setValue(node, text());
+            return node;
+        }
+    / "#" "0b" binary_literal
+        {
+            const node = createNode('INMEDIATE_OP', '#');
+            setValue(node, text());
+            return node;
+        }
+    / "#" integer
+        {
+            const node = createNode('INMEDIATE_OP', '#');
+            setValue(node, text());
+            return node;
+        }
 //"["addr"]"esing
 
 
@@ -265,10 +326,109 @@ reg32 = "w" ("30" / [12][0-9] / [0-9])
 
 operando = reg64 / reg32 / inmediate
 
+shift_op "Operador de Desplazamiento"
+    = "LSL"i
+        {
+            const node = createNode('LOGICAL_SHIFT_LEFT', 'LSL');
+            setValue(node, text());
+            return node;
+        } 
+    / "LSR"i
+        {
+            const node = createNode('LOGICAL_SHIFT_RIGHT', 'LSR');
+            setValue(node, text());
+            return node;
+        } 
+    / "ASR"i
+        {
+            const node = createNode('ARITHMETIC_SHIFT_RIGHT', 'ASR');
+            setValue(node, text());
+            return node;
+        }
+
+label "Etiqueta"
+    = [a-zA-Z_][a-zA-Z0-9_]*
+        {
+            const node = createNode('LABEL', 'Label');
+            setValue(node, text());
+            return node;
+        }
+
 rel21 = sign? [0-9]{1,21}
 rel33 = sign? [0-9]{1,33}
 sign = ("+" / "-")
 
 inmediate = "#" [0-9]+
 
+extend_op "Operador de Extensión"
+    = "UXTB"i
+        {
+            const node = createNode('UNSIGNED_EXTEND_BYTE', 'UXTB');
+            setValue(node, text());
+            return node;
+        }
+    / "UXTH"i 
+        {
+            const node = createNode('UNSIGNED_EXTEND_HALFWORD', 'UXTH');
+            setValue(node, text());
+            return node;
+        }
+    / "UXTW"i 
+        {
+            const node = createNode('UNSIGNED_EXTEND WORD', 'UXTW');
+            setValue(node, text());
+            return node;
+        }
+    / "UXTX"i
+        {
+            const node = createNode('UNSIGNED_EXTEND_DOUBLEWORD', 'UXTX');
+            setValue(node, text());
+            return node;
+        }
+    / "SXTB"i
+        {
+            const node = createNode('SIGNED_EXTEND_BYTE', 'SXTB');
+            setValue(node, text());
+            return node;
+        }
+    / "SXTH"i
+        {
+            const node = createNode('SIGNED_EXTEND_HALFWORD', 'SXTH');
+            setValue(node, text());
+            return node;
+        }
+    / "SXTW"i 
+        {
+            const node = createNode('SIGNED_EXTEND_WORD', 'SXTW');
+            setValue(node, text());
+            return node;
+        }
+    / "SXTX"i
+        {
+            const node = createNode('SIGNED_EXTEND_DOUBLEWORD', 'SXTX');
+            setValue(node, text());
+            return node;
+        }
+
+integer "Numero Entero"
+    = [0-9]+
+
+
+
+binary_literal
+  = [01]+ // Representa uno o más dígitos binarios
+hex_literal
+    = [0-9a-fA-F]+ // Representa uno o más dígitos hexadecimales
+letter
+    = [a-zA-Z] 
+// Expresiones
+expression "Espresión"
+    = label
+    / integer
+        {
+            const node = createNode('INTEGER', 'Integer');
+            setValue(node, text());
+            return node;
+        }
+        
 _ = [ \t\n\r]
