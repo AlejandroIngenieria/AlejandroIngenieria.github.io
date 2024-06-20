@@ -23,6 +23,7 @@ linea = ins:instruccion { return new Node("instruccion", ins); }
 instruccion 
     = crc_inst
     / load_inst
+    / system_inst
 
 
 /* -------------------------------------------------------------------------- */
@@ -132,6 +133,121 @@ STTRB_inst
     =   "sttrb" _* reg32 "," _* "[" inmediate "]"
 STTRH_inst
     =   "sttrh" _* reg32 "," _* "[" inmediate "]"
+
+
+/* -------------------------------------------------------------------------- */
+/*                            Codigos de condicion                            */
+/* -------------------------------------------------------------------------- */
+conditional_inst 
+    = "EQ"
+    / "NE"
+    / "CS"
+    / "HS"
+    / "CC"
+    / "LO"
+    / "MI"
+    / "PL"
+    / "VS"
+    / "VC"
+    / "HI"
+    / "LS"
+    / "GE"
+    / "LT"
+    / "GT"
+    / "LE"
+    / "AL"
+
+/* -------------------------------------------------------------------------- */
+/*                          Instrucciones al sistema                          */
+/* -------------------------------------------------------------------------- */
+system_inst
+=   AT_inst 
+/   BRK_inst
+/   CLREX_inst
+/   DMB_inst
+/   DSB_inst
+/   ERET_inst
+/   HVC_inst 
+/   ISB_inst
+/   MRS_inst
+/   MSR_inst
+/   NOP_inst
+/   SEV_inst
+/   SEVL_inst
+/   SMC_inst
+/   SVC_inst
+/   WFE_inst
+/   WFI_inst
+/   YIELD_inst
+
+
+AT_inst     = "at" _* at_operation "," _* reg64
+BRK_inst    = "brk" _* inmediate
+CLREX_inst  = "clrex" _* (inmediate)?
+DMB_inst    = "dmb" _* barrierop
+DSB_inst    = "dsb" _* barrierop
+ERET_inst   = "eret"
+HVC_inst    = "hvc" _* inmediate
+ISB_inst    = "isb" _* ("sy")?
+MRS_inst    = "mrs" _* reg64 "," _* sysreg
+MSR_inst    = "msr" _* msr_rules
+NOP_inst    = "nop"
+SEV_inst    = "sev" 
+SEVL_inst   = "sevl"
+SMC_inst    = "smc" _* inmediate
+SVC_inst    = "svc" _* inmediate
+WFE_inst    = "wfe"
+WFI_inst    = "wfi" 
+YIELD_inst  = "yield" 
+
+at_operation
+=   "S1E1R"
+/   "S1E1W"
+/   "S1E0R"
+/   "S1E0W"
+/   "S1E2R"
+/   "S1E2W"
+/   "S1E3R"
+/   "S1E3W"
+/   "S12E1R"
+/   "S12E1W"
+
+barrierop
+=   "SY"
+/   "ISH"
+/   "ISHST"
+/   "NSH"
+/   "NSHST"
+/   "OSH"
+/   "OSHST"
+
+sysreg
+=   "SCTLR"
+/   "ACTLR"
+/   "CPACR"
+/   "SCR"
+/   "SDER"
+/   "NSACR"
+/   "TTBR0"
+/   "TTBR1"
+/   "TCR"
+/   "MAIR0"
+/   "MAIR1"
+/   "VBAR"
+/   "ISR"
+/   "FPCR"
+/   "FPSR"
+/   "DSPSR"
+/   "DFSR"
+/   "ELR_ELx"
+/   "SP_ELx"
+/   "NZCV"
+
+msr_rules
+=   sysreg "," _* reg64
+/   "spsel" _* "," _* inmediate
+/   "daifset" _* "," _* inmediate
+/   "daifclr" _* "," _* inmediate
 
 reg64 = "x" ("30" / [12][0-9] / [0-9])
 reg32 = "w" ("30" / [12][0-9] / [0-9])
