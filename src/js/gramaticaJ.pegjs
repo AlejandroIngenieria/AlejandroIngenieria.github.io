@@ -22,7 +22,7 @@ linea = ins:instruccion { return new Node("instruccion", ins); }
 
 instruccion 
     = crc_inst
-    / load_inst
+    / loadAlm_inst
     / system_inst
 
 
@@ -54,7 +54,7 @@ CRC32CX_inst = "crc32cx" _* reg32 "," _* reg32 "," _* reg64
 /* -------------------------------------------------------------------------- */
 /*            Instrucciones de carga y almacenamiento con atributos           */
 /* -------------------------------------------------------------------------- */
-load_inst
+loadAlm_inst
     =   LDAXP_inst
     /   LDAXR_inst
     /   LDAXRB_inst

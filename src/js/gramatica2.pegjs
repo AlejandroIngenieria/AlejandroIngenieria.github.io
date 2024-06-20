@@ -26,7 +26,7 @@ instruccion
     / logica_inst 
     / atomic_inst
     / branch_inst
-    /cond_inst
+    / cond_inst
 
 arithmetic_inst 
     = adc_inst
