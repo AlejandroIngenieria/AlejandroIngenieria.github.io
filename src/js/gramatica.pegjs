@@ -74,6 +74,40 @@ nemonico = etiquetaPila
          / instArit 
          / instStore 
          / instLoad
+         / sumCRC
+         / loadAlm
+
+sumCRC = "CRC32B"
+        / "CRC32H"
+        / "CRC32W"
+        / "CRC32X"
+        / "CRC32CB"
+        / "CRC32CH"
+        / "CRC32CW"
+        / "CRC32CX"
+
+loadAlm = "LDAXP"
+        / "LDAXR"
+        / "LDAXRB"
+        / "LDAXRH"
+        / "LDNP"
+        / "LDTR"
+        / "LDTRB"
+        / "LDTRH"
+        / "LDTRSB"
+        / "LDTRSH"
+        / "LDTRSW"
+        / "STLR"
+        / "STLRB"
+        / "STLRH"
+        / "STLXP"
+        / "STLXR"
+        / "STLXRB"
+        / "STLXRH"
+        / "STNP"
+        / "STTR"
+        / "STTRB"
+        / "STTRH"
 
 instLoad = "LDR" 
          / "LDRB" 
