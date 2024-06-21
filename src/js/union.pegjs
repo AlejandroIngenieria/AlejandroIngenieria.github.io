@@ -138,26 +138,26 @@ mul_inst
     / "mul"_* r4:reg32 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
 
 neg_inst
-    = "neg" ("s")? _* reg64 "," _* operando { return new Node(  "neg", r2 , r3);} // aca me quede ---------------------------------
-    / "neg" ("s")? _* reg32 "," _* operando { return new Node(  "neg", r2 , r3);}
+    = "neg" ("s")? _* r2:reg64 "," _* r3:operando { return new Node(  "neg", r2 , r3);} 
+    / "neg" ("s")? _* r2:reg32 "," _* r3:operando { return new Node(  "neg", r2 , r3);}
 
 ngc_inst
-    = "ngc" ("s")? _* reg64 "," _* reg64 { return new Node( r4, r5, r6);}
-    / "ngc" ("s")? _* reg32 "," _* reg32 { return new Node( r4, r5, r6);}
+    = "ngc" ("s")? _* r5:reg64 "," _* r6:reg64 { return new Node( "ngc", r5, r6);}
+    / "ngc" ("s")? _* r5:reg32 "," _* r6:reg32 { return new Node( "ngc", r5, r6);}
 
 sbc_inst
-    = "sbc" ("s")? _* reg64 "," _* reg64 "," _* reg64  { return new Node( r4, r5, r6);}
-    / "sbc" ("s")? _* reg32 "," _* reg32 "," _* reg32 { return new Node( r4, r5, r6);}
+    = "sbc" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 { return new Node( r1, r2, r3);}
+    / "sbc" ("s")? _* r4:reg32 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
 
 sdiv_inst
-    = "sdiv" _* reg64 "," _* reg64 "," _* reg64 { return new Node( r4, r5, r6);}
-    / "sdiv" _* reg32 "," _* reg32 "," _* reg32 { return new Node( r4, r5, r6);}
+    = "sdiv" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 { return new Node( r1, r2, r3);}
+    / "sdiv" _* r4:reg32 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
 
 smaddl_inst
-    = "smaddl" _* reg64 "," _* reg32 "," _* reg32 "," _* reg64 { return new Node( r4, r5, r6);}
+    = "smaddl" _* r1:reg64 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:reg64 { return new Node( "smaddl", r1+","+r2 , r3+","+r4);}
 
 smnegl_inst
-    = "smnegl" _* reg64 "," _* reg32 "," _* reg32 { return new Node( r4, r5, r6);}
+    = "smnegl" _* r4:reg64 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
 
 smsubl_inst
     = "smsubl" _* reg64 "," _* reg32 "," _* reg32 "," _* reg64 { return new Node( r4, r5, r6);}
@@ -193,17 +193,17 @@ umull_inst
 
 bitmanipulation_inst
     = bfi:bfi_inst  { return new Node("bfi_inst", bfi);}
-    /bfxil_inst
-    /cls_inst
-    /clz_inst
-    /extr_inst
-    /rbit_inst
-    /rev_inst
-    /rev16_inst
-    /rev32_inst
-    /bfiz_inst
-    /bfx_inst
-    /xt_inst
+    /r1:bfxil_inst { return new Node("bfxil_inst", r1);}
+    /r2:cls_inst { return new Node("cls_inst", r2);}
+    /r3:clz_inst { return new Node("clz_inst", r3);}
+    /r4:extr_inst { return new Node("extr_inst", r4);}
+    /r5:rbit_inst { return new Node("rbit_inst", r5);}
+    /r6:rev_inst { return new Node("rev_inst", r6);}
+    /r7:rev16_inst { return new Node("bfi_inst", r7);}
+    /r8:rev32_inst { return new Node("bfi_inst", r8);}
+    /r9:bfiz_inst { return new Node("bfi_inst", r9);}
+    /r10:bfx_inst { return new Node("bfi_inst", r10);} 
+    /r11:xt_inst { return new Node("bfi_inst", r11);}
 //instruccion de manipulacion de bit
 bfi_inst
     = "bfi" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* r4:immediate { return new Node( "bfi", r1+","+r2 , r3+","+r4);}
@@ -578,38 +578,38 @@ crc_inst
     / r8:CRC32CX_inst { return new Node("CRC32CX_inst",r8);}
 
 
-CRC32B_inst = "crc32b" _* reg32 "," _* reg32 "," _* reg32
-CRC32H_inst = "crc32h" _* reg32 "," _* reg32 "," _* reg32
-CRC32W_inst = "crc32w" _* reg32 "," _* reg32 "," _* reg32
-CRC32X_inst = "crc32x" _* reg32 "," _* reg32 "," _* reg64
-CRC32CB_inst = "crc32cb" _* reg32 "," _* reg32 "," _* reg32
-CRC32CH_inst = "crc32ch" _* reg32 "," _* reg32 "," _* reg32
-CRC32CW_inst = "crc32cw" _* reg32 "," _* reg32 "," _* reg32
-CRC32CX_inst = "crc32cx" _* reg32 "," _* reg32 "," _* reg64
+CRC32B_inst = "crc32b" _* r6:reg32 "," _* r7:reg32 "," _* r8:reg32  { return new Node( r6, r7, r8);}
+CRC32H_inst = "crc32h" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32  { return new Node( r1, r2, r3);}
+CRC32W_inst = "crc32w" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32  { return new Node( r1, r2, r3);}
+CRC32X_inst = "crc32x" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg64  { return new Node( r1, r2, r3);}
+CRC32CB_inst = "crc32cb" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 { return new Node( r1, r2, r3);}
+CRC32CH_inst = "crc32ch" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32  { return new Node( r1, r2, r3);}
+CRC32CW_inst = "crc32cw" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32  { return new Node( r1, r2, r3);}
+CRC32CX_inst = "crc32cx" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg64 { return new Node( r1, r2, r3);}
 
 
 /* -------------------------------------------------------------------------- */
 /*            Instrucciones de carga y almacenamiento con atributos           */
 /* -------------------------------------------------------------------------- */
 loadAlm_inst
-    =   LDAXP_inst
-    /   LDAXR_inst
-    /   LDAXRB_inst
-    /   LDNP_inst
-    /   LDTR_inst
-    /   LDTRB_inst
-    /   LDTRSB_inst
-    /   LDTRSW_inst
-    /   STLR_inst
-    /   STLRB_inst
-    /   STLXP_inst
-    /   STLXRB_inst
-    /   STNP_inst
-    /   STTR_inst
-    /   STTRB_inst
-    / STRB_inst
-    / STR_inst
-    / STP_inst
+    =   r1:LDAXP_inst { return new Node("LDAXP_inst",r1);}
+    /   r2:LDAXR_inst { return new Node("LDAXR_inst",r2);}
+    /   r3:LDAXRB_inst { return new Node("LDAXRB_inst",r3);}
+    /   r4:LDNP_inst { return new Node("LDNP_inst",r4);}
+    /   r5:LDTR_inst { return new Node("LDTR_inst",r5);}
+    /   r6:LDTRB_inst { return new Node("LDTRB_inst",r6);}
+    /   r7:LDTRSB_inst { return new Node("LDTRSB_inst",r7);}
+    /   r8:LDTRSW_inst { return new Node("LDTRSW_inst",r8);}
+    /   r9:STLR_inst { return new Node("STLR_inst",r9);}
+    /   r10:STLRB_inst { return new Node("STLRB_inst",r10);} 
+    /   r11:STLXP_inst { return new Node("STLXP_inst",r11);}
+    /   r12:STLXRB_inst { return new Node("STLXRB_inst",r12);}
+    /   r13:STNP_inst { return new Node("STNP_inst",r13);}
+    /   r14:STTR_inst  { return new Node("STTR_inst",r14);}
+    /   r15:STTRB_inst { return new Node("STTRB_inst",r15);}
+    /   r16:STRB_inst { return new Node("STRB_inst",r16);}
+    /   r17:STR_inst { return new Node("STR_inst",r17);}
+    /   r18:STP_inst { return new Node("STP_inst",r18);}
 
 LDAXP_inst 
     =   "ld"("a")? "xp" _* reg32 "," _* reg32 "," _* "[" reg64 "]"
@@ -716,42 +716,42 @@ at_operation
 /   "s12e1w"
 
 barrierop
-=   "sy"
-/   "ish"
-/   "ishst"
-/   "nsh"
-/   "nshst"
-/   "osh"
-/   "oshst"
+=   "sy" { return new Node( "barrierop", "sy");}
+/   "ish" { return new Node( "barrierop", "ish");}
+/   "ishst" { return new Node( "barrierop", "ishst");}
+/   "nsh" { return new Node( "barrierop", "sctlr");}
+/   "nshst" { return new Node( "barrierop", "sctlr");}
+/   "osh" { return new Node( "barrierop", "sctlr");}
+/   "oshst" { return new Node( "barrierop", "sctlr");}
 
 sysreg
-=   "sctlr"
-/   "actlr"
-/   "cpacr"
-/   "scr"
-/   "sder"
-/   "nsacr"
-/   "ttbr0"
-/   "ttbr1"
-/   "tcr"
-/   "mair0"
-/   "mair1"
-/   "vbar"
-/   "isr"
-/   "fpcr"
-/   "fpsr"
-/   "dspsr"
-/   "dfsr"
-/   "elr_elx"
-/   "sp_elx"
-/   "nzcv"
+=   arg:"sctlr" { return new Node( "sysreg", "sctlr");}
+/   arg:"actlr" { return new Node( "sysreg", "actlr");}
+/   arg:"cpacr" { return new Node( "sysreg", "cpacr");}
+/   arg:"scr" { return new Node( "sysreg", "scr");}
+/   arg:"sder" { return new Node( "sysreg", "sder");}
+/   arg:"nsacr" { return new Node( "sysreg", "nsacr");}
+/   arg:"ttbr0" { return new Node( "sysreg", "ttbr0");}
+/   arg:"ttbr1" { return new Node( "sysreg", "ttbr1");}
+/   arg:"tcr" { return new Node( "sysreg", "tcr");}
+/   arg:"mair0" { return new Node( "sysreg", "mair0");}
+/   arg:"mair1" { return new Node( "sysreg", "mair1");}
+/   arg:"vbar" { return new Node( "sysreg", "vbar");}
+/   arg:"isr" { return new Node( "sysreg", "isr");}
+/   arg:"fpcr" { return new Node( "sysreg", "fpcr");}
+/   arg:"fpsr" { return new Node( "sysreg", "fpsr");}
+/   arg:"dspsr" { return new Node( "sysreg", "dspsr");}
+/   arg:"dfsr" { return new Node( "sysreg", "dfsr");}
+/   arg:"elr_elx" { return new Node( "sysreg", "elr_elx");}
+/   arg:"sp_elx" { return new Node( "sysreg", "sp_elx");}
+/   arg:"nzcv" { return new Node( "sysreg", "nzcv");}
 
 
 msr_rules
-=   sysreg "," _* reg64
-/   "spsel" _* "," _* immediate
-/   "daifset" _* "," _* immediate
-/   "daifclr" _* "," _* immediate
+=   arg1:sysreg "," _* arg:reg64  { return new Node( "msr_rules", arg1, arg);}
+/   "spsel" _* "," _* arg:immediate  { return new Node( "msr_rules", "spsel", arg);}
+/   "daifset" _* "," _* arg:immediate  { return new Node( "msr_rules", "daifset", arg);}
+/   "daifclr" _* "," _* arg:immediate  { return new Node( "msr_rules", "daifclr", arg);}
 
 
 //-----------------------------------------------------------------------------------------------------------------
@@ -759,59 +759,63 @@ msr_rules
 
 
 reg64 
-    = "x" ("30" / [12][0-9] / [0-9])
-    / "sp"
+    = "x" ("30" / [12][0-9] / [0-9]) { return new Node( "reg64","x",arg);}
+    / "sp" { return new Node( "reg64", "sp");}
 
-reg32 = "w" ("30" / [12][0-9] / [0-9])
-    / "sp"
+reg32 = "w" arg:("30" / [12][0-9] / [0-9]) { return new Node( "reg32","w",arg);}
+    / "sp" { return new Node( "reg32", "sp");}
 
-operando = reg64 / reg32 / immediate
+operando = arg:reg64 { return new Node( "operando", arg);}
+        / arg:reg32 { return new Node( "operando", arg);}
+        / arg:immediate { return new Node( "operando", arg);}
 
 rel16 = sign? [0-9]{1,16}
 rel21 = sign? [0-9]{1,21}
 rel28 = sign? [0-9]{1,28}
-rel33 = sign? [0-9]{1,33}
-sign = ("+" / "-")
+rel33 = arg1:sign? arg2:[0-9]{1,33} 
+sign = arg:("+" / "-") 
 
 //immediate = "#" [0-9]+
 immediate "Inmediato"
-    = integer
-    / "#" "'"letter"'"
-    / "#" "0x" hex_literal
-    / "#" "0b" binary_literal
-    / "#" integer
+    = arg:integer { return new Node( "inmediato", arg);}
+    / "#" "'"arg:letter"'" { return new Node( "inmediato", "#", arg);}
+    / "#" "0x" arg:hex_literal { return new Node( "inmediato", "#0x", arg);}
+    / "#" "0b" arg:binary_literal { return new Node( "inmediato", "#0b", arg);}
+    / "#" arg:integer { return new Node( "inmediato", "#", arg);}
 
 
 extend_op "Operador de Extensión"
-    = "UXTB"i
-    / "UXTH"i 
-    / "UXTW"i 
-    / "UXTX"i
-    / "SXTB"i
-    / "SXTH"i
-    / "SXTW"i 
-    / "SXTX"i
+    = "UXTB"i { return new Node( "extend_op", "uxtb");}
+    / "UXTH"i { return new Node( "extend_op", "uxth");}
+    / "UXTW"i { return new Node( "extend_op", "uxtw");}
+    / "UXTX"i { return new Node( "extend_op", "uxtx");}
+    / "SXTB"i { return new Node( "extend_op", "sxtb");}
+    / "SXTH"i { return new Node( "extend_op", "sxth");}
+    / "SXTW"i { return new Node( "extend_op", "sxtw");}
+    / "SXTX"i { return new Node( "extend_op", "sxtx");}
 
 integer 
-    = [0-9]+
+    = arg: [0-9]+ { return new Node( "integer", arg);}
 
 
 shift_op "Operador de Desplazamiento"
-    = "LSL"i
-    / "LSR"i
-    / "ASR"i
-
+    = "LSL"i { return new Node( "shift_op", "ls");}
+    / "LSR"i { return new Node( "shift_op", "lsr");}
+    / "ASR"i { return new Node( "shift_op", "asr");}
 label "Etiqueta"
-    = [a-zA-Z_][a-zA-Z0-9_]*
+    = arg:([a-zA-Z_][a-zA-Z0-9_]*) { return new Node( "label", arg);}
 
 letter
-    = [a-zA-Z] 
+    = arg: [a-zA-Z] { return new Node( "letra", arg);}
 
+// Representa uno o más dígitos binarios
 binary_literal
-  = [01]+ // Representa uno o más dígitos binarios
+  = arg:[01]+ { return new Node( "binario", arg);}
+  
+// Representa uno o más dígitos hexadecimales
 hex_literal
-    = [0-9a-fA-F]+ // Representa uno o más dígitos hexadecimales
+    = arg:[0-9a-fA-F]+ { return new Node( "enter", arg);}
 
-entero = [0-9]+
+entero = arg: [0-9]+ { return new Node( "entero", arg);}
 
 _ = [ \t\n\r]
