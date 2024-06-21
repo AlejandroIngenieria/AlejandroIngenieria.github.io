@@ -113,7 +113,7 @@ instDes = des1:"LSL" { return new Node("instDes", des1); }
         / des3:"ASR" { return new Node("instDes", des3); }
         / des4:"ROR" { return new Node("instDes", des4); }
 
-instSalto = sal1:"BEQ" { return new Node("instSalto", sal1); }
+instSalto = sal1:"BEQ"{ return new Node("instSalto", sal1); }
           / sal2:"BNE" { return new Node("instSalto", sal2); }
           / sal3:"BGT" { return new Node("instSalto", sal3); }
           / sal4:"BLT" { return new Node("instSalto", sal4); }

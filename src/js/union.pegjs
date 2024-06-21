@@ -11,8 +11,6 @@ class Node {
 function generateCST(root) {
   return new Node("Program", root);
 }
-
-
 }
 
 // Grammar
@@ -32,6 +30,9 @@ reservadas = id:".word"   { return new Node("GLOBAL", "."+id); }
         / id:".asciz"   { return new Node("GLOBAL", "."+id); }
         /id:".skip"   { return new Node("GLOBAL", "."+id); }
         /id:".float"   { return new Node("GLOBAL", "."+id); }
+        / ".space"
+        
+        
 
 valor = decim:[0-9]+ "." [0-9]+ { return new Node("decimal", decim); }
       / "0b" binar:[01]+ { return new Node("binario",'0b'+ binar ); }
@@ -59,8 +60,16 @@ instruccion
     / branch_inst _*
     / cond_inst _*
     / loadnstore_inst _*
+    / instSalto _* 
     
-
+instSalto = "beq" _* label
+          / "bne" _* label
+          / "bgt" _* label
+          / "blt" _* label
+          / "bl" _* label
+          / "b" _* label
+          /"ret" _* label
+          
 arithmetic_inst 
     = adc_inst
      /add_inst
@@ -608,6 +617,9 @@ loadAlm_inst
     /   STNP_inst
     /   STTR_inst
     /   STTRB_inst
+    / STRB_inst
+    / STR_inst
+    / STP_inst
 
 LDAXP_inst 
     =   "ld"("a")? "xp" _* reg32 "," _* reg32 "," _* "[" reg64 "]"
@@ -651,6 +663,12 @@ STTR_inst
 
 STTRB_inst
      =   "sttr" ("b"/"h")? _* reg32 "," _* "["reg64 ("," immediate )?"]"
+STRB_inst
+	=  "strb"  _* reg32 "," _* "["reg64 ("," _* immediate)?"]"
+STR_inst
+	= "str" _* reg64 "," _* "["reg64 "]"
+STP_inst
+	= "stp" _* reg64 "," _* reg64 "," _* "["reg64 "]"
 
 /* -------------------------------------------------------------------------- */
 /*                          Instrucciones al sistema                          */
