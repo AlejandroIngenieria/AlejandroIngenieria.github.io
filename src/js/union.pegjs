@@ -37,162 +37,162 @@ reservadas = id:".word"   { return new Node("GLOBAL", "."+id); }
 valor = decim:[0-9]+ "." [0-9]+ { return new Node("decimal", decim); }
       / "0b" binar:[01]+ { return new Node("binario",'0b'+ binar ); }
       / ente:[0-9]+ { return new Node("entero", ente); }
-      /"'" [A-Za-z]* "'"
-      /'"'[^"]*'"'
-        /id: ".space"
+      /"'" val:[A-Za-z]* "'" { return new Node("valor", val); }
+      /'"' val:[^"]*'"'  { return new Node("valor", val); }//que es esto ?-----------------------------
+      /id: ".space"  { return new Node("valor", id); }
 
-linea = glo:global _* 
+linea = glo:global _* { return new Node("global", glo);}
 	  / ins:instruccion _*{ return new Node("instruccion", ins);}
-	  / comentario _*
-      / etiq:etiq _* 
+	  / comentario _* 
+      / etiq:etiq _* { return new Node("etiqueta", etiq);}
 
 comentario  
     = ("//" [^\n]*) 
     
 etiq
-    = label ":" _* 
+    = ins:label ":" _* { return new Node("label", ins);}
 
 instruccion 
-    = arithmetic_inst _*
-    / bitmanipulation_inst _*
-    / logica_inst _*
-    / atomic_inst _*
-    / branch_inst _*
-    / cond_inst _*
-    / loadnstore_inst _*
-    / instSalto _* 
+    = ari:arithmetic_inst _* { return new Node("arithmetic_inst", ari);}
+    / bitman:bitmanipulation_inst _* { return new Node("bitmanipulation_inst", bitman);}
+    / logi:logica_inst _* { return new Node("logica_inst", logi);}
+    / atom:atomic_inst _* { return new Node("atomic_inst", atom);}
+    / bran:branch_inst _* { return new Node("branch_inst", bran);}
+    / cond:cond_inst _* { return new Node("cond_inst", cond);}
+    / load:loadnstore_inst _* { return new Node("loadnstore_inst", load);}
+    / inst:instSalto _* { return new Node("instSalto", inst);}
     
-instSalto = "beq" _* label
-          / "bne" _* label
-          / "bgt" _* label
-          / "blt" _* label
-          / "bl" _* label
-          / "b" _* label
-          /"ret" _* label
+instSalto = b1:"beq" _* label { return new Node("beq", b1);}
+          / b2:"bne" _* label { return new Node("bne", b2);}
+          / b3:"bgt" _* label { return new Node("bgt", b3);}
+          / b4:"blt" _* label { return new Node("blt", b4);}
+          / b5:"bl" _* label  { return new Node("bl", b5);}
+          / b6:"b" _* label   { return new Node("b", b6);}
+          / b7:"ret" _* label  { return new Node("ret", b7);}
           
 arithmetic_inst 
-    = adc_inst
-     /add_inst
-     /adr_inst
-     /adrp_inst
-     /cmn_inst
-     /cmp_inst
-     /madd_inst
-     /mneg_inst
-     /msub_inst
-     /mul_inst
-     /neg_inst
-     /ngc_inst
-     /sbc_inst
-     /sdiv_inst
-     /smaddl_inst
-     /smnegl_inst
-     /smsubl_inst
-     /smulh_inst
-     /smull_inst
-     /sub_inst
-     /udiv_inst
-     /umaddl_inst
-     /umnegl_inst
-     /umsubl_inst
-     /umulh_inst
-     /umull_inst
+    = adc:adc_inst  { return new Node("adc_inst", adc);}
+     /add:add_inst  { return new Node("add_inst", add);}
+     /adr:adr_inst  { return new Node("adr_inst", adr);}
+     /adrp:adrp_inst  { return new Node("adrp_inst", adrp);}
+     /cmn:cmn_inst  { return new Node("cmn_inst", cmn);}
+     /cmp:cmp_inst  { return new Node("cmp_inst", cmp);}
+     /madd:madd_inst  { return new Node("madd_inst", madd);}
+     /mneg:mneg_inst  { return new Node("mneg_inst", mneg);}
+     /msub:msub_inst  { return new Node("msub_inst", msub);}
+     /mul:mul_inst  { return new Node("mul_inst", mul);}
+     /neg:neg_inst  { return new Node("neg_inst", neg);}
+     /ngc:ngc_inst  { return new Node("ngc_inst", ngc);}
+     /sbc:sbc_inst  { return new Node("sbc_inst", sbc);}
+     /sdiv:sdiv_inst  { return new Node("sdiv_inst", sdiv);}
+     /smadd:smaddl_inst  { return new Node("smaddl_inst", smadd);}
+     /smnegl:smnegl_inst  { return new Node("smnegl_inst", smnegl);}
+     /smsubl:smsubl_inst  { return new Node("smsubl_inst", smsubl);}
+     /smulh:smulh_inst  { return new Node("smulh_inst", smulh);}
+     /smull:smull_inst  { return new Node("smull_inst", smull);}
+     /sub:sub_inst  { return new Node("sub_inst", sub);}
+     /udiv:udiv_inst  { return new Node("udiv_inst", udiv);}
+     /umaddl:umaddl_inst  { return new Node("umaddl_inst", umaddl);}
+     /umnegl:umnegl_inst  { return new Node("umnegl_inst", umnegl);}
+     /umsubl:umsubl_inst  { return new Node("umsubl_inst", umsubl);}
+     /umulh:umulh_inst  { return new Node("umulh_inst", umulh);}
+     /umull:umull_inst  { return new Node("umull_inst", umull);}
 
 
 //Instrucciones Aritmeticas
 adc_inst 
-    = "adc" ("s")? _* reg64 "," _* reg64 "," _* reg64
-     /"adc" ("s")? _* reg32 "," _* reg32 "," _* reg32
+    = "adc" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 { return new Node( r1, r2 , r3);}
+     /"adc" ("s")? _* r4:reg32 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
 
 add_inst 
-    = "add" ("s")? _* reg64 "," _* reg64 "," _* operando
-    / "add" ("s")? _* reg32 "," _* reg32 "," _* operando
+    = "add" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:operando { return new Node(  r1, r2 , r3);}
+    / "add" ("s")? _* r4:reg32 "," _* r5:reg32 "," _* r6:operando { return new Node( r4, r5, r6);}
 adr_inst
-    = "adr" _* reg64 "," _* rel21
+    = "adr" _* r5:reg64 "," _* r6:rel21 { return new Node( "adr", r5, r6);}
 
 adrp_inst 
-    = "adrp" _* reg64 "," _* rel33
+    = "adrp" _* r5:reg64 "," _* r6:rel33 { return new Node( "adrp", r5, r6);}
 
 cmn_inst
-    = "cmn" _* reg64 "," _* operando
-    / "cmn" _* reg32 "," _* operando
+    = "cmn" _* r3:reg64 "," _* r2:operando { return new Node( "cmn", r3, r2);}
+    / "cmn" _* r5:reg32 "," _* r6:operando { return new Node( "cmn", r5, r6);}
 
 cmp_inst
-    = "cmp" _* reg64 "," _* operando
-    / "cmp" _* reg32 "," _* operando
+    = "cmp" _* r5:reg64 "," _* r6:operando { return new Node( "cmp", r5, r6);}
+    / "cmp" _* r7:reg32 "," _* r8:operando { return new Node( "cmp", r7, r8);}
 
 madd_inst   
-    = "madd" _* reg64 "," _* reg64 "," _* reg64 "," _* reg64 
-    / "madd" _* reg32 "," _* reg32 "," _* reg32 "," _* reg32 
+    = "madd" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:reg64  { return new Node( "madd", r1+","+r2 , r3+","+r4);}
+    / "madd" _* r5:reg32 "," _* r6:reg32 "," _* r7:reg32 "," _* r8:reg32  { return new Node( "madd", r5+","+r6 , r7+","+r8);}
 
 mneg_inst
-    = "mneg" _* reg64 "," _* reg64 "," _* reg64
-    / "mneg" _* reg32 "," _* reg32 "," _* reg32
+    = "mneg" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 { return new Node( r1, r2, r3);}
+    / "mneg" _* r4:reg32 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
 
 msub_inst
-    = "msub" _* reg64 "," _* reg64 "," _* reg64 "," _* reg64 
-    / "msub" _* reg32 "," _* reg32 "," _* reg32 "," _* reg32 
+    = "msub" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:reg64 { return new Node( "msub", r1+","+r2 , r3+","+r4);}
+    / "msub" _* r5:reg32 "," _* r6:reg32 "," _* r7:reg32 "," _* r8:reg32  { return new Node( "madd", r5+","+r6 , r7+","+r8);}
 
 mul_inst
-    = "mul" _* reg64 "," _* reg64 "," _* reg64 
-    / "mul" _* reg32 "," _* reg32 "," _* reg32
+    = "mul"  _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64{ return new Node( r1, r2, r3);}
+    / "mul"_* r4:reg32 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
 
 neg_inst
-    = "neg" ("s")? _* reg64 "," _* operando
-    / "neg" ("s")? _* reg32 "," _* operando
+    = "neg" ("s")? _* reg64 "," _* operando { return new Node(  "neg", r2 , r3);} // aca me quede ---------------------------------
+    / "neg" ("s")? _* reg32 "," _* operando { return new Node(  "neg", r2 , r3);}
 
 ngc_inst
-    = "ngc" ("s")? _* reg64 "," _* reg64
-    / "ngc" ("s")? _* reg32 "," _* reg32
+    = "ngc" ("s")? _* reg64 "," _* reg64 { return new Node( r4, r5, r6);}
+    / "ngc" ("s")? _* reg32 "," _* reg32 { return new Node( r4, r5, r6);}
 
 sbc_inst
-    = "sbc" ("s")? _* reg64 "," _* reg64 "," _* reg64 
-    / "sbc" ("s")? _* reg32 "," _* reg32 "," _* reg32
+    = "sbc" ("s")? _* reg64 "," _* reg64 "," _* reg64  { return new Node( r4, r5, r6);}
+    / "sbc" ("s")? _* reg32 "," _* reg32 "," _* reg32 { return new Node( r4, r5, r6);}
 
 sdiv_inst
-    = "sdiv" _* reg64 "," _* reg64 "," _* reg64 
-    / "sdiv" _* reg32 "," _* reg32 "," _* reg32
+    = "sdiv" _* reg64 "," _* reg64 "," _* reg64 { return new Node( r4, r5, r6);}
+    / "sdiv" _* reg32 "," _* reg32 "," _* reg32 { return new Node( r4, r5, r6);}
 
 smaddl_inst
-    = "smaddl" _* reg64 "," _* reg32 "," _* reg32 "," _* reg64
+    = "smaddl" _* reg64 "," _* reg32 "," _* reg32 "," _* reg64 { return new Node( r4, r5, r6);}
 
 smnegl_inst
-    = "smnegl" _* reg64 "," _* reg32 "," _* reg32
+    = "smnegl" _* reg64 "," _* reg32 "," _* reg32 { return new Node( r4, r5, r6);}
 
 smsubl_inst
-    = "smsubl" _* reg64 "," _* reg32 "," _* reg32 "," _* reg64
+    = "smsubl" _* reg64 "," _* reg32 "," _* reg32 "," _* reg64 { return new Node( r4, r5, r6);}
 
 smulh_inst
-    = "smulh" _* reg64 "," _* reg64 "," _* reg64 
+    = "smulh" _* reg64 "," _* reg64 "," _* reg64  { return new Node( r4, r5, r6);}
 
 smull_inst
-    = "smull" _* reg64 "," _* reg32 "," _* reg32 
+    = "smull" _* reg64 "," _* reg32 "," _* reg32 { return new Node( r4, r5, r6);}
 
 sub_inst
-    = "sub" ("s")? _* reg64 "," _* reg64 "," _* operando
-    / "sub" ("s")? _* reg32 "," _* reg32 "," _* operando
+    = "sub" ("s")? _* reg64 "," _* reg64 "," _* operando { return new Node( r4, r5, r6);}
+    / "sub" ("s")? _* reg32 "," _* reg32 "," _* operando { return new Node( r4, r5, r6);}
 
 udiv_inst
-    = "udiv" _* reg64 "," _* reg64 "," _* reg64 
-    / "udiv" _* reg32 "," _* reg32 "," _* reg32
+    = "udiv" _* reg64 "," _* reg64 "," _* reg64 { return new Node( r4, r5, r6);}
+    / "udiv" _* reg32 "," _* reg32 "," _* reg32 { return new Node( r4, r5, r6);}
 
 umaddl_inst
-    = "umaddl" _* reg64 "," _* reg32 "," _* reg32 "," _* reg64
+    = "umaddl" _* reg64 "," _* reg32 "," _* reg32 "," _* reg64 { return new Node( r4, r5, r6);}
 
-umnegl_inst
-    = "umnegl" _* reg64 "," _* reg32 "," _* reg32
+umnegl_inst 
+    = "umnegl" _* reg64 "," _* reg32 "," _* reg32 { return new Node( r4, r5, r6);}
 
 umsubl_inst
-    = "umsubl" _* reg64 "," _* reg32 "," _* reg32 "," _* reg64
+    = "umsubl" _* reg64 "," _* reg32 "," _* reg32 "," _* reg64 { return new Node( r4, r5, r6);}
 
 umulh_inst
-    = "umulh" _* reg64 "," _* reg64 "," _* reg64 
+    = "umulh" _* reg64 "," _* reg64 "," _* reg64 { return new Node( r4, r5, r6);}
 
 umull_inst
-    = "umull" _* reg64 "," _* reg32 "," _* reg32
+    = "umull" _* reg64 "," _* reg32 "," _* reg32 { return new Node( r4, r5, r6);}
 
 bitmanipulation_inst
-    =bfi_inst
+    = bfi:bfi_inst  { return new Node("bfi_inst", bfi);}
     /bfxil_inst
     /cls_inst
     /clz_inst
@@ -206,7 +206,7 @@ bitmanipulation_inst
     /xt_inst
 //instruccion de manipulacion de bit
 bfi_inst
-    = "bfi" _* reg64 "," _* reg64 "," _* immediate "," _* immediate
+    = "bfi" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* r4:immediate { return new Node( "bfi", r1+","+r2 , r3+","+r4);}
     / "bfi" _* reg32 "," _* reg32 "," _* immediate "," _* immediate
 
 bfxil_inst
@@ -254,25 +254,25 @@ xt_inst
 
 //instrucciones logicas
 logica_inst 
-    = and_inst
-    / asr_inst
-    / bic_inst
-    / eon_inst
-    / eor_inst
-    / lsl_inst
-    / lsr_inst
-    / movk_inst
-    / movn_inst
-    / movz_inst
-    / mov_inst 
-    / mvn_inst
-    / orn_inst
-    / orr_inst
-    / ror_inst
-    / tst_inst
+    = and:and_inst { return new Node("and_inst", and);}
+    / asr:asr_inst { return new Node("asr_inst", asr);}
+    / bic:bic_inst { return new Node("bic_inst", bic);}
+    / eon:eon_inst { return new Node("eon_inst", eon);}
+    / eor:eor_inst { return new Node("eor_inst", eor);}
+    / lsl:lsl_inst { return new Node("lsl_inst", lsl);}
+    / lsr:lsr_inst { return new Node("lsr_inst", lsr);}
+    / movk:movk_inst { return new Node("movk_inst", movk);}
+    / movn:movn_inst { return new Node("movn_inst", movn);}
+    / movz:movz_inst { return new Node("movz_inst", movz);}
+    / mov:mov_inst { return new Node("mov_inst", mov);}
+    / mvn:mvn_inst { return new Node("mvn_inst", mvn);}
+    / orn:orn_inst { return new Node("orn_inst", orn);}
+    / orr:orr_inst { return new Node("orr_inst", orr);}
+    / ror:ror_inst { return new Node("ror_inst", ror);}
+    / tst:tst_inst { return new Node("tst_inst", tst);}
 
 and_inst
-    = "and" ("s")? _* reg64 "," _* reg64 "," _* operando
+    = "and" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:operando { return new Node( r1, r2, r3);}
     / "and" ("s")? _* reg32 "," _* reg32 "," _* operando
 
 asr_inst
@@ -338,22 +338,22 @@ tst_inst
 
 // instrucciones branch
 branch_inst
-    = bcc_inst
-    / blr_inst 
-    / bl_inst 
-    / br_inst
-    / b_inst
-    / cbnz_inst
-    / cbz_inst
-    / ret_inst
-    / tbnz_inst
-    / tbz_inst
+    = bcc:bcc_inst { return new Node("bcc_inst", bcc);}
+    / blr:blr_inst { return new Node("blr_inst", blr);}
+    / bl:bl_inst  { return new Node("bl_inst", bl);}
+    / br:br_inst { return new Node("br_inst", br);}
+    / b:b_inst { return new Node("b_inst", b);}
+    / cbnz:cbnz_inst { return new Node("cbnz_inst", cbnz);}
+    / cbz:cbz_inst { return new Node("cbz_inst", cbz);}
+    / ret:ret_inst { return new Node("ret_inst", ret);}
+    / tbnz:tbnz_inst { return new Node("tbnz_inst", tbnz);}
+    / tbz:tbz_inst { return new Node("tbz_inst", tbz);}
 
 b_inst 
-    = "b" _* rel28
+    = "b" _* r1:rel28 { return new Node( "b", r1);}
 
 bcc_inst
-    = "bcc" _* rel21
+    = "bcc" _* r1:rel21 { return new Node("bcc", r1);}
 
 bl_inst 
     = "bl" _* rel28
@@ -385,13 +385,13 @@ tbz_inst
 
 // instrucciones atomic
 atomic_inst
-    = cas_inst
-    / ldao_inst
-    / stao_inst
-    / swp_inst
+    = cas:cas_inst { return new Node("cas_inst", cas);}
+    / ldao:ldao_inst { return new Node("ldao_inst", ldao);}
+    / stao:stao_inst { return new Node("stao_inst", stao);}
+    / swp:swp_inst { return new Node("swp_inst", swp);}
 
 cas_inst
-    = "cas" ("a"/"l")? ("b"/"h") _* reg32 "," _* reg32 "," _* "["reg64"]"
+    = "cas" ("a"/"l")? ("b"/"h") _* r1:reg32 "," _* r2:reg32 "," _* "[" r3:reg64"]" { return new Node( r1, r2, r3);}
     /"cas" ("a"/"l")? "p" _* reg64 "," _* reg64 "," _* reg64 "," _* reg64 "," "["reg64"]"
     / "cas" ("a"/"l")? "p" _* reg32 "," _* reg32 "," _* reg32 "," _* reg32 "," "["reg64"]"
     / "cas" ("a"/"l")? _* reg64 "," _* reg64 "," _* "["reg64"]"
@@ -414,17 +414,18 @@ swp_inst
 
 //instrucciones condicionales
 cond_inst
-    = ccmn_inst
-    / ccmp_inst
-    / cinc_inst
-    / cinv_inst
-    / cneg_inst
-    / csel_inst
-    / cset_inst
-    / csetm_inst
-    / csinc_inst
-    / csinv_inst
-    / csneg_inst
+    = ccmn:ccmn_inst { return new Node("ccmn_inst", ccmn);}
+    / ccmp:ccmp_inst { return new Node("ccmp_inst", ccmp);}
+    / cinc:cinc_inst { return new Node("cinc_inst", cinc);}
+    / cinv:cinv_inst { return new Node("cinv_inst", cinv);}
+    / cneg:cneg_inst { return new Node("cneg_inst", cneg);}
+    / csel:csel_inst { return new Node("csel_inst", csel);}
+    / cset:cset_inst { return new Node("cset_inst", cset);}
+    / csetm:csetm_inst { return new Node("csetm_inst", csetm);}
+    / csinc:csinc_inst { return new Node("csinc_inst", csinc);}
+    / csinv:csinv_inst { return new Node("csinv_inst", csinv);}
+    / csneg:csneg_inst { return new Node("csneg_inst", csneg);}
+
 ccmn_inst
     = "ccmn" _* reg64 "," _* immediate "," _* immediate "," _* cc
     / "ccmn" _* reg64 "," _* reg64 "," _* immediate "," _* cc
@@ -473,39 +474,39 @@ csneg_inst
     = "csneg" _* reg64 "," _* reg64 "," _* reg64 "," _* cc
     / "csneg" _* reg32 "," _* reg32 "," _* reg32 "," _* cc
 
-cc = "eq"
-    / "ne"
-    / "hs"
-    / "lo"
-    / "mi"
-    / "pl"
-    / "vs"
-    / "vc"
-    / "hi"
-    / "ls"
-    / "ge"
-    / "lt"
-    / "gt"
-    / "le"
-    / "al"
+cc = "eq" { return new Node("cc", "eq");}
+    / "ne" { return new Node("cc", "ne");}
+    / "hs" { return new Node("cc", "hs");}
+    / "lo" { return new Node("cc", "lo");}
+    / "mi" { return new Node("cc", "mi");}
+    / "pl" { return new Node("cc", "pl");}
+    / "vs" { return new Node("cc", "vs");}
+    / "vc" { return new Node("cc", "vc");}
+    / "hi" { return new Node("cc", "hi");}
+    / "ls" { return new Node("cc", "ls");}
+    / "ge" { return new Node("cc", "ge");}
+    / "lt" { return new Node("cc", "lt");}
+    / "gt" { return new Node("cc", "gt");}
+    / "le" { return new Node("cc", "le");}
+    / "al" { return new Node("cc", "al");}
 
 
 //load and store instruccion
 
 loadnstore_inst
-    = ldpsw_inst
-    / ldp_inst
-    / ldursbh_inst
-    / ldurbh_inst
-    / ldursw_inst
-    / ldur_inst
-    / prfm_inst
-    / sturbh_inst
-    / stur_inst
-    / stp_inst
-    / crc_inst
-    / loadAlm_inst
-    / system_inst
+    = r1:ldpsw_inst { return new Node("ldpsw_inst",r1);}
+    / r2:ldp_inst { return new Node("ldp_inst",r2);}
+    / r3:ldursbh_inst { return new Node("ldursbh_inst",r3);}
+    / r4:ldurbh_inst { return new Node("ldurbh_inst",r4);}
+    / r5:ldursw_inst { return new Node("ldursw_inst",r5);}
+    / r6:ldur_inst { return new Node("ldur_inst",r6);}
+    / r7:prfm_inst { return new Node("prfm_inst",r7);}
+    / r8:sturbh_inst { return new Node("sturbh_inst",r8);}
+    / r9:stur_inst { return new Node("stur_inst",r9);}
+    / r10:stp_inst { return new Node("stp_inst",r10);}
+    / r11:crc_inst { return new Node("crc_inst",r11);}
+    / r12:loadAlm_inst { return new Node("loadAlm_inst",r12);}
+    / r13:system_inst { return new Node("system_inst",r13);}
 
 
 ldpsw_inst 
@@ -548,44 +549,33 @@ stp_inst
 
 addr 
     = "=" l:label
-        {
-            l.value = '=' + l.value;
-            return [l];
-        }
+       
     / "[" _* r:reg32 _* "," _* r2:reg32 _* "," _* s:shift_op _* i2:immediate _* "]"
 
     / "[" _* r:reg64 _* "," _* r2:reg64 _* "," _* s:shift_op _* i2:immediate _* "]"
         
     / "[" _* r:reg64 _* "," _* i:immediate _* "," _* s:shift_op _* i2:immediate _* "]"
-        {
-            return [r, i, s, i2];
-        }
+      
     / "[" _* r:reg64 _* "," _* i:immediate _* "," _* e:extend_op _* "]" 
-        {
-            return [r, i, e];
-        }
+       
     / "[" _* r:reg64 _* "," _* i:immediate _* "]"
-        {
-            return [r, i];
-        }
+        
     / "[" _* r:reg64 _* "]"
-        {
-            return [r];
-        }
+        
 
 /* -------------------------------------------------------------------------- */
 /*                    Instrucciones de suma de comprobacion                   */
 /* -------------------------------------------------------------------------- */
 
 crc_inst
-    = CRC32B_inst
-    / CRC32H_inst
-    / CRC32W_inst
-    / CRC32X_inst
-    / CRC32CB_inst
-    / CRC32CH_inst
-    / CRC32CW_inst
-    / CRC32CX_inst
+    = r1:CRC32B_inst { return new Node("CRC32B_inst",r1);}
+    / r2:CRC32H_inst { return new Node("CRC32H_inst",r2);}
+    / r3:CRC32W_inst { return new Node("CRC32W_inst",r3);}
+    / r4:CRC32X_inst { return new Node("CRC32X_inst",r4);}
+    / r5:CRC32CB_inst { return new Node("CRC32CB_inst",r5);}
+    / r6:CRC32CH_inst { return new Node("CRC32CH_inst",r6);}
+    / r7:CRC32CW_inst { return new Node("CRC32CW_inst",r7);}
+    / r8:CRC32CX_inst { return new Node("CRC32CX_inst",r8);}
 
 
 CRC32B_inst = "crc32b" _* reg32 "," _* reg32 "," _* reg32
