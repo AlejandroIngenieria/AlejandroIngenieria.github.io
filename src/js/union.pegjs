@@ -16,14 +16,14 @@ function generateCST(root) {
 }
 
 // Grammar
- s= global*_ root:linea* _* { return generateCST(root); }
+ s= global* _* root:linea* _* { return generateCST(root); }
 
-global = glo:".global"_ [a-zA-Z_][a-zA-Z0-9_]* _  { return new Node("PR", glo); }
-        / glo1:".section" _ { return new Node("PR", glo1); }
-        / glo2:".data" _ { return new Node("PR", glo2); }
-        / glo3:".text" _ { return new Node("PR", glo3); }
-        / glo4:".bss" _ { return new Node("PR", glo4); }
-        / reservadas _ valor _
+global = glo:".global"_ [a-zA-Z_][a-zA-Z0-9_]*  { return new Node("PR", glo); }
+        / glo1:".section"  { return new Node("PR", glo1); }
+        / glo2:".data"  { return new Node("PR", glo2); }
+        / glo3:".text"  { return new Node("PR", glo3); }
+        / glo4:".bss"  { return new Node("PR", glo4); }
+        / reservadas _* valor 
 
 reservadas = id:".word"   { return new Node("GLOBAL", "."+id); }
         /id:".half"   { return new Node("GLOBAL", "."+id); }
@@ -36,14 +36,14 @@ reservadas = id:".word"   { return new Node("GLOBAL", "."+id); }
 valor = decim:[0-9]+ "." [0-9]+ { return new Node("decimal", decim); }
       / "0b" binar:[01]+ { return new Node("binario",'0b'+ binar ); }
       / ente:[0-9]+ { return new Node("entero", ente); }
-      /"'" [A-Za-z]* "'"_
-      /'"'[^"]*'"'_
+      /"'" [A-Za-z]* "'"
+      /'"'[^"]*'"'
         /id: ".space"
 
-linea =  ins:instruccion _*{ return new Node("instruccion", ins);}
+linea = glo:global _* 
+	  / ins:instruccion _*{ return new Node("instruccion", ins);}
 	  / comentario _*
-      / etiq:etiq _* { return new Node("etiqueta", etiq); } 
-      / glo:global _* { return new Node("etiqueta", glo); } 
+      / etiq:etiq _* 
 
 comentario  
     = ("//" [^\n]*) 

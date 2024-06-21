@@ -16,17 +16,50 @@ function generateCST(root) {
 }
 
 // Grammar
- s= root:linea* _ { return generateCST(root);}
+ s= global*_ root:linea* _* { return generateCST(root); }
 
-linea = ins:instruccion { return new Node("instruccion", ins); }
+global = glo:".global"_ [a-zA-Z_][a-zA-Z0-9_]* _  { return new Node("PR", glo); }
+        / glo1:".section" _ { return new Node("PR", glo1); }
+        / glo2:".data" _ { return new Node("PR", glo2); }
+        / glo3:".text" _ { return new Node("PR", glo3); }
+        / glo4:".bss" _ { return new Node("PR", glo4); }
+        / reservadas _ valor _
+
+reservadas = id:".word"   { return new Node("GLOBAL", "."+id); }
+        /id:".half"   { return new Node("GLOBAL", "."+id); }
+        /id:".byte"   { return new Node("GLOBAL", "."+id); }
+        /id:".ascii"   { return new Node("GLOBAL", "."+id); }
+        / id:".asciz"   { return new Node("GLOBAL", "."+id); }
+        /id:".skip"   { return new Node("GLOBAL", "."+id); }
+        /id:".float"   { return new Node("GLOBAL", "."+id); }
+
+valor = decim:[0-9]+ "." [0-9]+ { return new Node("decimal", decim); }
+      / "0b" binar:[01]+ { return new Node("binario",'0b'+ binar ); }
+      / ente:[0-9]+ { return new Node("entero", ente); }
+      /"'" [A-Za-z]* "'"_
+      /'"'[^"]*'"'_
+        /id: ".space"
+
+linea =  ins:instruccion _*{ return new Node("instruccion", ins);}
+	  / comentario _*
+      / etiq:etiq _* { return new Node("etiqueta", etiq); } 
+      / glo:global _* { return new Node("etiqueta", glo); } 
+
+comentario  
+    = ("//" [^\n]*) 
+    
+etiq
+    = label ":" _* 
 
 instruccion 
-    = arithmetic_inst 
-    / bitmanipulation_inst
-    / logica_inst 
-    / atomic_inst
-    / branch_inst
-    / cond_inst
+    = arithmetic_inst _*
+    / bitmanipulation_inst _*
+    / logica_inst _*
+    / atomic_inst _*
+    / branch_inst _*
+    / cond_inst _*
+    / loadnstore_inst _*
+    
 
 arithmetic_inst 
     = adc_inst
@@ -55,6 +88,7 @@ arithmetic_inst
      /umsubl_inst
      /umulh_inst
      /umull_inst
+
 
 //Instrucciones Aritmeticas
 adc_inst 
@@ -163,12 +197,12 @@ bitmanipulation_inst
     /xt_inst
 //instruccion de manipulacion de bit
 bfi_inst
-    = "bfi" _* reg64 "," _* reg64 "," _* inmediate "," _* inmediate
-    / "bfi" _* reg32 "," _* reg32 "," _* inmediate "," _* inmediate
+    = "bfi" _* reg64 "," _* reg64 "," _* immediate "," _* immediate
+    / "bfi" _* reg32 "," _* reg32 "," _* immediate "," _* immediate
 
 bfxil_inst
-    = "bfxil" _* reg64 "," _* reg64 "," _* inmediate "," _* inmediate
-    / "bfxil" _* reg32 "," _* reg32 "," _* inmediate "," _* inmediate
+    = "bfxil" _* reg64 "," _* reg64 "," _* immediate "," _* immediate
+    / "bfxil" _* reg32 "," _* reg32 "," _* immediate "," _* immediate
 
 cls_inst
     = "cls" _* reg64 "," _* reg64 
@@ -179,8 +213,8 @@ clz_inst
     / "clz" _* reg32 "," _* reg32 
 
 extr_inst
-    = "extr" _* reg64 "," _* reg64 "," _* reg64 "," _* inmediate
-    / "extr" _* reg32 "," _* reg32 "," _* reg32 "," _* inmediate
+    = "extr" _* reg64 "," _* reg64 "," _* reg64 "," _* immediate
+    / "extr" _* reg32 "," _* reg32 "," _* reg32 "," _* immediate
 
 rbit_inst
     = "rbit" _* reg64 "," _* reg64 
@@ -198,12 +232,12 @@ rev32_inst
     = "rev32" _* reg64 "," _* reg64 
 
 bfiz_inst
-    = ("s"/"u") "bfiz" _* reg64 "," _* reg64 "," _* inmediate "," _* inmediate
-    / ("s"/"u") "bfiz" _* reg32 "," _* reg32 "," _* inmediate "," _* inmediate
+    = ("s"/"u") "bfiz" _* reg64 "," _* reg64 "," _* immediate "," _* immediate
+    / ("s"/"u") "bfiz" _* reg32 "," _* reg32 "," _* immediate "," _* immediate
 
 bfx_inst
-    = ("s"/"u") "bfx" _* reg64 "," _* reg64 "," _* inmediate "," _* inmediate
-    / ("s"/"u") "bfx" _* reg32 "," _* reg32 "," _* inmediate "," _* inmediate
+    = ("s"/"u") "bfx" _* reg64 "," _* reg64 "," _* immediate "," _* immediate
+    / ("s"/"u") "bfx" _* reg32 "," _* reg32 "," _* immediate "," _* immediate
 
 xt_inst
     = ("s"/"u") "xt" ("b"/"h")? _* reg64 "," _* reg32
@@ -221,7 +255,7 @@ logica_inst
     / movk_inst
     / movn_inst
     / movz_inst
-    / mov_inst
+    / mov_inst 
     / mvn_inst
     / orn_inst
     / orr_inst
@@ -233,8 +267,8 @@ and_inst
     / "and" ("s")? _* reg32 "," _* reg32 "," _* operando
 
 asr_inst
-    = "asr" _* reg64 "," _* reg64 "," _* (reg64 / inmediate)
-    / "asr" _* reg32 "," _* reg32 "," _* (reg32 / inmediate)
+    = "asr" _* reg64 "," _* reg64 "," _* (reg64 / immediate)
+    / "asr" _* reg32 "," _* reg32 "," _* (reg32 / immediate)
 
 bic_inst
     = "bic" ("s")? _* reg64 "," _* reg64 "," _* operando
@@ -249,28 +283,28 @@ eor_inst
     / "eor" _* reg32 "," _* reg32 "," _* operando
 
 lsl_inst
-    = "lsl" _* reg64 "," _* reg64 "," _* (reg64 / inmediate)
-    / "lsl" _* reg32 "," _* reg32 "," _* (reg32 / inmediate)
+    = "lsl" _* reg64 "," _* reg64 "," _* (reg64 / immediate)
+    / "lsl" _* reg32 "," _* reg32 "," _* (reg32 / immediate)
 
 lsr_inst
-    = "lsr" _* reg64 "," _* reg64 "," _* (reg64 / inmediate)
-    / "lsr" _* reg32 "," _* reg32 "," _* (reg32 / inmediate)
+    = "lsr" _* reg64 "," _* reg64 "," _* (reg64 / immediate)
+    / "lsr" _* reg32 "," _* reg32 "," _* (reg32 / immediate)
 
 mov_inst
-    = "mov" _* reg64 "," _* (reg64 / inmediate)
-    / "mov" _* reg32 "," _* (reg32 / inmediate)
+    = "mov" _* reg64 "," _* (reg64 / immediate)*  
+    / "mov" _* reg32 "," _* (reg32 / immediate)* 
 
 movk_inst
-    = "movk" _* reg64 "," _* inmediate ("["entero"]"/"{"entero"}")?
-    / "movk" _* reg32 "," _* inmediate ("["entero"]"/"{"entero"}")?
+    = "movk" _* reg64 "," _* immediate ("["entero"]"/"{"entero"}")?
+    / "movk" _* reg32 "," _* immediate ("["entero"]"/"{"entero"}")?
 
 movn_inst
-    = "movn" _* reg64 "," _* inmediate ("["entero"]"/"{"entero"}")?
-    / "movn" _* reg32 "," _* inmediate ("["entero"]"/"{"entero"}")?
+    = "movn" _* reg64 "," _* immediate ("["entero"]"/"{"entero"}")?
+    / "movn" _* reg32 "," _* immediate ("["entero"]"/"{"entero"}")?
 
 movz_inst
-    = "movz" _* reg64 "," _* inmediate ("["entero"]"/"{"entero"}")?
-    / "movz" _* reg32 "," _* inmediate ("["entero"]"/"{"entero"}")?
+    = "movz" _* reg64 "," _* immediate ("["entero"]"/"{"entero"}")?
+    / "movz" _* reg32 "," _* immediate ("["entero"]"/"{"entero"}")?
 
 mvn_inst
     = "mvn" _* reg64 "," _* operando
@@ -285,8 +319,8 @@ orr_inst
     / "orr" _* reg32 "," _* reg32 "," _* operando   
 
 ror_inst
-    = "ror" _* reg64 "," _* reg64 "," _* (reg64 / inmediate)
-    / "ror" _* reg32 "," _* reg32 "," _* (reg32 / inmediate)
+    = "ror" _* reg64 "," _* reg64 "," _* (reg64 / immediate)
+    / "ror" _* reg32 "," _* reg32 "," _* (reg32 / immediate)
 
 tst_inst
     = "tst" _* reg64 "," _* reg64 "," _* operando
@@ -333,12 +367,12 @@ ret_inst
     = "ret" _* "{" reg64 "}"
 
 tbnz_inst
-    = "tbnz" _* reg64 "," _* inmediate "," _* rel16
-    / "tbnz" _* reg32 "," _* inmediate "," _* rel16
+    = "tbnz" _* reg64 "," _* immediate "," _* rel16
+    / "tbnz" _* reg32 "," _* immediate "," _* rel16
 
 tbz_inst
-    = "tbz" _* reg64 "," _* inmediate "," _* rel16
-    / "tbz" _* reg32 "," _* inmediate "," _* rel16
+    = "tbz" _* reg64 "," _* immediate "," _* rel16
+    / "tbz" _* reg32 "," _* immediate "," _* rel16
 
 // instrucciones atomic
 atomic_inst
@@ -383,16 +417,16 @@ cond_inst
     / csinv_inst
     / csneg_inst
 ccmn_inst
-    = "ccmn" _* reg64 "," _* inmediate "," _* inmediate "," _* cc
-    / "ccmn" _* reg64 "," _* reg64 "," _* inmediate "," _* cc
-    / "ccmn" _* reg32 "," _* inmediate "," _* inmediate "," _* cc
-    / "ccmn" _* reg32 "," _* reg32 "," _* inmediate "," _* cc
+    = "ccmn" _* reg64 "," _* immediate "," _* immediate "," _* cc
+    / "ccmn" _* reg64 "," _* reg64 "," _* immediate "," _* cc
+    / "ccmn" _* reg32 "," _* immediate "," _* immediate "," _* cc
+    / "ccmn" _* reg32 "," _* reg32 "," _* immediate "," _* cc
 
 ccmp_inst
-    = "ccmp" _* reg64 "," _* inmediate "," _* inmediate "," _* cc
-    / "ccmp" _* reg64 "," _* reg64 "," _* inmediate "," _* cc
-    / "ccmp" _* reg32 "," _* inmediate "," _* inmediate "," _* cc
-    / "ccmp" _* reg32 "," _* reg32 "," _* inmediate "," _* cc
+    = "ccmp" _* reg64 "," _* immediate "," _* immediate "," _* cc
+    / "ccmp" _* reg64 "," _* reg64 "," _* immediate "," _* cc
+    / "ccmp" _* reg32 "," _* immediate "," _* immediate "," _* cc
+    / "ccmp" _* reg32 "," _* reg32 "," _* immediate "," _* cc
 
 cinc_inst
     = "cinc" _* reg64 "," _* reg64 "," _* cc
@@ -446,10 +480,284 @@ cc = "eq"
     / "le"
     / "al"
 
-reg64 = "x" ("30" / [12][0-9] / [0-9])
-reg32 = "w" ("30" / [12][0-9] / [0-9])
 
-operando = reg64 / reg32 / inmediate
+//load and store instruccion
+
+loadnstore_inst
+    = ldpsw_inst
+    / ldp_inst
+    / ldursbh_inst
+    / ldurbh_inst
+    / ldursw_inst
+    / ldur_inst
+    / prfm_inst
+    / sturbh_inst
+    / stur_inst
+    / stp_inst
+    / crc_inst
+    / loadAlm_inst
+    / system_inst
+
+
+ldpsw_inst 
+    = "ldpsw" _* reg64 "," _* reg64 "," _* "["addr"]"
+    /"ldpsw" _* reg32 "," _* reg32 "," _* "["addr"]"
+
+ldp_inst
+    = "ldp" _* reg64 "," _* reg64 "," _* "["addr"]"
+
+ldursbh_inst
+    = "ld" ("u")? "rs" ("b"/"h") _* reg64 "," _* "["addr"]"
+    / "ld" ("u")? "rs" ("b"/"h") _* reg32 "," _* "["addr"]"
+
+ldurbh_inst
+    = "ld" ("u")? "r" ("b"/"h") _* reg32 "," _* "["addr"]"
+
+ldursw_inst
+    = "ld" ("u")? "rsw"  _* reg64 "," _* "["addr"]"
+
+ldur_inst 
+    = "ld" ("u")? "r"  _* reg64 "," _* "["addr"]"
+    / "ld" ("u")? "r"  _* reg32 "," _* "["addr"]"
+
+prfm_inst
+    = "prfm" reg32 "," _* addr
+    / "prfm" reg64 "," _* addr
+
+sturbh_inst
+    = "st" ("u")? "r" ("b"/"h") _* reg64 "," _* "["addr"]"
+
+stur_inst
+    = "st" ("u")? "r"  _* reg64 "," _* "["addr"]"
+    / "st" ("u")? "r"  _* reg32 "," _* "["addr"]"
+
+stp_inst
+    = "stp" _* reg64 "," _* reg64 "," _* "["addr"]"
+    / "stp" _* reg32 "," _* reg32 "," _* "["addr"]"
+
+
+
+addr 
+    = "=" l:label
+        {
+            l.value = '=' + l.value;
+            return [l];
+        }
+    / "[" _* r:reg32 _* "," _* r2:reg32 _* "," _* s:shift_op _* i2:immediate _* "]"
+
+    / "[" _* r:reg64 _* "," _* r2:reg64 _* "," _* s:shift_op _* i2:immediate _* "]"
+        
+    / "[" _* r:reg64 _* "," _* i:immediate _* "," _* s:shift_op _* i2:immediate _* "]"
+        {
+            return [r, i, s, i2];
+        }
+    / "[" _* r:reg64 _* "," _* i:immediate _* "," _* e:extend_op _* "]" 
+        {
+            return [r, i, e];
+        }
+    / "[" _* r:reg64 _* "," _* i:immediate _* "]"
+        {
+            return [r, i];
+        }
+    / "[" _* r:reg64 _* "]"
+        {
+            return [r];
+        }
+
+/* -------------------------------------------------------------------------- */
+/*                    Instrucciones de suma de comprobacion                   */
+/* -------------------------------------------------------------------------- */
+
+crc_inst
+    = CRC32B_inst
+    / CRC32H_inst
+    / CRC32W_inst
+    / CRC32X_inst
+    / CRC32CB_inst
+    / CRC32CH_inst
+    / CRC32CW_inst
+    / CRC32CX_inst
+
+
+CRC32B_inst = "crc32b" _* reg32 "," _* reg32 "," _* reg32
+CRC32H_inst = "crc32h" _* reg32 "," _* reg32 "," _* reg32
+CRC32W_inst = "crc32w" _* reg32 "," _* reg32 "," _* reg32
+CRC32X_inst = "crc32x" _* reg32 "," _* reg32 "," _* reg64
+CRC32CB_inst = "crc32cb" _* reg32 "," _* reg32 "," _* reg32
+CRC32CH_inst = "crc32ch" _* reg32 "," _* reg32 "," _* reg32
+CRC32CW_inst = "crc32cw" _* reg32 "," _* reg32 "," _* reg32
+CRC32CX_inst = "crc32cx" _* reg32 "," _* reg32 "," _* reg64
+
+
+/* -------------------------------------------------------------------------- */
+/*            Instrucciones de carga y almacenamiento con atributos           */
+/* -------------------------------------------------------------------------- */
+loadAlm_inst
+    =   LDAXP_inst
+    /   LDAXR_inst
+    /   LDAXRB_inst
+    /   LDNP_inst
+    /   LDTR_inst
+    /   LDTRB_inst
+    /   LDTRSB_inst
+    /   LDTRSW_inst
+    /   STLR_inst
+    /   STLRB_inst
+    /   STLXP_inst
+    /   STLXRB_inst
+    /   STNP_inst
+    /   STTR_inst
+    /   STTRB_inst
+
+LDAXP_inst 
+    =   "ld"("a")? "xp" _* reg32 "," _* reg32 "," _* "[" reg64 "]"
+    /   "ld"("a")? "xp" _* reg64 "," _* reg64 "," _* "[" reg64 "]"
+LDAXR_inst 
+    =   "ld"("a")? ("x")? "r" _* reg32 "," _* "[" reg64 "]"
+    /   "ld"("a")? ("x")? "r" _* reg64 "," _* "[" reg64 "]"
+LDAXRB_inst 
+    =    "ld"("a")? ("x")? "r" ("b"/"h")? _* reg32 "," _* "[" reg64 "]"
+LDNP_inst 
+    =   "ldnp" _* reg32 "," _* reg32 "," _* "[" reg64 ("," immediate)? "]"
+    /   "ldnp" _* reg64 "," _* reg64 "," _* "[" reg64 ("," immediate)? "]"
+LDTR_inst 
+    =   "ldtr" _* reg32 "," _* "[" reg64 ("," immediate)? "]"
+    /   "ldtr" _* reg64 "," _* "[" reg64 ("," immediate)? "]"
+LDTRB_inst 
+    =    "ldtr" ("b"/"h")? _* reg32 "," _* "[" reg64 ("," immediate)? "]"
+LDTRSB_inst
+    =    "ldtrs" ("b"/"h")? _* reg32 "," _* "[" reg64 ("," immediate)? "]"
+    /    "ldtrsb" ("b"/"h")? _* reg64 "," _* "[" reg64 ("," immediate)? "]"
+LDTRSW_inst
+    =    "ldtrsw" _* reg64 "," _* "[" reg64 ("," immediate)? "]"
+STLR_inst
+    =   "stlr" _* reg32 "," _* "[" reg64 "]"
+    /   "stlr" _* reg64 "," _* "[" reg64 "]"
+STLRB_inst
+    =   "stlr"  ("b"/"h")? _* reg32 "," _* "[" reg64 "]"
+STLXP_inst
+    =   "st" ("l")? "xp" _* reg32 "," _* reg32 "," _* reg32 "," _* "[" reg64 "]"
+    /   "st" ("l")? "xp" _* reg32 "," _* reg64 "," _* reg64 "," _* "[" reg64 "]"
+    /   "st" ("l")? "xp"  _* reg32 "," _* reg32 "," _* "[" reg64 "]"
+    /   "st" ("l")? "xp"  _* reg32 "," _* reg64 "," _* "[" reg64 "]"
+STLXRB_inst
+    =   "st" ("l")? "xr" ("b"/"h")? _* reg32 "," _* reg32 "," _* "[" reg64 "]"
+STNP_inst
+    =   "stnp" _* reg32 "," _* reg32 "," _* "["reg64 ("," immediate )?"]"
+    /   "stnp" _* reg64 "," _* reg64 "," _* "["reg64 ("," immediate )?"]"
+STTR_inst
+    =   "sttr" _* reg32 "," _* "["reg64 ("," immediate )?"]"
+    /   "sttr" _* reg64 "," _* "["reg64 ("," immediate )?"]"
+
+STTRB_inst
+     =   "sttr" ("b"/"h")? _* reg32 "," _* "["reg64 ("," immediate )?"]"
+
+/* -------------------------------------------------------------------------- */
+/*                          Instrucciones al sistema                          */
+/* -------------------------------------------------------------------------- */
+system_inst
+=   AT_inst 
+/   BRK_inst
+/   CLREX_inst
+/   DMB_inst
+/   DSB_inst
+/   ERET_inst
+/   HVC_inst 
+/   ISB_inst
+/   MRS_inst
+/   MSR_inst
+/   NOP_inst
+/   SEV_inst
+/   SEVL_inst
+/   SMC_inst
+/   SVC_inst
+/   WFE_inst
+/   WFI_inst
+/   YIELD_inst
+
+
+AT_inst     = "at" _* at_operation "," _* reg64
+BRK_inst    = "brk" _* immediate
+CLREX_inst  = "clrex" _* (immediate)?
+DMB_inst    = "dmb" _* barrierop
+DSB_inst    = "dsb" _* barrierop
+ERET_inst   = "eret"
+HVC_inst    = "hvc" _* immediate
+ISB_inst    = "isb" _* ("sy")?
+MRS_inst    = "mrs" _* reg64 "," _* sysreg
+MSR_inst    = "msr" _* msr_rules
+NOP_inst    = "nop"
+SEV_inst    = "sev" 
+SEVL_inst   = "sevl"
+SMC_inst    = "smc" _* immediate
+SVC_inst    = "svc" _* immediate
+WFE_inst    = "wfe"
+WFI_inst    = "wfi" 
+YIELD_inst  = "yield" 
+
+at_operation
+=   "s1e1r"
+/   "s1e1w"
+/   "s1e0r"
+/   "s1e0w"
+/   "s1e2r"
+/   "s1e2w"
+/   "s1e3r"
+/   "s1e3w"
+/   "s12e1r"
+/   "s12e1w"
+
+barrierop
+=   "sy"
+/   "ish"
+/   "ishst"
+/   "nsh"
+/   "nshst"
+/   "osh"
+/   "oshst"
+
+sysreg
+=   "sctlr"
+/   "actlr"
+/   "cpacr"
+/   "scr"
+/   "sder"
+/   "nsacr"
+/   "ttbr0"
+/   "ttbr1"
+/   "tcr"
+/   "mair0"
+/   "mair1"
+/   "vbar"
+/   "isr"
+/   "fpcr"
+/   "fpsr"
+/   "dspsr"
+/   "dfsr"
+/   "elr_elx"
+/   "sp_elx"
+/   "nzcv"
+
+
+msr_rules
+=   sysreg "," _* reg64
+/   "spsel" _* "," _* immediate
+/   "daifset" _* "," _* immediate
+/   "daifclr" _* "," _* immediate
+
+
+//-----------------------------------------------------------------------------------------------------------------
+    // Definición de valores inmediatos
+
+
+reg64 
+    = "x" ("30" / [12][0-9] / [0-9])
+    / "sp"
+
+reg32 = "w" ("30" / [12][0-9] / [0-9])
+    / "sp"
+
+operando = reg64 / reg32 / immediate
 
 rel16 = sign? [0-9]{1,16}
 rel21 = sign? [0-9]{1,21}
@@ -457,7 +765,45 @@ rel28 = sign? [0-9]{1,28}
 rel33 = sign? [0-9]{1,33}
 sign = ("+" / "-")
 
-inmediate = "#" [0-9]+
+//immediate = "#" [0-9]+
+immediate "Inmediato"
+    = integer
+    / "#" "'"letter"'"
+    / "#" "0x" hex_literal
+    / "#" "0b" binary_literal
+    / "#" integer
+
+
+extend_op "Operador de Extensión"
+    = "UXTB"i
+    / "UXTH"i 
+    / "UXTW"i 
+    / "UXTX"i
+    / "SXTB"i
+    / "SXTH"i
+    / "SXTW"i 
+    / "SXTX"i
+
+integer 
+    = [0-9]+
+
+
+shift_op "Operador de Desplazamiento"
+    = "LSL"i
+    / "LSR"i
+    / "ASR"i
+
+label "Etiqueta"
+    = [a-zA-Z_][a-zA-Z0-9_]*
+
+letter
+    = [a-zA-Z] 
+
+binary_literal
+  = [01]+ // Representa uno o más dígitos binarios
+hex_literal
+    = [0-9a-fA-F]+ // Representa uno o más dígitos hexadecimales
+
 entero = [0-9]+
 
 _ = [ \t\n\r]
