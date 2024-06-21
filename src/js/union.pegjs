@@ -16,9 +16,37 @@ function generateCST(root) {
 }
 
 // Grammar
- s= root:linea* _ { return generateCST(root);}
+ s= global*_ root:linea* _*{ return generateCST(root);}
 
-linea = ins:instruccion { return new Node("instruccion", ins); }
+global = glo:".global"_ [a-zA-Z_][a-zA-Z0-9_]* _  { return new Node("PR", glo); }
+        / glo1:".section" _ { return new Node("PR", glo1); }
+        / glo2:".data" _ { return new Node("PR", glo2); }
+        / glo3:".text" _ { return new Node("PR", glo3); }
+        / glo4:".bss" _ { return new Node("PR", glo4); }
+        / reservadas _ valor
+
+reservadas = id:".word"   { return new Node("GLOBAL", "."+id); }
+        /id:".half"   { return new Node("GLOBAL", "."+id); }
+        /id:".byte"   { return new Node("GLOBAL", "."+id); }
+        /id:".ascii"   { return new Node("GLOBAL", "."+id); }
+        /id:".asciz"   { return new Node("GLOBAL", "."+id); }
+        /id:".skip"   { return new Node("GLOBAL", "."+id); }
+        /id:".float"   { return new Node("GLOBAL", "."+id); }
+
+valor = decim:[0-9]+ "." [0-9]+ { return new Node("decimal", decim); }
+      / "0b" binar:[01]+ { return new Node("binario",'0b'+ binar ); }
+      / ente:[0-9]+ { return new Node("entero", ente); }
+      /"'" [A-Za-z]* "'"_
+      /'"'[^"]*'"'_
+        /id: ".space"
+
+linea = ins:instruccion { return new Node("instruccion", ins); } 
+      / comentario 
+      / etiq:etiq { return new Node("etiqueta", etiq); }
+      / glo:global { return new Node("etiqueta", glo); }
+
+etiq
+    = label ":" _* 
 
 instruccion 
     = arithmetic_inst 
@@ -28,6 +56,9 @@ instruccion
     / branch_inst
     / cond_inst
     / loadnstore_inst
+    
+comentario  
+    = ("//" [^\n]*) 
 
 arithmetic_inst 
     = adc_inst
@@ -259,8 +290,8 @@ lsr_inst
     / "lsr" _* reg32 "," _* reg32 "," _* (reg32 / immediate)
 
 mov_inst
-    = "mov" _* reg64 "," _* (reg64 / immediate)
-    / "mov" _* reg32 "," _* (reg32 / immediate)
+    = "mov" _* reg64 "," _* (reg64 / immediate)* _* 
+    / "mov" _* reg32 "," _* (reg32 / immediate)* _*
 
 movk_inst
     = "movk" _* reg64 "," _* immediate ("["entero"]"/"{"entero"}")?
@@ -738,8 +769,12 @@ msr_rules
     // Definición de valores inmediatos
 
 
-reg64 = "x" ("30" / [12][0-9] / [0-9])
+reg64 
+    = "x" ("30" / [12][0-9] / [0-9])
+    / "sp"
+
 reg32 = "w" ("30" / [12][0-9] / [0-9])
+    / "sp"
 
 operando = reg64 / reg32 / immediate
 
@@ -752,118 +787,33 @@ sign = ("+" / "-")
 //immediate = "#" [0-9]+
 immediate "Inmediato"
     = integer
-        {
-            const node = createNode('immediate_OP', 'Integer');
-            setValue(node, text());
-            return node;
-        }
     / "#" "'"letter"'"
-        {
-            const node = createNode('immediate_OP', '#');
-            setValue(node, text());
-            return node;
-        }
     / "#" "0x" hex_literal
-        {
-            const node = createNode('immediate_OP', '#');
-            setValue(node, text());
-            return node;
-        }
     / "#" "0b" binary_literal
-        {
-            const node = createNode('immediate_OP', '#');
-            setValue(node, text());
-            return node;
-        }
     / "#" integer
-        {
-            const node = createNode('immediate_OP', '#');
-            setValue(node, text());
-            return node;
-        }
 
 
 extend_op "Operador de Extensión"
     = "UXTB"i
-        {
-            const node = createNode('UNSIGNED_EXTEND_BYTE', 'UXTB');
-            setValue(node, text());
-            return node;
-        }
     / "UXTH"i 
-        {
-            const node = createNode('UNSIGNED_EXTEND_HALFWORD', 'UXTH');
-            setValue(node, text());
-            return node;
-        }
     / "UXTW"i 
-        {
-            const node = createNode('UNSIGNED_EXTEND WORD', 'UXTW');
-            setValue(node, text());
-            return node;
-        }
     / "UXTX"i
-        {
-            const node = createNode('UNSIGNED_EXTEND_DOUBLEWORD', 'UXTX');
-            setValue(node, text());
-            return node;
-        }
     / "SXTB"i
-        {
-            const node = createNode('SIGNED_EXTEND_BYTE', 'SXTB');
-            setValue(node, text());
-            return node;
-        }
     / "SXTH"i
-        {
-            const node = createNode('SIGNED_EXTEND_HALFWORD', 'SXTH');
-            setValue(node, text());
-            return node;
-        }
     / "SXTW"i 
-        {
-            const node = createNode('SIGNED_EXTEND_WORD', 'SXTW');
-            setValue(node, text());
-            return node;
-        }
     / "SXTX"i
-        {
-            const node = createNode('SIGNED_EXTEND_DOUBLEWORD', 'SXTX');
-            setValue(node, text());
-            return node;
-        }
 
-integer "Numero Entero"
+integer 
     = [0-9]+
 
 
 shift_op "Operador de Desplazamiento"
     = "LSL"i
-        {
-            const node = createNode('LOGICAL_SHIFT_LEFT', 'LSL');
-            setValue(node, text());
-            return node;
-        } 
     / "LSR"i
-        {
-            const node = createNode('LOGICAL_SHIFT_RIGHT', 'LSR');
-            setValue(node, text());
-            return node;
-        } 
     / "ASR"i
-        {
-            const node = createNode('ARITHMETIC_SHIFT_RIGHT', 'ASR');
-            setValue(node, text());
-            return node;
-        }
 
 label "Etiqueta"
     = [a-zA-Z_][a-zA-Z0-9_]*
-        {
-            const node = createNode('LABEL', 'Label');
-            setValue(node, text());
-            return node;
-        }
 
 letter
     = [a-zA-Z] 
