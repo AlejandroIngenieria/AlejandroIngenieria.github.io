@@ -16,20 +16,20 @@ function generateCST(root) {
 }
 
 // Grammar
- s= global*_ root:linea* _*{ return generateCST(root);}
+ s= global*_ root:linea* _* { return generateCST(root); }
 
 global = glo:".global"_ [a-zA-Z_][a-zA-Z0-9_]* _  { return new Node("PR", glo); }
         / glo1:".section" _ { return new Node("PR", glo1); }
         / glo2:".data" _ { return new Node("PR", glo2); }
         / glo3:".text" _ { return new Node("PR", glo3); }
         / glo4:".bss" _ { return new Node("PR", glo4); }
-        / reservadas _ valor
+        / reservadas _ valor _
 
 reservadas = id:".word"   { return new Node("GLOBAL", "."+id); }
         /id:".half"   { return new Node("GLOBAL", "."+id); }
         /id:".byte"   { return new Node("GLOBAL", "."+id); }
         /id:".ascii"   { return new Node("GLOBAL", "."+id); }
-        /id:".asciz"   { return new Node("GLOBAL", "."+id); }
+        / id:".asciz"   { return new Node("GLOBAL", "."+id); }
         /id:".skip"   { return new Node("GLOBAL", "."+id); }
         /id:".float"   { return new Node("GLOBAL", "."+id); }
 
@@ -40,25 +40,26 @@ valor = decim:[0-9]+ "." [0-9]+ { return new Node("decimal", decim); }
       /'"'[^"]*'"'_
         /id: ".space"
 
-linea = ins:instruccion { return new Node("instruccion", ins); } 
-      / comentario 
-      / etiq:etiq { return new Node("etiqueta", etiq); }
-      / glo:global { return new Node("etiqueta", glo); }
+linea =  ins:instruccion _*{ return new Node("instruccion", ins);}
+	  / comentario _*
+      / etiq:etiq _* { return new Node("etiqueta", etiq); } 
+      / glo:global _* { return new Node("etiqueta", glo); } 
 
+comentario  
+    = ("//" [^\n]*) 
+    
 etiq
     = label ":" _* 
 
 instruccion 
-    = arithmetic_inst 
-    / bitmanipulation_inst
-    / logica_inst 
-    / atomic_inst
-    / branch_inst
-    / cond_inst
-    / loadnstore_inst
+    = arithmetic_inst _*
+    / bitmanipulation_inst _*
+    / logica_inst _*
+    / atomic_inst _*
+    / branch_inst _*
+    / cond_inst _*
+    / loadnstore_inst _*
     
-comentario  
-    = ("//" [^\n]*) 
 
 arithmetic_inst 
     = adc_inst
@@ -254,7 +255,7 @@ logica_inst
     / movk_inst
     / movn_inst
     / movz_inst
-    / mov_inst
+    / mov_inst 
     / mvn_inst
     / orn_inst
     / orr_inst
@@ -290,8 +291,8 @@ lsr_inst
     / "lsr" _* reg32 "," _* reg32 "," _* (reg32 / immediate)
 
 mov_inst
-    = "mov" _* reg64 "," _* (reg64 / immediate)* _* 
-    / "mov" _* reg32 "," _* (reg32 / immediate)* _*
+    = "mov" _* reg64 "," _* (reg64 / immediate)*  
+    / "mov" _* reg32 "," _* (reg32 / immediate)* 
 
 movk_inst
     = "movk" _* reg64 "," _* immediate ("["entero"]"/"{"entero"}")?
@@ -595,81 +596,61 @@ loadAlm_inst
     =   LDAXP_inst
     /   LDAXR_inst
     /   LDAXRB_inst
-    /   LDAXRH_inst
     /   LDNP_inst
     /   LDTR_inst
     /   LDTRB_inst
-    /   LDTRH_inst
     /   LDTRSB_inst
-    /   LDTRSH_inst
     /   LDTRSW_inst
     /   STLR_inst
     /   STLRB_inst
-    /   STLRH_inst
     /   STLXP_inst
-    /   STLXR_inst
     /   STLXRB_inst
-    /   STLXRH_inst
     /   STNP_inst
     /   STTR_inst
     /   STTRB_inst
-    /   STTRH_inst
 
 LDAXP_inst 
-    =   "ldaxp" _* reg32 "," _* reg32 "," _* "[" reg64 "]"
-    /   "ldaxp" _* reg64 "," _* reg64 "," _* "[" reg64 "]"
+    =   "ld"("a")? "xp" _* reg32 "," _* reg32 "," _* "[" reg64 "]"
+    /   "ld"("a")? "xp" _* reg64 "," _* reg64 "," _* "[" reg64 "]"
 LDAXR_inst 
-    =   "ldaxr" _* reg32 "," _* "[" reg64 "]"
-    /   "ldaxr" _* reg64 "," _* "[" reg64 "]"
+    =   "ld"("a")? ("x")? "r" _* reg32 "," _* "[" reg64 "]"
+    /   "ld"("a")? ("x")? "r" _* reg64 "," _* "[" reg64 "]"
 LDAXRB_inst 
-    =    "ldaxrb" _* reg32 "," _* "[" reg64 "]"
-LDAXRH_inst 
-    =    "ldaxrh" _* reg32 "," _* "[" reg64 "]"
+    =    "ld"("a")? ("x")? "r" ("b"/"h")? _* reg32 "," _* "[" reg64 "]"
 LDNP_inst 
-    =   "ldnp" _* reg32 "," _* reg32 "," _* "[" immediate "]"
-    /   "ldnp" _* reg64 "," _* reg64 "," _* "[" immediate "]"
+    =   "ldnp" _* reg32 "," _* reg32 "," _* "[" reg64 ("," immediate)? "]"
+    /   "ldnp" _* reg64 "," _* reg64 "," _* "[" reg64 ("," immediate)? "]"
 LDTR_inst 
-    =   "ldtr" _* reg32 "," _* "[" immediate "]"
-    /   "ldtr" _* reg64 "," _* "[" immediate "]"
+    =   "ldtr" _* reg32 "," _* "[" reg64 ("," immediate)? "]"
+    /   "ldtr" _* reg64 "," _* "[" reg64 ("," immediate)? "]"
 LDTRB_inst 
-    =    "ldtrb" _* reg32 "," _* "[" immediate "]"
-LDTRH_inst 
-    =    "ldtrh" _* reg32 "," _* "[" immediate "]"
+    =    "ldtr" ("b"/"h")? _* reg32 "," _* "[" reg64 ("," immediate)? "]"
 LDTRSB_inst
-    =    "ldtrsb" _* reg32 "," _* "[" immediate "]"
-    /    "ldtrsb" _* reg64 "," _* "[" immediate "]"
-LDTRSH_inst
-    =    "ldtrsh" _* reg32 "," _* "[" immediate "]"
-    /    "ldtrsh" _* reg64 "," _* "[" immediate "]"
+    =    "ldtrs" ("b"/"h")? _* reg32 "," _* "[" reg64 ("," immediate)? "]"
+    /    "ldtrsb" ("b"/"h")? _* reg64 "," _* "[" reg64 ("," immediate)? "]"
 LDTRSW_inst
-    =    "ldtrsw" _* reg64 "," _* "[" immediate "]"
+    =    "ldtrsw" _* reg64 "," _* "[" reg64 ("," immediate)? "]"
 STLR_inst
     =   "stlr" _* reg32 "," _* "[" reg64 "]"
     /   "stlr" _* reg64 "," _* "[" reg64 "]"
 STLRB_inst
-    =   "stlrb" _* reg32 "," _* "[" reg64 "]"
-STLRH_inst
-    =   "stlrh" _* reg32 "," _* "[" reg64 "]"
+    =   "stlr"  ("b"/"h")? _* reg32 "," _* "[" reg64 "]"
 STLXP_inst
-    =   "stlxp" _* reg32 "," _* reg32 "," _* reg32 "," _* "[" reg64 "]"
-    /   "stlxp" _* reg32 "," _* reg64 "," _* reg64 "," _* "[" reg64 "]"
-STLXR_inst
-    =   "stlxr" _* reg32 "," _* reg32 "," _* "[" reg64 "]"
-    /   "stlxr" _* reg32 "," _* reg64 "," _* "[" reg64 "]"
+    =   "st" ("l")? "xp" _* reg32 "," _* reg32 "," _* reg32 "," _* "[" reg64 "]"
+    /   "st" ("l")? "xp" _* reg32 "," _* reg64 "," _* reg64 "," _* "[" reg64 "]"
+    /   "st" ("l")? "xp"  _* reg32 "," _* reg32 "," _* "[" reg64 "]"
+    /   "st" ("l")? "xp"  _* reg32 "," _* reg64 "," _* "[" reg64 "]"
 STLXRB_inst
-    =   "stlxrb" _* reg32 "," _* reg32 "," _* "[" reg64 "]"
-STLXRH_inst
-    =   "stlxrh" _* reg32 "," _* reg32 "," _* "[" reg64 "]"
+    =   "st" ("l")? "xr" ("b"/"h")? _* reg32 "," _* reg32 "," _* "[" reg64 "]"
 STNP_inst
-    =   "stnp" _* reg32 "," _* reg32 "," _* "[" immediate "]"
-    /   "stnp" _* reg64 "," _* reg64 "," _* "[" immediate "]"
+    =   "stnp" _* reg32 "," _* reg32 "," _* "["reg64 ("," immediate )?"]"
+    /   "stnp" _* reg64 "," _* reg64 "," _* "["reg64 ("," immediate )?"]"
 STTR_inst
-    =   "sttr" _* reg32 "," _* "[" immediate "]"
-    /   "sttr" _* reg64 "," _* "[" immediate "]"
+    =   "sttr" _* reg32 "," _* "["reg64 ("," immediate )?"]"
+    /   "sttr" _* reg64 "," _* "["reg64 ("," immediate )?"]"
+
 STTRB_inst
-    =   "sttrb" _* reg32 "," _* "[" immediate "]"
-STTRH_inst
-    =   "sttrh" _* reg32 "," _* "[" immediate "]"
+     =   "sttr" ("b"/"h")? _* reg32 "," _* "["reg64 ("," immediate )?"]"
 
 /* -------------------------------------------------------------------------- */
 /*                          Instrucciones al sistema                          */
