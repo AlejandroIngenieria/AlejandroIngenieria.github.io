@@ -21,7 +21,7 @@ global = glo:".global"_ [a-zA-Z_][a-zA-Z0-9_]*  { return new Node("PR", glo); }
         / glo2:".data"  { return new Node("PR", glo2); }
         / glo3:".text"  { return new Node("PR", glo3); }
         / glo4:".bss"  { return new Node("PR", glo4); }
-        / reservadas _* valor 
+        / r1:reservadas _* r2:valor { return new Node("PR", r1.join("") + r2.join("")); } 
 
 reservadas = id:".word"   { return new Node("GLOBAL", "."+id); }
         /id:".half"   { return new Node("GLOBAL", "."+id); }
@@ -39,15 +39,15 @@ valor = decim:[0-9]+ "." [0-9]+ { return new Node("decimal", decim); }
       / ente:[0-9]+ { return new Node("entero", ente); }
       /"'" val:[A-Za-z]* "'" { return new Node("valor", val); }
       /'"' val:[^"]*'"'  { return new Node("valor", val); }//que es esto ?-----------------------------
-      /id: ".space"  { return new Node("valor", id); }
+      /id: ".space"  { return new Node("valor", id + " .space"); }
 
-linea = glo:global _* { return new Node("global", glo);}
+linea = glo:global _* { return new Node("global", glo.join(""));}
 	  / ins:instruccion _*{ return new Node("instruccion", ins);}
-	  / comentario _* 
+	  / sss:comentario _* { return new Node("instruccion","comentario");}
       / etiq:etiq _* { return new Node("etiqueta", etiq);}
 
 comentario  
-    = ("//" [^\n]*) 
+    = "//" [^\n]* 
     
 etiq
     = ins:label ":" _* { return new Node("label", ins);}
@@ -210,8 +210,8 @@ bfi_inst
     / "bfi" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate "," _* r4:immediate { return new Node( "bfi", r1+","+r2 , r3+","+r4);}
 
 bfxil_inst
-    = "bfxil" _* reg64 "," _* reg64 "," _* immediate "," _* immediate { return new Node( "bfxil", r1+","+r2 , r3+","+r4);}
-    / "bfxil" _* reg32 "," _* reg32 "," _* immediate "," _* immediate { return new Node( "bfxil", r1+","+r2 , r3+","+r4);}
+    = "bfxil" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* r4:immediate { return new Node( "bfxil", r1+","+r2 , r3+","+r4);}
+    / "bfxil" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate "," _* r4:immediate { return new Node( "bfxil", r1+","+r2 , r3+","+r4);}
 
 cls_inst
     = "cls" _* r5:reg64 "," _* r6:reg64  { return new Node( "cls", r5, r6);}
@@ -253,8 +253,8 @@ bfx_inst
 
 
 xt_inst
-    = ("s"/"u") "xt" ("b"/"h")? _* reg64 "," _* reg32 { return new Node( r4, r5, r6);}
-    / ("s"/"u") "xt" ("b"/"h")? _* reg32 "," _* reg32 { return new Node( r4, r5, r6);}
+    = ("s"/"u") "xt" ("b"/"h")? _* r5:reg64 "," _* r6:reg32 { return new Node( "suxtbh", r5, r6);}
+    / ("s"/"u") "xt" ("b"/"h")? _* r5:reg32 "," _* r6:reg32 { return new Node( "suxtbh", r5, r6);}
 
 //instrucciones logicas
 logica_inst 
@@ -277,7 +277,7 @@ logica_inst
 
 and_inst
     = "and" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:operando { return new Node( "and", r1+","+r2 , r3);}
-    / "and" ("s")? _* reg32 "," _* reg32 "," _* operando { return new Node( "and", r1+","+r2 , r3);}
+    / "and" ("s")? _* r1:reg32 "," _* r2:reg32 "," _* r3:operando { return new Node( "and", r1+","+r2 , r3);}
 
 asr_inst
     = "asr" _* r1:reg64 "," _* r2:reg64 "," _* r3:(reg64 / immediate) { return new Node( "asr", r1+","+r2 , r3);}
@@ -285,7 +285,7 @@ asr_inst
 
 bic_inst
     = "bic" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:operando { return new Node( "bic", r1+","+r2 , r3 );}
-    / "bic" ("s")? _* reg32 "," _* reg32 "," _* operando { return new Node( "bic", r1+","+r2 , r3+","+r4);}
+    / "bic" ("s")? _* r1:reg32 "," _* r2:reg32 "," _* r3:operando { return new Node( "bic", r1+","+r2 , r3);}
 
 eon_inst
     = r1:"eon" _* r2:reg64 "," _* r3:reg64 "," _* r4:operando { return new Node( "eon", r1+","+r2 , r3+","+r4);}
@@ -296,48 +296,48 @@ eor_inst
     / r1:"eor" _* r2:reg32 "," _* r3:reg32 "," _* r4:operando { return new Node( "eor", r1+","+r2 , r3+","+r4);}
 
 lsl_inst
-    = "lsl" _* reg64 "," _* reg64 "," _* (reg64 / immediate) { return new Node( "lsl", r1+","+r2 , r3+","+r4);}
-    / "lsl" _* reg32 "," _* reg32 "," _* (reg32 / immediate) { return new Node( "lsl", r1+","+r2 , r3+","+r4);}
+    = "lsl" _* r1:reg64 "," _* r2:reg64 "," _* r3:(reg64 / immediate) { return new Node( "lsl", r1+","+r2 , r3);}
+    / "lsl" _* r1:reg32 "," _* r2:reg32 "," _* r3:(reg32 / immediate) { return new Node( "lsl", r1+","+r2 , r3);}
 
 lsr_inst
-    = "lsr" _* reg64 "," _* reg64 "," _* (reg64 / immediate) { return new Node( "lsr", r1+","+r2 , r3+","+r4);}
-    / "lsr" _* reg32 "," _* reg32 "," _* (reg32 / immediate) { return new Node( "lsr", r1+","+r2 , r3+","+r4);}
+    = "lsr" _* r1:reg64 "," _* r2:reg64 "," _* r3:(reg64 / immediate) { return new Node( "lsr", r1+","+r2 , r3);}
+    / "lsr" _* r1:reg32 "," _* r2:reg32 "," _* r3:(reg32 / immediate) { return new Node( "lsr", r1+","+r2 , r3);}
 
 mov_inst
-    = "mov" _* reg64 "," _* (reg64 / immediate)*  { return new Node( "mov", r1+","+r2 , r3);}
-    / "mov" _* reg32 "," _* (reg32 / immediate)*  { return new Node( "mov", r1+","+r2 , r3);}
+    = "mov" _* r1:reg64 "," _* r2:(reg64 / immediate)*  { return new Node( "mov", r1 , r2);}
+    / "mov" _* r1:reg32 "," _* r2:(reg32 / immediate)*  { return new Node( "mov", r2, r2);}
 
 movk_inst
-    = "movk" _* reg64 "," _* immediate ("["entero"]"/"{"entero"}")? { return new Node( "movk", r1+","+r2 , r3+","+r4);}
-    / "movk" _* reg32 "," _* immediate ("["entero"]"/"{"entero"}")? { return new Node( "movk", r1+","+r2 , r3+","+r4);}
+    = "movk" _* r1:reg64 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? { return new Node( "movk", r1+","+r2 , r3);}
+    / "movk" _* r1:reg32 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? { return new Node( "movk", r1+","+r2 , r3);}
 
 movn_inst
-    = "movn" _* reg64 "," _* immediate ("["entero"]"/"{"entero"}")? { return new Node( "movn", r1+","+r2 , r3+","+r4);}
-    / "movn" _* reg32 "," _* immediate ("["entero"]"/"{"entero"}")? { return new Node( "movn", r1+","+r2 , r3+","+r4);}
+    = "movn" _* r1:reg64 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? { return new Node( "movn", r1+","+r2 , r3);}
+    / "movn" _* r1:reg32 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? { return new Node( "movn", r1+","+r2 , r3);}
 
 movz_inst
-    = "movz" _* reg64 "," _* immediate ("["entero"]"/"{"entero"}")? { return new Node( "bfx", r1+","+r2 , r3+","+r4);}
-    / "movz" _* reg32 "," _* immediate ("["entero"]"/"{"entero"}")? { return new Node( "bfx", r1+","+r2 , r3+","+r4);}
+    = "movz" _* r1:reg64 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? { return new Node( "movz", r1+","+r2 , r3);}
+    / "movz" _* r1:reg32 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? { return new Node( "movz", r1+","+r2 , r3);}
 
 mvn_inst
-    = "mvn" _* reg64 "," _* operando { return new Node( "and", r1+","+r2 , r3);}
-    / "mvn" _* reg32 "," _* operando { return new Node( "and", r1+","+r2 , r3);}
+    = "mvn" _* r1:reg64 "," _* r2:operando { return new Node( "mvn", r1 , r2 );}
+    / "mvn" _* r1:reg32 "," _* r2:operando { return new Node( "mvn", r1 , r2 );}
 
 orn_inst
-    = "orn" _* reg64 "," _* reg64 "," _* operando { return new Node( "and", r1+","+r2 , r3);}
-    / "orn" _* reg32 "," _* reg32 "," _* operando { return new Node( "and", r1+","+r2 , r3);}
+    = "orn" _* r1:reg64 "," _* r2:reg64 "," _* r3:operando { return new Node( "orn", r1+","+r2 , r3);}
+    / "orn" _* r1:reg32 "," _* r2:reg32 "," _* r3:operando { return new Node( "orn", r1+","+r2 , r3);}
 
 orr_inst
-    = "orr" _* reg64 "," _* reg64 "," _* operando { return new Node( "and", r1+","+r2 , r3);}
-    / "orr" _* reg32 "," _* reg32 "," _* operando    { return new Node( "and", r1+","+r2 , r3);}
+    = "orr" _* r1:reg64 "," _* r2:reg64 "," _* r3:operando { return new Node( "orr", r1+","+r2 , r3);}
+    / "orr"  _* r1:reg32 "," _* r2:reg32 "," _* r3:operando   { return new Node( "orr", r1+","+r2 , r3);}
 
 ror_inst
-    = "ror" _* reg64 "," _* reg64 "," _* (reg64 / immediate) { return new Node( "and", r1+","+r2 , r3);}
-    / "ror" _* reg32 "," _* reg32 "," _* (reg32 / immediate) { return new Node( "and", r1+","+r2 , r3);}
+    = "ror" _* r1:reg64 "," _* r2:reg64 "," _* r3:(reg64 / immediate) { return new Node( "ror", r1+","+r2 , r3);}
+    / "ror" _* r1:reg32 "," _* r2:reg32 "," _* r3:(reg32 / immediate) { return new Node( "ror", r1+","+r2 , r3);}
 
 tst_inst
-    = "tst" _* reg64 "," _* reg64 "," _* operando { return new Node( "and", r1+","+r2 , r3);}
-    / "tst" _* reg32 "," _* reg32 "," _* operando { return new Node( "and", r1+","+r2 , r3);}
+    = "tst" _* r1:reg64 "," _* r2:reg64 "," _* r3:operando  { return new Node( "tst", r1+","+r2 , r3);}
+    / "tst"  _* r1:reg32 "," _* r2:reg32 "," _* r3:operando{ return new Node( "tst", r1+","+r2 , r3);}
 
 
 // instrucciones branch
@@ -360,32 +360,32 @@ bcc_inst
     = "bcc" _* r1:rel21 { return new Node("bcc", r1);}
 
 bl_inst 
-    = "bl" _* rel28
+    = "bl" _* r1:rel28 { return new Node("bl", r1);}
 
 blr_inst    
-    = "blr" _* reg64
+    = "blr" _* r1:reg64 { return new Node("blr", r1);}
 
-br_inst 
-    = "br" _* reg64
+br_inst  
+    = "br" _* r1:reg64 { return new Node("br", r1);}
 
 cbnz_inst
-    = "cbnz" _* reg64 "," _* rel21
-    / "cbnz" _* reg32 "," _* rel21
+    = "cbnz" _* r5:reg64 "," _* r6:rel21 { return new Node( "cbnz", r5, r6);}
+    / "cbnz" _* r5:reg32 "," _* r6:rel21 { return new Node( "cbnz", r5, r6);}
 
 cbz_inst
-    = "cbz" _* reg64 "," _* rel21
-    / "cbz" _* reg32 "," _* rel21
+    = "cbz" _* r5:reg64 "," _* r6:rel21 { return new Node( "cbz", r5, r6);}
+    / "cbz" _* r5:reg32 "," _* r6:rel21 { return new Node( "cbz", r5, r6);}
 
 ret_inst 
-    = "ret" _* "{" reg64 "}"
+    = "ret" _* "{" r1:reg64 "}" { return new Node("bcc", r1);}
 
 tbnz_inst
-    = "tbnz" _* reg64 "," _* immediate "," _* rel16
-    / "tbnz" _* reg32 "," _* immediate "," _* rel16
+    = "tbnz" _* r1:reg64 "," _* r2:immediate "," _* r3:rel16 { return new Node( "tbnz", r1+","+r2 , r3);}
+    / "tbnz" _* r1:reg32 "," _* r2:immediate "," _* r3:rel16 { return new Node( "tbnz", r1+","+r2 , r3);}
 
 tbz_inst
-    = "tbz" _* reg64 "," _* immediate "," _* rel16
-    / "tbz" _* reg32 "," _* immediate "," _* rel16
+    = "tbz" r1:reg64 "," _* r2:immediate "," _* r3:rel16  { return new Node( "tbz", r1+","+r2 , r3);}
+    / "tbz" _* r1:reg32 "," _* r2:immediate "," _* r3:rel16 { return new Node( "tbz", r1+","+r2 , r3);}
 
 // instrucciones atomic
 atomic_inst
@@ -722,26 +722,26 @@ barrierop
 /   "oshst" { return new Node( "barrierop", "oshst");}
 
 sysreg
-=   arg:"sctlr" { return new Node( "sysreg", "sctlr");}
-/   arg:"actlr" { return new Node( "sysreg", "actlr");}
-/   arg:"cpacr" { return new Node( "sysreg", "cpacr");}
-/   arg:"scr" { return new Node( "sysreg", "scr");}
-/   arg:"sder" { return new Node( "sysreg", "sder");}
-/   arg:"nsacr" { return new Node( "sysreg", "nsacr");}
-/   arg:"ttbr0" { return new Node( "sysreg", "ttbr0");}
-/   arg:"ttbr1" { return new Node( "sysreg", "ttbr1");}
-/   arg:"tcr" { return new Node( "sysreg", "tcr");}
-/   arg:"mair0" { return new Node( "sysreg", "mair0");}
-/   arg:"mair1" { return new Node( "sysreg", "mair1");}
-/   arg:"vbar" { return new Node( "sysreg", "vbar");}
-/   arg:"isr" { return new Node( "sysreg", "isr");}
-/   arg:"fpcr" { return new Node( "sysreg", "fpcr");}
-/   arg:"fpsr" { return new Node( "sysreg", "fpsr");}
-/   arg:"dspsr" { return new Node( "sysreg", "dspsr");}
-/   arg:"dfsr" { return new Node( "sysreg", "dfsr");}
-/   arg:"elr_elx" { return new Node( "sysreg", "elr_elx");}
-/   arg:"sp_elx" { return new Node( "sysreg", "sp_elx");}
-/   arg:"nzcv" { return new Node( "sysreg", "nzcv");}
+=   "sctlr" { return new Node( "sysreg", "sctlr");}
+/   "actlr" { return new Node( "sysreg", "actlr");}
+/   "cpacr" { return new Node( "sysreg", "cpacr");}
+/   "scr" { return new Node( "sysreg", "scr");}
+/   "sder" { return new Node( "sysreg", "sder");}
+/   "nsacr" { return new Node( "sysreg", "nsacr");}
+/   "ttbr0" { return new Node( "sysreg", "ttbr0");}
+/   "ttbr1" { return new Node( "sysreg", "ttbr1");}
+/   "tcr" { return new Node( "sysreg", "tcr");}
+/   "mair0" { return new Node( "sysreg", "mair0");}
+/   "mair1" { return new Node( "sysreg", "mair1");}
+/   "vbar" { return new Node( "sysreg", "vbar");}
+/   "isr" { return new Node( "sysreg", "isr");}
+/   "fpcr" { return new Node( "sysreg", "fpcr");}
+/   "fpsr" { return new Node( "sysreg", "fpsr");}
+/   "dspsr" { return new Node( "sysreg", "dspsr");}
+/   "dfsr" { return new Node( "sysreg", "dfsr");}
+/   "elr_elx" { return new Node( "sysreg", "elr_elx");}
+/   "sp_elx" { return new Node( "sysreg", "sp_elx");}
+/   "nzcv" { return new Node( "sysreg", "nzcv");}
 
 
 msr_rules
@@ -756,7 +756,7 @@ msr_rules
 
 
 reg64 
-    = "x" ("30" / [12][0-9] / [0-9]) { return new Node( "reg64","x",arg);}
+    = "x" arg:("30" / [12][0-9] / [0-9]) { return new Node( "reg64","x",arg);}
     / "sp" { return new Node( "reg64", "sp");}
 
 reg32 = "w" arg:("30" / [12][0-9] / [0-9]) { return new Node( "reg32","w",arg);}
