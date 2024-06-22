@@ -792,7 +792,7 @@ extend_op "Operador de Extensión"
     / "SXTX"i { return new Node( "extend_op", "sxtx");}
 
 integer 
-    = arg: [0-9]+ { return new Node( "integer", arg);}
+    = arg: [0-9]+ { return new Node( "integer", arg.join(""));}
 
 
 shift_op "Operador de Desplazamiento"
@@ -800,7 +800,7 @@ shift_op "Operador de Desplazamiento"
     / "LSR"i { return new Node( "shift_op", "lsr");}
     / "ASR"i { return new Node( "shift_op", "asr");}
 label "Etiqueta"
-    = arg:([a-zA-Z_][a-zA-Z0-9_]*) { return new Node( "label", arg);}
+    = arg:(r2:[a-zA-Z_]r3:[a-zA-Z0-9_]*) { return new Node( "label", arg.join(""));}
 
 letter
     = arg: [a-zA-Z] { return new Node( "letra", arg);}
