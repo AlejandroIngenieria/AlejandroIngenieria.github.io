@@ -1,5 +1,4 @@
 let x;
-let Arrcuad=[];
 
 document.getElementById("ast").addEventListener("click", function () {
   terminal.innerHTML = ""
@@ -10,7 +9,7 @@ document.getElementById("ast").addEventListener("click", function () {
   
   vt = new VTree(container);
   var reader = new VTree.reader.Object();
-  var data = reader.read(cst);
+  var data = reader.read(cst.root);
   vt.data(data)
     .update();
 
@@ -40,7 +39,7 @@ playbtn.addEventListener("click", function () {
   let result
   try {
     result = PEG.parse(x);
-    console.log(Arrcuad);
+    console.log(result);
     
 
   

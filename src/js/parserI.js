@@ -674,7 +674,7 @@ function peg$parse(input, options) {
   var peg$e249 = peg$classExpectation([["0", "9"], ["a", "f"], ["A", "F"]], false, false);
   var peg$e250 = peg$classExpectation([" ", "\t", "\n", "\r"], false, false);
 
-  var peg$f0 = function(root) { return new Items(ArrCuad, root); };
+  var peg$f0 = function(root) { return generateCST(root); };
   var peg$f1 = function(glo) { return new Node("PR", glo); };
   var peg$f2 = function(glo1) { return new Node("PR", glo1); };
   var peg$f3 = function(glo2) { return new Node("PR", glo2); };
@@ -845,8 +845,8 @@ function peg$parse(input, options) {
   var peg$f168 = function(r1, r2, r3) { return new Node( "lsl", r1+","+r2 , r3);};
   var peg$f169 = function(r1, r2, r3) { return new Node( "lsr", r1+","+r2 , r3);};
   var peg$f170 = function(r1, r2, r3) { return new Node( "lsr", r1+","+r2 , r3);};
-  var peg$f171 = function(mov, r1, r2) { ArrCuad.push({mov,r2,r1}); return new Node( "mov", r1 , r2);};
-  var peg$f172 = function(mov, r1, r2) {  ArrCuad.push({mov,r2,r1});  return new Node( "mov", r2, r2);};
+  var peg$f171 = function(mov, r1, r2) { ArrCuad.push(new Cuadrupo(mov,r2,r1)); return new Node( "mov", r1 , r2);};
+  var peg$f172 = function(mov, r1, r2) { ArrCuad.push(new Cuadrupo(mov,r2,r1));  return new Node( "mov", r2, r2);};
   var peg$f173 = function(r1, r2, r3) { return new Node( "movk", r1+","+r2 , r3);};
   var peg$f174 = function(r1, r2, r3) { return new Node( "movk", r1+","+r2 , r3);};
   var peg$f175 = function(r1, r2, r3) { return new Node( "movn", r1+","+r2 , r3);};
@@ -25027,14 +25027,6 @@ function peg$parse(input, options) {
   }
 
 
-
-class Items{
-    constructor(quad, root){
-        this.quad = quad;
-        this.root = new Node("Program", root);
-    }
-}
-
 class Node {
   constructor(value, left = null, right = null) {
     this.value = value;
@@ -25050,7 +25042,7 @@ class Cuadrupo{
         this.result = result;
     }
 }
-const ArrCuad = [];
+let ArrCuad = [];
 let cont = 0;
 
 

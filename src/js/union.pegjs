@@ -1,4 +1,12 @@
 {
+
+class Items{
+    constructor(quad, root){
+        this.quad = quad;
+        this.root = new Node("Program", root);
+    }
+}
+
 class Node {
   constructor(value, left = null, right = null) {
     this.value = value;
@@ -7,11 +15,12 @@ class Node {
   }
 }
 class Cuadrupo{
-    constructor(operacion,arg1,result,arg2=null){
-        this.operacion = operacion;
-        this.arg1 = arg1;
-        this.arg2 = arg2;
-        this.result = result;
+    constructor(op,arg1,arg2,arg3=null, res){
+        this.op = '-';
+        this.arg1 = '-';
+        this.arg2 = '-';
+        this.arg3 = '-';
+        this.res = '-';
     }
 }
 const ArrCuad = [];
@@ -25,7 +34,7 @@ function generateCST(root) {
 }
 
 // Grammar
- s= global* _* root:linea* _* { return generateCST(root); }
+ s= global* _* root:linea* _* { return new Items(ArrCuad, root); }
 
 global = glo:".global"_ [a-zA-Z_][a-zA-Z0-9_]*  { return new Node("PR", glo); }
         / glo1:".section"  { return new Node("PR", glo1); }
