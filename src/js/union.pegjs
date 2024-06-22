@@ -14,13 +14,14 @@ class Node {
     this.right = right;
   }
 }
-class Cuadrupo{
-    constructor(op,arg1,arg2,arg3=null, res){
-        this.op = '-';
-        this.arg1 = '-';
-        this.arg2 = '-';
-        this.arg3 = '-';
-        this.res = '-';
+class Cuadruplo{
+    constructor(op,arg1,arg2=null,arg3=null,arg4=null, res){
+        this.op = op;
+        this.arg1 = arg1;
+        this.arg2 = arg2;
+        this.arg3 = arg3;
+        this.arg4 = arg4;
+        this.res = res;
     }
 }
 const ArrCuad = [];
@@ -121,95 +122,95 @@ arithmetic_inst
 
 //Instrucciones Aritmeticas
 adc_inst 
-    = "adc" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 { return new Node( r1, r2 , r3);}
-     /"adc" ("s")? _* r4:reg32 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
+    = "adc" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 {ArrCuad.push(new Cuadruplo("adc",r1,r2,r3,null,r1)); return new Node( r1, r2 , r3);}
+     /"adc" ("s")? _* r4:reg32 "," _* r5:reg32 "," _* r6:reg32 {ArrCuad.push(new Cuadruplo("adc",r4,r5,r6,null,r4)); return new Node( r4, r5, r6);}
 
 add_inst 
-    = "add" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:operando { return new Node(  r1, r2 , r3);}
-    / "add" ("s")? _* r4:reg32 "," _* r5:reg32 "," _* r6:operando { return new Node( r4, r5, r6);}
+    = "add" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:operando {ArrCuad.push(new Cuadruplo("add",r1,r2,r3,null,r1)); return new Node(  r1, r2 , r3);}
+    / "add" ("s")? _* r4:reg32 "," _* r5:reg32 "," _* r6:operando {ArrCuad.push(new Cuadruplo("add",r4,r5,r6,null,r4)); return new Node( r4, r5, r6);}
 adr_inst
-    = "adr" _* r5:reg64 "," _* r6:rel21 { return new Node( "adr", r5, r6);}
+    = "adr" _* r5:reg64 "," _* r6:rel21 {ArrCuad.push(new Cuadruplo("adr",r5,r6,null,null,r5)); return new Node( "adr", r5, r6);}
 
 adrp_inst 
-    = "adrp" _* r5:reg64 "," _* r6:rel33 { return new Node( "adrp", r5, r6);}
+    = "adrp" _* r5:reg64 "," _* r6:rel33 {ArrCuad.push(new Cuadruplo("adrp",r5,r6,null,null,r5)); return new Node( "adrp", r5, r6);}
 
 cmn_inst
-    = "cmn" _* r3:reg64 "," _* r2:operando { return new Node( "cmn", r3, r2);}
-    / "cmn" _* r5:reg32 "," _* r6:operando { return new Node( "cmn", r5, r6);}
+    = "cmn" _* r3:reg64 "," _* r2:operando {ArrCuad.push(new Cuadruplo("cmn",r3,r2,null,null,r3)); return new Node( "cmn", r3, r2);}
+    / "cmn" _* r5:reg32 "," _* r6:operando {ArrCuad.push(new Cuadruplo("cmn",r5,r6,null,null,r5)); return new Node( "cmn", r5, r6);}
 
 cmp_inst
-    = "cmp" _* r5:reg64 "," _* r6:operando { return new Node( "cmp", r5, r6);}
-    / "cmp" _* r7:reg32 "," _* r8:operando { return new Node( "cmp", r7, r8);}
+    = "cmp" _* r5:reg64 "," _* r6:operando {ArrCuad.push(new Cuadruplo("cmp",r5,r6,null,null,r5)); return new Node( "cmp", r5, r6);}
+    / "cmp" _* r7:reg32 "," _* r8:operando {ArrCuad.push(new Cuadruplo("cmp",r7,r8,null,null,r7)); return new Node( "cmp", r7, r8);}
 
 madd_inst   
-    = "madd" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:reg64  { return new Node( "madd", r1+","+r2 , r3+","+r4);}
-    / "madd" _* r5:reg32 "," _* r6:reg32 "," _* r7:reg32 "," _* r8:reg32  { return new Node( "madd", r5+","+r6 , r7+","+r8);}
+    = "madd" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:reg64  {ArrCuad.push(new Cuadruplo("madd",r1,r2,r3,r4,r1)); return new Node( "madd", r1+","+r2 , r3+","+r4);}
+    / "madd" _* r5:reg32 "," _* r6:reg32 "," _* r7:reg32 "," _* r8:reg32  {ArrCuad.push(new Cuadruplo("madd",r5,r6,r7,r8,r5)); return new Node( "madd", r5+","+r6 , r7+","+r8);}
 
 mneg_inst
-    = "mneg" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 { return new Node( r1, r2, r3);}
-    / "mneg" _* r4:reg32 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
+    = "mneg" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 {ArrCuad.push(new Cuadruplo("mneg",r1,r2,r3,null,r1)); return new Node( r1, r2, r3);}
+    / "mneg" _* r4:reg32 "," _* r5:reg32 "," _* r6:reg32 {ArrCuad.push(new Cuadruplo("mneg",r4,r5,r6,null,r4)); return new Node( r4, r5, r6);}
 
 msub_inst
-    = "msub" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:reg64 { return new Node( "msub", r1+","+r2 , r3+","+r4);}
-    / "msub" _* r5:reg32 "," _* r6:reg32 "," _* r7:reg32 "," _* r8:reg32  { return new Node( "madd", r5+","+r6 , r7+","+r8);}
+    = "msub" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:reg64  {ArrCuad.push(new Cuadruplo("msub",r1,r2,r3,r4,r1)); return new Node( "msub", r1+","+r2 , r3+","+r4);}
+    / "msub" _* r5:reg32 "," _* r6:reg32 "," _* r7:reg32 "," _* r8:reg32  {ArrCuad.push(new Cuadruplo("msub",r5,r6,r7,r8,r5)); return new Node( "madd", r5+","+r6 , r7+","+r8);}
 
 mul_inst
-    = "mul"  _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64{ return new Node( r1, r2, r3);}
-    / "mul"_* r4:reg32 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
+    = "mul"  _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 {ArrCuad.push(new Cuadruplo("mul",r1,r2,r3,null,r1)); return new Node( r1, r2, r3);}
+    / "mul"  _* r4:reg32 "," _* r5:reg32 "," _* r6:reg32 {ArrCuad.push(new Cuadruplo("mul",r4,r5,r6,null,r4)); return new Node( r4, r5, r6);}
 
 neg_inst
-    = "neg" ("s")? _* r2:reg64 "," _* r3:operando { return new Node(  "neg", r2 , r3);} 
-    / "neg" ("s")? _* r2:reg32 "," _* r3:operando { return new Node(  "neg", r2 , r3);}
+    = "neg" ("s")? _* r2:reg64 "," _* r3:operando {ArrCuad.push(new Cuadruplo("neg",r2,r3,null,null,r2)); return new Node(  "neg", r2 , r3);} 
+    / "neg" ("s")? _* r2:reg32 "," _* r3:operando {ArrCuad.push(new Cuadruplo("neg",r2,r3,null,null,r2)); return new Node(  "neg", r2 , r3);}
 
 ngc_inst
-    = "ngc" ("s")? _* r5:reg64 "," _* r6:reg64 { return new Node( "ngc", r5, r6);}
-    / "ngc" ("s")? _* r5:reg32 "," _* r6:reg32 { return new Node( "ngc", r5, r6);}
+    = "ngc" ("s")? _* r5:reg64 "," _* r6:reg64 {ArrCuad.push(new Cuadruplo("ngc",r5,r6,null,null,r5)); return new Node( "ngc", r5, r6);}
+    / "ngc" ("s")? _* r5:reg32 "," _* r6:reg32 {ArrCuad.push(new Cuadruplo("ngc",r5,r6,null,null,r5)); return new Node( "ngc", r5, r6);}
 
 sbc_inst
-    = "sbc" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 { return new Node( r1, r2, r3);}
-    / "sbc" ("s")? _* r4:reg32 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
+    = "sbc" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 {ArrCuad.push(new Cuadruplo("sbc",r1,r2,r3,null,r1)); return new Node( r1, r2, r3);}
+    / "sbc" ("s")? _* r4:reg32 "," _* r5:reg32 "," _* r6:reg32 {ArrCuad.push(new Cuadruplo("sbc",r4,r5,r6,null,r4)); return new Node( r4, r5, r6);}
 
 sdiv_inst
-    = "sdiv" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 { return new Node( r1, r2, r3);}
-    / "sdiv" _* r4:reg32 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
+    = "sdiv" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 {ArrCuad.push(new Cuadruplo("sdiv",r1,r2,r3,null,r1)); return new Node( r1, r2, r3);}
+    / "sdiv" _* r4:reg32 "," _* r5:reg32 "," _* r6:reg32 {ArrCuad.push(new Cuadruplo("sdiv",r4,r5,r6,null,r4)); return new Node( r4, r5, r6);}
 
 smaddl_inst
-    = "smaddl" _* r1:reg64 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:reg64 { return new Node( "smaddl", r1+","+r2 , r3+","+r4);}
+    = "smaddl" _* r1:reg64 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:reg64 {ArrCuad.push(new Cuadruplo("smaddl",r1,r2,r3,r4,r1)); return new Node( "smaddl", r1+","+r2 , r3+","+r4);}
 
 smnegl_inst
-    = "smnegl" _* r4:reg64 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
+    = "smnegl" _* r4:reg64 "," _* r5:reg32 "," _* r6:reg32 {ArrCuad.push(new Cuadruplo("smnegl",r4,r5,r6,null,r4)); return new Node( r4, r5, r6);}
 
 smsubl_inst
-    = "smsubl" _* r1:reg64 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:reg64 { return new Node( "smsubl", r1+","+r2 , r3+","+r4);}
+    = "smsubl" _* r1:reg64 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:reg64 {ArrCuad.push(new Cuadruplo("smsubl",r1,r2,r3,r4,r1)); return new Node( "smsubl", r1+","+r2 , r3+","+r4);}
 
 smulh_inst
-    = "smulh" _* r4:reg64 "," _* r5:reg64 "," _* r6:reg64  { return new Node( r4, r5, r6);}
+    = "smulh" _* r4:reg64 "," _* r5:reg64 "," _* r6:reg64  {ArrCuad.push(new Cuadruplo("smulh",r4,r5,r6,null,r4)); return new Node( r4, r5, r6);}
 
 smull_inst
-    = "smull" _* r4:reg64 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
+    = "smull" _* r4:reg64 "," _* r5:reg32 "," _* r6:reg32  {ArrCuad.push(new Cuadruplo("smull",r4,r5,r6,null,r4)); return new Node( r4, r5, r6);}
 
 sub_inst
-    = "sub" ("s")? _* r4:reg64 "," _* r5:reg64 "," _* r6:operando { return new Node( r4, r5, r6);}
-    / "sub" ("s")? _* r4:reg32 "," _* r5:reg32 "," _* r6:operando { return new Node( r4, r5, r6);}
+    = "sub" ("s")? _* r4:reg64 "," _* r5:reg64 "," _* r6:operando {ArrCuad.push(new Cuadruplo("sub",r4,r5,r6,null,r4)); return new Node( r4, r5, r6);}
+    / "sub" ("s")? _* r4:reg32 "," _* r5:reg32 "," _* r6:operando {ArrCuad.push(new Cuadruplo("sub",r4,r5,r6,null,r4)); return new Node( r4, r5, r6);}
 
 udiv_inst
-    = "udiv" _* r4:reg64 "," _* r5:reg64 "," _* r6:reg64  { return new Node( r4, r5, r6);}
-    / "udiv" _* r4:reg32 "," _* r5:reg32 "," _* r6:reg32{ return new Node( r4, r5, r6);}
+    = "udiv" _* r4:reg64 "," _* r5:reg64 "," _* r6:reg64  {ArrCuad.push(new Cuadruplo("udiv",r4,r5,r6,null,r4)); return new Node( r4, r5, r6);}
+    / "udiv" _* r4:reg32 "," _* r5:reg32 "," _* r6:reg32  {ArrCuad.push(new Cuadruplo("udiv",r4,r5,r6,null,r4)); return new Node( r4, r5, r6);}
 
 umaddl_inst
-    = "umaddl" _* r1:reg64 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:reg64 { return new Node( "umaddl", r1+","+r2 , r3+","+r4);}
+    = "umaddl" _* r1:reg64 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:reg64 { ArrCuad.push(new Cuadruplo("umaddl",r1,r2,r3,r4,r1)); return new Node( "umaddl", r1+","+r2 , r3+","+r4);}
 
 umnegl_inst 
-    = "umnegl" _* r4:reg64 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
+    = "umnegl" _* r4:reg64 "," _* r5:reg32 "," _* r6:reg32 {ArrCuad.push(new Cuadruplo("umnegl",r4,r5,r6,null,r4)); return new Node( r4, r5, r6);}
 
 umsubl_inst
-    = "umsubl" _* r1:reg64 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:reg64 { return new Node( "umsubl", r1+","+r2 , r3+","+r4);}
+    = "umsubl" _* r1:reg64 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:reg64 {ArrCuad.push(new Cuadruplo("umsubl",r1,r2,r3,r4,r1)); return new Node( "umsubl", r1+","+r2 , r3+","+r4);}
 
 umulh_inst
-    = "umulh" _* r4:reg64 "," _* r5:reg64 "," _* r6:reg64 { return new Node( r4, r5, r6);}
+    = "umulh" _* r4:reg64 "," _* r5:reg64 "," _* r6:reg64 {ArrCuad.push(new Cuadruplo("umulh",r4,r5,r6,null,r4)); return new Node( r4, r5, r6);}
 
 umull_inst
-    = "umull" _* r4:reg64 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
+    = "umull" _* r4:reg64 "," _* r5:reg32 "," _* r6:reg32 {ArrCuad.push(new Cuadruplo("umull",r4,r5,r6,null,r4)); return new Node( r4, r5, r6);}
 
 bitmanipulation_inst
     = bfi:bfi_inst  { return new Node("bfi_inst", bfi);}
@@ -226,55 +227,53 @@ bitmanipulation_inst
     /r11:xt_inst { return new Node("bfi_inst", r11);}
 //instruccion de manipulacion de bit
 bfi_inst
-    = "bfi" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* r4:immediate { return new Node( "bfi", r1+","+r2 , r3+","+r4);}
-    / "bfi" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate "," _* r4:immediate { return new Node( "bfi", r1+","+r2 , r3+","+r4);}
+    = "bfi" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* r4:immediate {ArrCuad.push(new Cuadruplo("bfi",r1,r2,r3,r4,r1)); return new Node( "bfi", r1+","+r2 , r3+","+r4);}
+    / "bfi" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate "," _* r4:immediate {ArrCuad.push(new Cuadruplo("bfi",r1,r2,r3,r4,r1)); return new Node( "bfi", r1+","+r2 , r3+","+r4);}
 
 bfxil_inst
-    = "bfxil" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* r4:immediate { return new Node( "bfxil", r1+","+r2 , r3+","+r4);}
-    / "bfxil" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate "," _* r4:immediate { return new Node( "bfxil", r1+","+r2 , r3+","+r4);}
+    = "bfxil" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* r4:immediate {ArrCuad.push(new Cuadruplo("bfxil",r1,r2,r3,r4,r1)); return new Node( "bfxil", r1+","+r2 , r3+","+r4);}
+    / "bfxil" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate "," _* r4:immediate {ArrCuad.push(new Cuadruplo("bfxil",r1,r2,r3,r4,r1)); return new Node( "bfxil", r1+","+r2 , r3+","+r4);}
 
 cls_inst
-    = "cls" _* r5:reg64 "," _* r6:reg64  { return new Node( "cls", r5, r6);}
-    / "cls" _* r5:reg32 "," _* r6:reg32  { return new Node( "cls", r5, r6);}
+    = "cls" _* r5:reg64 "," _* r6:reg64  {ArrCuad.push(new Cuadruplo("cls",r5,r6,null,null,r5)); return new Node( "cls", r5, r6);}
+    / "cls" _* r5:reg32 "," _* r6:reg32  {ArrCuad.push(new Cuadruplo("cls",r5,r6,null,null,r5)); return new Node( "cls", r5, r6);}
 
 clz_inst
-    = "clz" _* r5:reg64 "," _* r6:reg64 { return new Node( "clz", r5, r6);}
-    / "clz" _* r5:reg32 "," _* r6:reg32  { return new Node( "clz", r5, r6);}
+    = "clz" _* r5:reg64 "," _* r6:reg64  {ArrCuad.push(new Cuadruplo("clz",r5,r6,null,null,r5)); return new Node( "clz", r5, r6);}
+    / "clz" _* r5:reg32 "," _* r6:reg32  {ArrCuad.push(new Cuadruplo("clz",r5,r6,null,null,r5)); return new Node( "clz", r5, r6);}
 
 extr_inst
-    = "extr" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:immediate { return new Node( "extr", r1+","+r2 , r3+","+r4);}
-    / "extr" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:immediate { return new Node( "extr", r1+","+r2 , r3+","+r4);}
+    = "extr" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:immediate {ArrCuad.push(new Cuadruplo("extr",r1,r2,r3,r4,r1)); return new Node( "extr", r1+","+r2 , r3+","+r4);}
+    / "extr" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:immediate {ArrCuad.push(new Cuadruplo("extr",r1,r2,r3,r4,r1)); return new Node( "extr", r1+","+r2 , r3+","+r4);}
 
 rbit_inst
-    = "rbit" _* r5:reg64 "," _* r6:reg64 { return new Node( "rbit", r5, r6);}
-    / "rbit" _* r5:reg32 "," _* r6:reg32 { return new Node( "rbit", r5, r6);}
+    = "rbit" _* r5:reg64 "," _* r6:reg64 {ArrCuad.push(new Cuadruplo("rbit",r5,r6,null,null,r5)); return new Node( "rbit", r5, r6);}
+    / "rbit" _* r5:reg32 "," _* r6:reg32 {ArrCuad.push(new Cuadruplo("rbit",r5,r6,null,null,r5)); return new Node( "rbit", r5, r6);}
 
 rev_inst
-    = "rev" _* r5:reg64 "," _* r6:reg64 { return new Node( "rev", r5, r6);}
-    / "rev" _* r5:reg32 "," _* r6:reg32 { return new Node( "rev", r5, r6);}
+    = "rev" _* r5:reg64 "," _* r6:reg64 {ArrCuad.push(new Cuadruplo("rev",r5,r6,null,null,r5)); return new Node( "rev", r5, r6);}
+    / "rev" _* r5:reg32 "," _* r6:reg32 {ArrCuad.push(new Cuadruplo("rev",r5,r6,null,null,r5)); return new Node( "rev", r5, r6);}
 
 rev16_inst
-    = "rev16" _* r5:reg64 "," _* r6:reg64 { return new Node( "rev16", r5, r6);}
-    / "rev16" _* r5:reg32 "," _* r6:reg32 { return new Node( "rev16", r5, r6);}
+    = "rev16" _* r5:reg64 "," _* r6:reg64 {ArrCuad.push(new Cuadruplo("rev16",r5,r6,null,null,r5)); return new Node( "rev16", r5, r6);}
+    / "rev16" _* r5:reg32 "," _* r6:reg32 {ArrCuad.push(new Cuadruplo("rev16",r5,r6,null,null,r5)); return new Node( "rev16", r5, r6);}
 
 rev32_inst
-    = "rev32" _* r5:reg64 "," _* r6:reg64 { return new Node( "rev32", r5, r6);}
+    = "rev32" _* r5:reg64 "," _* r6:reg64 {ArrCuad.push(new Cuadruplo("rev32",r5,r6,null,null,r5)); return new Node( "rev32", r5, r6);}
 
 bfiz_inst
-    = ("s"/"u") "bfiz" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* r4:immediate { return new Node( "bfiz", r1+","+r2 , r3+","+r4);}
-
-    / ("s"/"u") "bfiz" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate "," _* r4:immediate{ return new Node( "bfiz", r1+","+r2 , r3+","+r4);}
+    = ("s"/"u") "bfiz" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* r4:immediate {ArrCuad.push(new Cuadruplo("bfiz",r1,r2,r3,r4,r1)); return new Node( "bfiz", r1+","+r2 , r3+","+r4);}
+    / ("s"/"u") "bfiz" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate "," _* r4:immediate {ArrCuad.push(new Cuadruplo("bfiz",r1,r2,r3,r4,r1)); return new Node( "bfiz", r1+","+r2 , r3+","+r4);}
 
 
 bfx_inst
-    = ("s"/"u") "bfx" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* r4:immediate { return new Node( "bfx", r1+","+r2 , r3+","+r4);}
-
-    / ("s"/"u") "bfx" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate "," _* r4:immediate { return new Node( "bfx", r1+","+r2 , r3+","+r4);}
+    = ("s"/"u") "bfx" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* r4:immediate {ArrCuad.push(new Cuadruplo("bfx",r1,r2,r3,r4,r1)); return new Node( "bfx", r1+","+r2 , r3+","+r4);}
+    / ("s"/"u") "bfx" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate "," _* r4:immediate {ArrCuad.push(new Cuadruplo("bfx",r1,r2,r3,r4,r1)); return new Node( "bfx", r1+","+r2 , r3+","+r4);}
 
 
 xt_inst
-    = ("s"/"u") "xt" ("b"/"h")? _* r5:reg64 "," _* r6:reg32 { return new Node( "suxtbh", r5, r6);}
-    / ("s"/"u") "xt" ("b"/"h")? _* r5:reg32 "," _* r6:reg32 { return new Node( "suxtbh", r5, r6);}
+    = ("s"/"u") "xt" ("b"/"h")? _* r5:reg64 "," _* r6:reg32 {ArrCuad.push(new Cuadruplo("suxtbh",r5,r6,null,null,r5)); return new Node( "suxtbh", r5, r6);}
+    / ("s"/"u") "xt" ("b"/"h")? _* r5:reg32 "," _* r6:reg32 {ArrCuad.push(new Cuadruplo("suxtbh",r5,r6,null,null,r5)); return new Node( "suxtbh", r5, r6);}
 
 //instrucciones logicas
 logica_inst 
@@ -296,69 +295,74 @@ logica_inst
     / tst:tst_inst { return new Node("tst_inst", tst);}
 
 and_inst
-    = "and" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:operando { return new Node( "and", r1+","+r2 , r3);}
-    / "and" ("s")? _* r1:reg32 "," _* r2:reg32 "," _* r3:operando { return new Node( "and", r1+","+r2 , r3);}
+    = "and" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:operando {ArrCuad.push(new Cuadruplo("and",r1,r2,r3,null,r1)); return new Node( "and", r1+","+r2 , r3);}
+    / "and" ("s")? _* r1:reg32 "," _* r2:reg32 "," _* r3:operando {ArrCuad.push(new Cuadruplo("and",r1,r2,r3,null,r1)); return new Node( "and", r1+","+r2 , r3);}
 
 asr_inst
-    = "asr" _* r1:reg64 "," _* r2:reg64 "," _* r3:(reg64 / immediate) { return new Node( "asr", r1+","+r2 , r3);}
-    / "asr" _* r1:reg32 "," _* r2:reg32 "," _* r3:(reg32 / immediate) { return new Node( "asr", r1+","+r2 , r3);}
+    = "asr" _* r1:reg64 "," _* r2:reg64 "," _* r3:(reg64 / immediate) {ArrCuad.push(new Cuadruplo("asr",r1,r2,r3,null,r1)); return new Node( "asr", r1+","+r2 , r3);}
+    / "asr" _* r1:reg32 "," _* r2:reg32 "," _* r3:(reg32 / immediate) {ArrCuad.push(new Cuadruplo("asr",r1,r2,r3,null,r1)); return new Node( "asr", r1+","+r2 , r3);}
 
 bic_inst
-    = "bic" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:operando { return new Node( "bic", r1+","+r2 , r3 );}
-    / "bic" ("s")? _* r1:reg32 "," _* r2:reg32 "," _* r3:operando { return new Node( "bic", r1+","+r2 , r3);}
+    = "bic" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:operando {ArrCuad.push(new Cuadruplo("bic",r1,r2,r3,null,r1)); return new Node( "bic", r1+","+r2 , r3 );}
+    / "bic" ("s")? _* r1:reg32 "," _* r2:reg32 "," _* r3:operando {ArrCuad.push(new Cuadruplo("bic",r1,r2,r3,null,r1)); return new Node( "bic", r1+","+r2 , r3); }
 
 eon_inst
-    = r1:"eon" _* r2:reg64 "," _* r3:reg64 "," _* r4:operando { return new Node( "eon", r1+","+r2 , r3+","+r4);}
-    / r1:"eon" _* r2:reg32 "," _* r3:reg32 "," _* r4:operando { return new Node( "eon", r1+","+r2 , r3+","+r4);}
+    = r1:"eon" _* r2:reg64 "," _* r3:reg64 "," _* r4:operando {ArrCuad.push(new Cuadruplo("eon",r2,r3,r4,null,r2)); return new Node( "eon", r1+","+r2 , r3+","+r4);}
+    / r1:"eon" _* r2:reg32 "," _* r3:reg32 "," _* r4:operando {ArrCuad.push(new Cuadruplo("eon",r2,r3,r4,null,r2)); return new Node( "eon", r1+","+r2 , r3+","+r4);}
 
 eor_inst
-    = r1:"eor" _* r2:reg64 "," _* r3:reg64 "," _* r4:operando { return new Node( "eor", r1+","+r2 , r3+","+r4);}
-    / r1:"eor" _* r2:reg32 "," _* r3:reg32 "," _* r4:operando { return new Node( "eor", r1+","+r2 , r3+","+r4);}
+    = r1:"eor" _* r2:reg64 "," _* r3:reg64 "," _* r4:operando {ArrCuad.push(new Cuadruplo("eor",r2,r3,r4,null,r2)); return new Node( "eor", r1+","+r2 , r3+","+r4);}
+    / r1:"eor" _* r2:reg32 "," _* r3:reg32 "," _* r4:operando {ArrCuad.push(new Cuadruplo("eor",r2,r3,r4,null,r2)); return new Node( "eor", r1+","+r2 , r3+","+r4);}
 
 lsl_inst
-    = "lsl" _* r1:reg64 "," _* r2:reg64 "," _* r3:(reg64 / immediate) { return new Node( "lsl", r1+","+r2 , r3);}
-    / "lsl" _* r1:reg32 "," _* r2:reg32 "," _* r3:(reg32 / immediate) { return new Node( "lsl", r1+","+r2 , r3);}
+    = "lsl" _* r1:reg64 "," _* r2:reg64 "," _* r3:(reg64 / immediate) {ArrCuad.push(new Cuadruplo("lsl",r1,r2,r3,null,r1)); return new Node( "lsl", r1+","+r2 , r3);}
+    / "lsl" _* r1:reg32 "," _* r2:reg32 "," _* r3:(reg32 / immediate) {ArrCuad.push(new Cuadruplo("lsl",r1,r2,r3,null,r1)); return new Node( "lsl", r1+","+r2 , r3);}
 
 lsr_inst
-    = "lsr" _* r1:reg64 "," _* r2:reg64 "," _* r3:(reg64 / immediate) { return new Node( "lsr", r1+","+r2 , r3);}
-    / "lsr" _* r1:reg32 "," _* r2:reg32 "," _* r3:(reg32 / immediate) { return new Node( "lsr", r1+","+r2 , r3);}
+    = "lsr" _* r1:reg64 "," _* r2:reg64 "," _* r3:(reg64 / immediate) {ArrCuad.push(new Cuadruplo("lsr",r1,r2,r3,null,r1)); return new Node( "lsr", r1+","+r2 , r3);}
+    / "lsr" _* r1:reg32 "," _* r2:reg32 "," _* r3:(reg32 / immediate) {ArrCuad.push(new Cuadruplo("lsr",r1,r2,r3,null,r1)); return new Node( "lsr", r1+","+r2 , r3);}
 
 mov_inst
-    = mov:"mov" _* r1:reg64 "," _* r2:(reg64 / immediate)*  { ArrCuad.push({mov,r2,r1}); return new Node( "mov", r1 , r2);}
-    / mov:"mov" _* r1:reg32 "," _* r2:(reg32 / immediate)*  {  ArrCuad.push({mov,r2,r1});  return new Node( "mov", r2, r2);}
+    = mov:"mov" _* r1:reg64 "," _* r2:(reg64 / immediate)*  {ArrCuad.push(new Cuadruplo("mov",r1,r2,null,null,r1)); return new Node( "mov", r1 , r2);}
+    / mov:"mov" _* r1:reg32 "," _* r2:(reg32 / immediate)*  {ArrCuad.push(new Cuadruplo("mov",r1,r2,null,null,r1)); return new Node( "mov", r2, r2);}
 
 movk_inst
-    = "movk" _* r1:reg64 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? { return new Node( "movk", r1+","+r2 , r3);}
-    / "movk" _* r1:reg32 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? { return new Node( "movk", r1+","+r2 , r3);}
+    = "movk" _* r1:reg64 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? {ArrCuad.push(new Cuadruplo("movk",r1,r2,r3,null,r1)); return new Node( "movk", r1+","+r2 , r3);}
+    / "movk" _* r1:reg32 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? {ArrCuad.push(new Cuadruplo("movk",r1,r2,r3,null,r1)); return new Node( "movk", r1+","+r2 , r3);}
 
 movn_inst
-    = "movn" _* r1:reg64 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? { return new Node( "movn", r1+","+r2 , r3);}
-    / "movn" _* r1:reg32 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? { return new Node( "movn", r1+","+r2 , r3);}
+    = "movn" _* r1:reg64 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? {ArrCuad.push(new Cuadruplo("movn",r1,r2,r3,null,r1)); return new Node( "movn", r1+","+r2 , r3);}
+    / "movn" _* r1:reg32 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? {ArrCuad.push(new Cuadruplo("movn",r1,r2,r3,null,r1)); return new Node( "movn", r1+","+r2 , r3);}
 
 movz_inst
-    = "movz" _* r1:reg64 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? { return new Node( "movz", r1+","+r2 , r3);}
-    / "movz" _* r1:reg32 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? { return new Node( "movz", r1+","+r2 , r3);}
+    = "movz" _* r1:reg64 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? {ArrCuad.push(new Cuadruplo("movz",r1,r2,r3,null,r1)); return new Node( "movz", r1+","+r2 , r3);}
+    / "movz" _* r1:reg32 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? {ArrCuad.push(new Cuadruplo("movz",r1,r2,r3,null,r1)); return new Node( "movz", r1+","+r2 , r3);}
 
 mvn_inst
-    = "mvn" _* r1:reg64 "," _* r2:operando { return new Node( "mvn", r1 , r2 );}
-    / "mvn" _* r1:reg32 "," _* r2:operando { return new Node( "mvn", r1 , r2 );}
+    = "mvn" _* r1:reg64 "," _* r2:operando {ArrCuad.push(new Cuadruplo("mvn",r1,r2,null,null,r1)); return new Node( "mvn", r1 , r2 );}
+    / "mvn" _* r1:reg32 "," _* r2:operando {ArrCuad.push(new Cuadruplo("mvn",r1,r2,null,null,r1)); return new Node( "mvn", r1 , r2 );}
 
 orn_inst
-    = "orn" _* r1:reg64 "," _* r2:reg64 "," _* r3:operando { return new Node( "orn", r1+","+r2 , r3);}
-    / "orn" _* r1:reg32 "," _* r2:reg32 "," _* r3:operando { return new Node( "orn", r1+","+r2 , r3);}
+    = "orn" _* r1:reg64 "," _* r2:reg64 "," _* r3:operando {ArrCuad.push(new Cuadruplo("orn",r1,r2,r3,null,r1)); return new Node( "orn", r1+","+r2 , r3);}
+    / "orn" _* r1:reg32 "," _* r2:reg32 "," _* r3:operando {ArrCuad.push(new Cuadruplo("orn",r1,r2,r3,null,r1)); return new Node( "orn", r1+","+r2 , r3);}
 
 orr_inst
-    = "orr" _* r1:reg64 "," _* r2:reg64 "," _* r3:operando { return new Node( "orr", r1+","+r2 , r3);}
-    / "orr"  _* r1:reg32 "," _* r2:reg32 "," _* r3:operando   { return new Node( "orr", r1+","+r2 , r3);}
+    = "orr"  _* r1:reg64 "," _* r2:reg64 "," _* r3:operando {ArrCuad.push(new Cuadruplo("orr",r1,r2,r3,null,r1)); return new Node( "orr", r1+","+r2 , r3);}
+    / "orr"  _* r1:reg32 "," _* r2:reg32 "," _* r3:operando {ArrCuad.push(new Cuadruplo("orr",r1,r2,r3,null,r1)); return new Node( "orr", r1+","+r2 , r3);}
 
 ror_inst
-    = "ror" _* r1:reg64 "," _* r2:reg64 "," _* r3:(reg64 / immediate) { return new Node( "ror", r1+","+r2 , r3);}
-    / "ror" _* r1:reg32 "," _* r2:reg32 "," _* r3:(reg32 / immediate) { return new Node( "ror", r1+","+r2 , r3);}
+    = "ror" _* r1:reg64 "," _* r2:reg64 "," _* r3:(reg64 / immediate) {ArrCuad.push(new Cuadruplo("ror",r1,r2,r3,null,r1)); return new Node( "ror", r1+","+r2 , r3);}
+    / "ror" _* r1:reg32 "," _* r2:reg32 "," _* r3:(reg32 / immediate) {ArrCuad.push(new Cuadruplo("ror",r1,r2,r3,null,r1)); return new Node( "ror", r1+","+r2 , r3);}
 
 tst_inst
-    = "tst" _* r1:reg64 "," _* r2:reg64 "," _* r3:operando  { return new Node( "tst", r1+","+r2 , r3);}
-    / "tst"  _* r1:reg32 "," _* r2:reg32 "," _* r3:operando{ return new Node( "tst", r1+","+r2 , r3);}
+    = "tst"  _* r1:reg64 "," _* r2:reg64 "," _* r3:operando  {ArrCuad.push(new Cuadruplo("tst",r1,r2,r3,null,r1)); return new Node( "tst", r1+","+r2 , r3);}
+    / "tst"  _* r1:reg32 "," _* r2:reg32 "," _* r3:operando  {ArrCuad.push(new Cuadruplo("tst",r1,r2,r3,null,r1)); return new Node( "tst", r1+","+r2 , r3);}
 
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // instrucciones branch
 branch_inst
