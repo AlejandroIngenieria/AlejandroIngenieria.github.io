@@ -1,11 +1,13 @@
 let x;
+let Arrcuad=[];
 
 document.getElementById("ast").addEventListener("click", function () {
   terminal.innerHTML = ""
   x = editor.getValue()
   const container = terminal;
   var cst = PEG.parse(x);
-  console.log(cst);
+  
+  
   vt = new VTree(container);
   var reader = new VTree.reader.Object();
   var data = reader.read(cst);
@@ -38,6 +40,10 @@ playbtn.addEventListener("click", function () {
   let result
   try {
     result = PEG.parse(x);
+    console.log(Arrcuad);
+    
+
+  
     terminal.innerHTML = "<h2>Analisis terminado sin errores</h2>"
   } catch (e) {
     let errorHtml = `

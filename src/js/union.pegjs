@@ -6,11 +6,22 @@ class Node {
     this.right = right;
   }
 }
+class Cuadrupo{
+    constructor(operacion,arg1,result,arg2=null){
+        this.operacion = operacion;
+        this.arg1 = arg1;
+        this.arg2 = arg2;
+        this.result = result;
+    }
+}
+const ArrCuad = [];
+let cont = 0;
 
 
 function generateCST(root) {
   return new Node("Program", root);
 }
+
 }
 
 // Grammar
@@ -304,8 +315,8 @@ lsr_inst
     / "lsr" _* r1:reg32 "," _* r2:reg32 "," _* r3:(reg32 / immediate) { return new Node( "lsr", r1+","+r2 , r3);}
 
 mov_inst
-    = "mov" _* r1:reg64 "," _* r2:(reg64 / immediate)*  { return new Node( "mov", r1 , r2);}
-    / "mov" _* r1:reg32 "," _* r2:(reg32 / immediate)*  { return new Node( "mov", r2, r2);}
+    = mov:"mov" _* r1:reg64 "," _* r2:(reg64 / immediate)*  { ArrCuad.push({mov,r2,r1}); return new Node( "mov", r1 , r2);}
+    / mov:"mov" _* r1:reg32 "," _* r2:(reg32 / immediate)*  {  ArrCuad.push({mov,r2,r1});  return new Node( "mov", r2, r2);}
 
 movk_inst
     = "movk" _* r1:reg64 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? { return new Node( "movk", r1+","+r2 , r3);}
