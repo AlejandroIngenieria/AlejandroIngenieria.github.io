@@ -396,25 +396,25 @@ atomic_inst
 
 cas_inst
     = "cas" ("a"/"l")? ("b"/"h") _* r1:reg32 "," _* r2:reg32 "," _* "[" r3:reg64"]" { return new Node( r1, r2, r3);}
-    /"cas" ("a"/"l")? "p" _* reg64 "," _* reg64 "," _* reg64 "," _* reg64 "," "["reg64"]"
-    / "cas" ("a"/"l")? "p" _* reg32 "," _* reg32 "," _* reg32 "," _* reg32 "," "["reg64"]"
-    / "cas" ("a"/"l")? _* reg64 "," _* reg64 "," _* "["reg64"]"
-    / "cas" ("a"/"l")? _* reg32 "," _* reg32 "," _* "["reg64"]"
+    / "cas" ("a"/"l")? "p" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:reg64 "," "["r5:reg64"]"  { return new Node("cas",r1+","+r2+","+r3,r4+","+r5); }
+    / "cas" ("a"/"l")? "p" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:reg32 "," "["r5:reg64"]"  { return new Node("cas",r1+","+r2+","+r3,r4+","+r5); }
+    / "cas" ("a"/"l")? _* r1:reg64 "," _* r2:reg64 "," _* "["r3:reg64"]" {return new Node( r1, r2, r3);}
+    / "cas" ("a"/"l")? _* r1:reg32 "," _* r2:reg32 "," _* "["r3:reg64"]" {return new Node( r1, r2, r3);}
 
 ldao_inst
-    = "ldao" ("a"/"l")? ("b"/"h") _* reg32 "," _* reg32 "," _* "["reg64"]"
-    / "ldao" ("a"/"l")? _* reg64 "," _* reg64 "," _* "["reg64"]"
-    / "ldao" ("a"/"l")? _* reg32 "," _* reg32 "," _* "["reg64"]"
+    = "ldao" ("a"/"l")? ("b"/"h") _* r1:reg32 "," _* r2:reg32 "," _* "["r3:reg64"]"  { return new Node( r1, r2, r3);}
+    / "ldao" ("a"/"l")? _* r1:reg64 "," _* r2:reg64 "," _* "["r3:reg64"]"  { return new Node( r1, r2, r3);}
+    / "ldao" ("a"/"l")? _* r1:reg32 "," _* r2:reg32 "," _* "["r3:reg64"]"  { return new Node( r1, r2, r3);}
 
 stao_inst
-    = "stao" ("a"/"l")? ("b"/"h") _* reg32 ","  _* "["reg64"]"
-    / "stao" ("a"/"l")? _* reg64 "," _* reg64 "," _* "["reg64"]"
-    / "stao" ("a"/"l")? _* reg32 "," _* reg32 "," _* "["reg64"]"
+    = "stao" ("a"/"l")? ("b"/"h") _* r1:reg32 ","  _* "["r2:reg64"]"   { return new Node("stao",r1, r2);}
+    / "stao" ("a"/"l")? _* r1:reg64 "," _* r2:reg64 "," _* "["r3:reg64"]"   { return new Node(r1, r2, r3);}
+    / "stao" ("a"/"l")? _* r1:reg32 "," _* r2:reg32 "," _* "["r3:reg64"]"   { return new Node(r1, r2, r3);}
 
 swp_inst
-    = "swp" ("a"/"l")? ("b"/"h") _* reg32 "," _* reg32 "," _* "["reg64"]"
-    / "swp" ("a"/"l")? _* reg64 "," _* reg64 "," _* "["reg64"]"
-    / "swp" ("a"/"l")? _* reg32 "," _* reg32 "," _* "["reg64"]"
+    = "swp" ("a"/"l")? ("b"/"h") _* r1:reg32 "," _* r2:reg32 "," _* "["r3:reg64"]"   { return new Node( r1, r2, r3);}
+    / "swp" ("a"/"l")? _* r1:reg64 "," _* r2:reg64 "," _* "["r3:reg64"]"    { return new Node( r1, r2, r3);}
+    / "swp" ("a"/"l")? _* r1:reg32 "," _* r2:reg32 "," _* "["r3:reg64"]"    { return new Node( r1, r2, r3);}
 
 //instrucciones condicionales
 cond_inst
@@ -431,52 +431,52 @@ cond_inst
     / csneg:csneg_inst { return new Node("csneg_inst", csneg);}
 
 ccmn_inst
-    = "ccmn" _* reg64 "," _* immediate "," _* immediate "," _* cc
-    / "ccmn" _* reg64 "," _* reg64 "," _* immediate "," _* cc
-    / "ccmn" _* reg32 "," _* immediate "," _* immediate "," _* cc
-    / "ccmn" _* reg32 "," _* reg32 "," _* immediate "," _* cc
+    = "ccmn" _* r1:reg64 "," _* r2:immediate "," _* r3:immediate "," _* cc { return new Node( r1, r2, r3);}
+    / "ccmn" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* cc { return new Node( r1, r2, r3);}
+    / "ccmn" _* r1:reg32 "," _* r2:immediate "," _* r3:immediate "," _* cc { return new Node( r1, r2, r3);}
+    / "ccmn" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate "," _* cc { return new Node( r1, r2, r3);}
 
 ccmp_inst
-    = "ccmp" _* reg64 "," _* immediate "," _* immediate "," _* cc
-    / "ccmp" _* reg64 "," _* reg64 "," _* immediate "," _* cc
-    / "ccmp" _* reg32 "," _* immediate "," _* immediate "," _* cc
-    / "ccmp" _* reg32 "," _* reg32 "," _* immediate "," _* cc
+    = "ccmp" _* r1:reg64 "," _* r2:immediate "," _* r3:immediate "," _* cc { return new Node( r1, r2, r3);}
+    / "ccmp" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* cc { return new Node( r1, r2, r3);}
+    / "ccmp" _* r1:reg32 "," _* r2:immediate "," _* r3:immediate "," _* cc { return new Node( r1, r2, r3);}
+    / "ccmp" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate "," _* cc { return new Node( r1, r2, r3);}
 
 cinc_inst
-    = "cinc" _* reg64 "," _* reg64 "," _* cc
-    / "cinc" _* reg32 "," _* reg32 "," _* cc
+    = "cinc" _* r1:reg64 "," _* r2:reg64 "," _* r3:cc { return new Node( r1, r2, r3);}
+    / "cinc" _* r1:reg32 "," _* r2:reg32 "," _* r3:cc { return new Node( r1, r2, r3);}
 
 cinv_inst
-    = "cinv" _* reg64 "," _* reg64 "," _* cc
-    / "cinv" _* reg32 "," _* reg32 "," _* cc
+    = "cinv" _* r1:reg64 "," _* r2:reg64 "," _* r3:cc { return new Node( r1, r2, r3);}
+    / "cinv" _* r1:reg32 "," _* r2:reg32 "," _* r3:cc { return new Node( r1, r2, r3);}
 
 cneg_inst
-    = "cneg" _* reg64 "," _* reg64 "," _* cc
-    / "cneg" _* reg32 "," _* reg32 "," _* cc
+    = "cneg" _* r1:reg64 "," _* r2:reg64 "," _* r3:cc { return new Node( r1, r2, r3);}
+    / "cneg" _* r1:reg32 "," _* r2:reg32 "," _* r3:cc { return new Node( r1, r2, r3);}
 
 csel_inst
-    = "csel" _* reg64 "," _* reg64 "," _* reg64 "," _* cc
-    / "csel" _* reg32 "," _* reg32 "," _* reg32 "," _* cc
+    = "csel" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:cc { return new Node("csel", r1+","+r2 , r3+","+r4);}
+    / "csel" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:cc { return new Node("csel", r1+","+r2 , r3+","+r4);}
 
 cset_inst
-    = "cset" _* reg64 "," _* cc
-    / "cset" _* reg32 "," _* cc
+    = "cset" _* r1:reg64 "," _* r2:cc { return new Node("cset", r1, r2);}
+    / "cset" _* r1:reg32 "," _* r2:cc { return new Node("cset", r1, r2);}
 
 csetm_inst
-    = "csetm" _* reg64 "," _* cc
-    / "csetm" _* reg32 "," _* cc
+    = "csetm" _* r1:reg64 "," _* r2:cc { return new Node("csetm", r1, r2);}
+    / "csetm" _* r1:reg32 "," _* r2:cc { return new Node("csetm", r1, r2);}
 
 csinc_inst
-    = "csinc" _* reg64 "," _* reg64 "," _* reg64 "," _* cc
-    / "csinc" _* reg32 "," _* reg32 "," _* reg32 "," _* cc
+    = "csinc" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:cc { return new Node("csinc", r1+","+r2 , r3+","+r4);}
+    / "csinc" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:cc { return new Node("csinc", r1+","+r2 , r3+","+r4);}
 
 csinv_inst
-    = "csinv" _* reg64 "," _* reg64 "," _* reg64 "," _* cc
-    / "csinv" _* reg32 "," _* reg32 "," _* reg32 "," _* cc
+    = "csinv" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:cc { return new Node("csinv", r1+","+r2 , r3+","+r4);}
+    / "csinv" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:cc { return new Node("csinv", r1+","+r2 , r3+","+r4);}
 
 csneg_inst
-    = "csneg" _* reg64 "," _* reg64 "," _* reg64 "," _* cc
-    / "csneg" _* reg32 "," _* reg32 "," _* reg32 "," _* cc
+    = "csneg" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:cc { return new Node("csneg", r1+","+r2 , r3+","+r4);}
+    / "csneg" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:cc { return new Node("csneg", r1+","+r2 , r3+","+r4);}
 
 cc = "eq" { return new Node("cc", "eq");}
     / "ne" { return new Node("cc", "ne");}
@@ -514,58 +514,51 @@ loadnstore_inst
 
 
 ldpsw_inst 
-    = "ldpsw" _* reg64 "," _* reg64 "," _* "["addr"]"
-    /"ldpsw" _* reg32 "," _* reg32 "," _* "["addr"]"
+    = "ldpsw" _* r1:reg64 "," _* r2:reg64 "," _* "["r3:addr"]" { return new Node( r1, r2, r3);}
+    / "ldpsw" _* r1:reg32 "," _* r2:reg32 "," _* "["r3:addr"]" { return new Node( r1, r2, r3);}
 
 ldp_inst
-    = "ldp" _* reg64 "," _* reg64 "," _* "["addr"]"
+    = "ldp" _* r1:reg64 "," _* r2:reg64 "," _* "["r3:addr"]" { return new Node( r1, r2, r3);}
 
 ldursbh_inst
-    = "ld" ("u")? "rs" ("b"/"h") _* reg64 "," _* "["addr"]"
-    / "ld" ("u")? "rs" ("b"/"h") _* reg32 "," _* "["addr"]"
+    = "ld" ("u")? "rs" ("b"/"h") _* r1:reg64 "," _* "["r2:addr"]" { return new Node("ldr", r1, r2);}
+    / "ld" ("u")? "rs" ("b"/"h") _* r1:reg32 "," _* "["r2:addr"]" { return new Node("ldr", r1, r2);}
 
 ldurbh_inst
-    = "ld" ("u")? "r" ("b"/"h") _* reg32 "," _* "["addr"]"
+    = "ld" ("u")? "r" ("b"/"h") _* r1:reg32 "," _* "["r2:addr"]"  { return new Node("ldr", r1, r2);}
 
 ldursw_inst
-    = "ld" ("u")? "rsw"  _* reg64 "," _* "["addr"]"
+    = "ld" ("u")? "rsw"  _* r1:reg64 "," _* "["r2:addr"]"  { return new Node("ldr", r1, r2);}
 
 ldur_inst 
-    = "ld" ("u")? "r"  _* reg64 "," _* "["addr"]"
-    / "ld" ("u")? "r"  _* reg32 "," _* "["addr"]"
+    = "ld" ("u")? "r"  _* r1:reg64 "," _* "["r2:addr"]"   { return new Node("ldr", r1, r2);}
+    / "ld" ("u")? "r"  _* r1:reg32 "," _* "["r2:addr"]"   { return new Node("ldr", r1, r2);}
 
 prfm_inst
-    = "prfm" reg32 "," _* addr
-    / "prfm" reg64 "," _* addr
+    = "prfm" r1:reg32 "," _* r2:addr { return new Node("prfm", r1, r2);}
+    / "prfm" r1:reg64 "," _* r2:addr { return new Node("prfm", r1, r2);}
 
 sturbh_inst
-    = "st" ("u")? "r" ("b"/"h") _* reg64 "," _* "["addr"]"
+    = "st" ("u")? "r" ("b"/"h") _* r1:reg64 "," _* "["r2:addr"]" { return new Node("str", r1, r2);}
 
 stur_inst
-    = "st" ("u")? "r"  _* reg64 "," _* "["addr"]"
-    / "st" ("u")? "r"  _* reg32 "," _* "["addr"]"
+    = "st" ("u")? "r"  _* r1:reg64 "," _* "["r2:addr"]" { return new Node("str", r1, r2);}
+    / "st" ("u")? "r"  _* r1:reg32 "," _* "["r2:addr"]" { return new Node("str", r1, r2);}
 
 stp_inst
-    = "stp" _* reg64 "," _* reg64 "," _* "["addr"]"
-    / "stp" _* reg32 "," _* reg32 "," _* "["addr"]"
+    = "stp" _* r1:reg64 "," _* r2:reg64 "," _* "["r3:addr"]" { return new Node( r1, r2, r3);}
+    / "stp" _* r1:reg32 "," _* r2:reg32 "," _* "["r3:addr"]" { return new Node( r1, r2, r3);}
 
 
 
 addr 
-    = "=" l:label
-       
-    / "[" _* r:reg32 _* "," _* r2:reg32 _* "," _* s:shift_op _* i2:immediate _* "]"
-
-    / "[" _* r:reg64 _* "," _* r2:reg64 _* "," _* s:shift_op _* i2:immediate _* "]"
-        
-    / "[" _* r:reg64 _* "," _* i:immediate _* "," _* s:shift_op _* i2:immediate _* "]"
-      
-    / "[" _* r:reg64 _* "," _* i:immediate _* "," _* e:extend_op _* "]" 
-       
-    / "[" _* r:reg64 _* "," _* i:immediate _* "]"
-        
-    / "[" _* r:reg64 _* "]"
-        
+    = "=" l:label { return new Node("addr", l);}
+    / "[" _* r1:reg32 _* "," _* r2:reg32 _* "," _* s:shift_op _* i2:immediate _* "]" { return new Node("addr", r1+","+r2, s+","+i2);}
+    / "[" _* r1:reg64 _* "," _* r2:reg64 _* "," _* s:shift_op _* i2:immediate _* "]" { return new Node("addr", r1+","+r2, s+","+i2);}
+    / "[" _* r1:reg64 _* "," _* i:immediate _* "," _* s:shift_op _* i2:immediate _* "]" { return new Node("addr", r1+","+i, s+","+i2);}
+    / "[" _* r1:reg64 _* "," _* i:immediate _* "," _* e:extend_op _* "]" { return new Node(r1, i, e);}
+    / "[" _* r1:reg64 _* "," _* i:immediate _* "]" { return new Node("addr", r1, i);}
+    / "[" _* r1:reg64 _* "]" { return new Node("addr", r1);}
 
 /* -------------------------------------------------------------------------- */
 /*                    Instrucciones de suma de comprobacion                   */
@@ -616,117 +609,117 @@ loadAlm_inst
     /   r18:STP_inst { return new Node("STP_inst",r18);}
 
 LDAXP_inst 
-    =   "ld"("a")? "xp" _* reg32 "," _* reg32 "," _* "[" reg64 "]"
-    /   "ld"("a")? "xp" _* reg64 "," _* reg64 "," _* "[" reg64 "]"
+    =   "ld"("a")? "xp" _* r1:reg32 "," _* r2:reg32 "," _* "[" r3:reg64 "]" { return new Node( r1, r2 , r3);}
+    /   "ld"("a")? "xp" _* r1:reg64 "," _* r2:reg64 "," _* "[" r3:reg64 "]" { return new Node( r1, r2 , r3);}
 LDAXR_inst 
-    =   "ld"("a")? ("x")? "r" _* reg32 "," _* "[" reg64 "]"
-    /   "ld"("a")? ("x")? "r" _* reg64 "," _* "[" reg64 "]"
+    =   "ld"("a")? ("x")? "r" _* r1:reg32 "," _* "[" r2:reg64 "]" { return new Node( "ldr", r1 , r2);}
+    /   "ld"("a")? ("x")? "r" _* r1:reg64 "," _* "[" r2:reg64 "]" { return new Node( "ldr", r1 , r2);}
 LDAXRB_inst 
-    =    "ld"("a")? ("x")? "r" ("b"/"h")? _* reg32 "," _* "[" reg64 "]"
+    =    "ld"("a")? ("x")? "r" ("b"/"h")? _* r2:reg32 "," _* "[" r3:reg64 "]" { return new Node( "ldaxrbh", r2 , r3);}
 LDNP_inst 
-    =   "ldnp" _* reg32 "," _* reg32 "," _* "[" reg64 ("," immediate)? "]"
-    /   "ldnp" _* reg64 "," _* reg64 "," _* "[" reg64 ("," immediate)? "]"
+    =   "ldnp" _* r1:reg32 "," _* r2:reg32 "," _* "[" r3:reg64 ("," r4:immediate)? "]" { return new Node( "ldnp", r1+","+r2 , r3+","+r4);}
+    /   "ldnp" _* r1:reg64 "," _* r2:reg64 "," _* "[" r3:reg64 ("," r4:immediate)? "]" { return new Node( "ldnp", r1+","+r2 , r3+","+r4);}
 LDTR_inst 
-    =   "ldtr" _* reg32 "," _* "[" reg64 ("," immediate)? "]"
-    /   "ldtr" _* reg64 "," _* "[" reg64 ("," immediate)? "]"
+    =   "ldtr" _* r1:reg32 "," _* "[" r2:reg64 ("," r3:immediate)? "]" { return new Node( r1, r2 , r3);}
+    /   "ldtr" _* r1:reg64 "," _* "[" r2:reg64 ("," r3:immediate)? "]" { return new Node( r1, r2 , r3);}
 LDTRB_inst 
-    =    "ldtr" ("b"/"h")? _* reg32 "," _* "[" reg64 ("," immediate)? "]"
+    =    "ldtr" ("b"/"h")? _* r1:reg32 "," _* "[" r2:reg64 ("," r3:immediate)? "]" { return new Node( r1, r2 , r3);}
 LDTRSB_inst
-    =    "ldtrs" ("b"/"h")? _* reg32 "," _* "[" reg64 ("," immediate)? "]"
-    /    "ldtrsb" ("b"/"h")? _* reg64 "," _* "[" reg64 ("," immediate)? "]"
+    =    "ldtrs" ("b"/"h")? _* r1:reg32 "," _* "[" r2:reg64 ("," r3:immediate)? "]" { return new Node( r1, r2 , r3);}
+    /    "ldtrsb" ("b"/"h")? _* r1:reg64 "," _* "[" r2:reg64 ("," r3:immediate)? "]" { return new Node( r1, r2 , r3);}
 LDTRSW_inst
-    =    "ldtrsw" _* reg64 "," _* "[" reg64 ("," immediate)? "]"
+    =    "ldtrsw" _* r1:reg64 "," _* "[" r2:reg64 ("," r3:immediate)? "]" { return new Node( r1, r2 , r3);}
 STLR_inst
-    =   "stlr" _* reg32 "," _* "[" reg64 "]"
-    /   "stlr" _* reg64 "," _* "[" reg64 "]"
+    =   "stlr" _* r2:reg32 "," _* "[" r3:reg64 "]" { return new Node( "stlr", r2 , r3);}
+    /   "stlr" _* r2:reg64 "," _* "[" r3:reg64 "]" { return new Node( "stlr", r2 , r3);}
 STLRB_inst
-    =   "stlr"  ("b"/"h")? _* reg32 "," _* "[" reg64 "]"
+    =   "stlr"  ("b"/"h")? _* r2:reg32 "," _* "[" r3:reg64 "]" { return new Node( "stlrb/h", r2 , r3);}
 STLXP_inst
-    =   "st" ("l")? "xp" _* reg32 "," _* reg32 "," _* reg32 "," _* "[" reg64 "]"
-    /   "st" ("l")? "xp" _* reg32 "," _* reg64 "," _* reg64 "," _* "[" reg64 "]"
-    /   "st" ("l")? "xp"  _* reg32 "," _* reg32 "," _* "[" reg64 "]"
-    /   "st" ("l")? "xp"  _* reg32 "," _* reg64 "," _* "[" reg64 "]"
+    =   "st" ("l")? "xp" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 "," _* "[" r4:reg64 "]" { return new Node( "stxp", r1+","+r2 , r3+","+r4);}
+    /   "st" ("l")? "xp" _* r1:reg32 "," _* r2:reg64 "," _* r3:reg64 "," _* "[" r4:reg64 "]" { return new Node( "stxp", r1+","+r2 , r3+","+r4);}
+    /   "st" ("l")? "xp"  _* r1:reg32 "," _* r2:reg32 "," _* "[" r3:reg64 "]" { return new Node( r1, r2 , r3);}
+    /   "st" ("l")? "xp"  _* r1:reg32 "," _* r2:reg64 "," _* "[" r3:reg64 "]" { return new Node( r1, r2 , r3);}
 STLXRB_inst
-    =   "st" ("l")? "xr" ("b"/"h")? _* reg32 "," _* reg32 "," _* "[" reg64 "]"
+    =   "st" ("l")? "xr" ("b"/"h")? _* r1:reg32 "," _* r2:reg32 "," _* "[" r3:reg64 "]" { return new Node( r1, r2 , r3);}
 STNP_inst
-    =   "stnp" _* reg32 "," _* reg32 "," _* "["reg64 ("," immediate )?"]"
-    /   "stnp" _* reg64 "," _* reg64 "," _* "["reg64 ("," immediate )?"]"
+    =   "stnp" _* r1:reg32 "," _* r2:reg32 "," _* "["r3:reg64 ("," r4:immediate )?"]" { return new Node( "stnp", r1+","+r2 , r3+","+r4);}
+    /   "stnp" _* r1:reg64 "," _* r2:reg64 "," _* "["r3:reg64 ("," r4:immediate )?"]" { return new Node( "stnp", r1+","+r2 , r3+","+r4);}
 STTR_inst
-    =   "sttr" _* reg32 "," _* "["reg64 ("," immediate )?"]"
-    /   "sttr" _* reg64 "," _* "["reg64 ("," immediate )?"]"
+    =   "sttr" _* r1:reg32 "," _* "["r2:reg64 ("," r3:immediate )?"]" { return new Node( r1, r2 , r3);}
+    /   "sttr" _* r1:reg64 "," _* "["r2:reg64 ("," r3:immediate )?"]" { return new Node( r1, r2 , r3);}
 
 STTRB_inst
-     =   "sttr" ("b"/"h")? _* reg32 "," _* "["reg64 ("," immediate )?"]"
+     =   "sttr" ("b"/"h")? _* r1:reg32 "," _* "["r2:reg64 ("," r3:immediate )?"]" { return new Node( r1, r2 , r3);}
 STRB_inst
-	=  "strb"  _* reg32 "," _* "["reg64 ("," _* immediate)?"]"
+	=  "strb"  _* r1:reg32 "," _* "["r2:reg64 ("," _* r3:immediate)?"]" { return new Node( r1, r2 , r3);}
 STR_inst
-	= "str" _* reg64 "," _* "["reg64 "]"
+	= "str" _* r2:reg64 "," _* "["r3:reg64 "]" { return new Node( "str", r2 , r3);}
 STP_inst
-	= "stp" _* reg64 "," _* reg64 "," _* "["reg64 "]"
+	= "stp" _* r1:reg64 "," _* r2:reg64 "," _* "["r3:reg64 "]" { return new Node( r1, r2 , r3);}
 
 /* -------------------------------------------------------------------------- */
 /*                          Instrucciones al sistema                          */
 /* -------------------------------------------------------------------------- */
 system_inst
-=   AT_inst 
-/   BRK_inst
-/   CLREX_inst
-/   DMB_inst
-/   DSB_inst
-/   ERET_inst
-/   HVC_inst 
-/   ISB_inst
-/   MRS_inst
-/   MSR_inst
-/   NOP_inst
-/   SEV_inst
-/   SEVL_inst
-/   SMC_inst
-/   SVC_inst
-/   WFE_inst
-/   WFI_inst
-/   YIELD_inst
+=   arg:AT_inst  { return new Node( "system_inst",arg);}
+/   arg:BRK_inst { return new Node( "system_inst",arg);}
+/   arg:CLREX_inst { return new Node( "system_inst",arg);}
+/   arg:DMB_inst { return new Node( "system_inst",arg);}
+/   arg:DSB_inst { return new Node( "system_inst",arg);}
+/   arg:ERET_inst { return new Node( "system_inst",arg);}
+/   arg:HVC_inst  { return new Node( "system_inst",arg);}
+/   arg:ISB_inst { return new Node( "system_inst",arg);}
+/   arg:MRS_inst { return new Node( "system_inst",arg);}
+/   arg:MSR_inst { return new Node( "system_inst",arg);}
+/   arg:NOP_inst { return new Node( "system_inst",arg);}
+/   arg:SEV_inst { return new Node( "system_inst",arg);}
+/   arg:SEVL_inst { return new Node( "system_inst",arg);}
+/   arg:SMC_inst { return new Node( "system_inst",arg);}
+/   arg:SVC_inst { return new Node( "system_inst",arg);}
+/   arg:WFE_inst { return new Node( "system_inst",arg);}
+/   arg:WFI_inst { return new Node( "system_inst",arg);}
+/   arg:YIELD_inst  { return new Node( "system_inst",arg);}
 
 
-AT_inst     = "at" _* at_operation "," _* reg64
-BRK_inst    = "brk" _* immediate
-CLREX_inst  = "clrex" _* (immediate)?
-DMB_inst    = "dmb" _* barrierop
-DSB_inst    = "dsb" _* barrierop
-ERET_inst   = "eret"
-HVC_inst    = "hvc" _* immediate
-ISB_inst    = "isb" _* ("sy")?
-MRS_inst    = "mrs" _* reg64 "," _* sysreg
-MSR_inst    = "msr" _* msr_rules
-NOP_inst    = "nop"
-SEV_inst    = "sev" 
-SEVL_inst   = "sevl"
-SMC_inst    = "smc" _* immediate
-SVC_inst    = "svc" _* immediate
-WFE_inst    = "wfe"
-WFI_inst    = "wfi" 
-YIELD_inst  = "yield" 
+AT_inst     = "at" _* arg:at_operation "," _* arg2:reg64 { return new Node( "at", arg, arg2);}
+BRK_inst    = "brk" _* arg:immediate { return new Node( "BRK_inst", "brk", arg);}
+CLREX_inst  = "clrex" _* arg:(immediate)? { return new Node( "CLREX_inst", "clrex", arg);}
+DMB_inst    = "dmb" _* arg:barrierop { return new Node( "DMB_inst", "dmb", arg);}
+DSB_inst    = "dsb" _* arg:barrierop { return new Node( "DSB_inst", "dsb", arg);}
+ERET_inst   = "eret" { return new Node( "ERET_inst", "eret");}
+HVC_inst    = "hvc" _* arg:immediate { return new Node( "HVC_inst", "hvc", arg);}
+ISB_inst    = "isb" _* ("sy")? { return new Node( "ISB_inst", "isb");}
+MRS_inst    = "mrs" _* arg:reg64 "," _* arg2:sysreg { return new Node( "mrs", arg,arg2);}
+MSR_inst    = "msr" _* arg:msr_rules { return new Node( "MSR_inst", "msr", arg);}
+NOP_inst    = "nop" { return new Node( "NOP_inst", "nop");}
+SEV_inst    = "sev"  { return new Node( "SEV_inst", "sev");}
+SEVL_inst   = "sevl" { return new Node( "SEVL_inst", "sevl");}
+SMC_inst    = "smc" _* arg:immediate { return new Node( "SMC_inst", "smc", arg);}
+SVC_inst    = "svc" _* arg:immediate { return new Node( "SVC_inst", "svc", arg);}
+WFE_inst    = "wfe" { return new Node( "WFE_inst", "wfe");}
+WFI_inst    = "wfi"  { return new Node( "WFI_inst", "wfi");}
+YIELD_inst  = "yield"  { return new Node( "YIELD_inst", "yield");}
 
 at_operation
-=   "s1e1r"
-/   "s1e1w"
-/   "s1e0r"
-/   "s1e0w"
-/   "s1e2r"
-/   "s1e2w"
-/   "s1e3r"
-/   "s1e3w"
-/   "s12e1r"
-/   "s12e1w"
+=   "s1e1r" { return new Node( "at_operation", "s1e1r");}
+/   "s1e1w" { return new Node( "at_operation", "s1e1w");}
+/   "s1e0r" { return new Node( "at_operation", "s1e0r");}
+/   "s1e0w" { return new Node( "at_operation", "s1e0w");}
+/   "s1e2r" { return new Node( "at_operation", "s1e2r");}
+/   "s1e2w" { return new Node( "at_operation", "s1e2w");}
+/   "s1e3r" { return new Node( "at_operation", "s1e3r");}
+/   "s1e3w" { return new Node( "at_operation", "s1e3w");}
+/   "s12e1r" { return new Node( "at_operation", "ss12e1ry");}
+/   "s12e1w" { return new Node( "at_operation", "s12e1w");}
 
 barrierop
 =   "sy" { return new Node( "barrierop", "sy");}
 /   "ish" { return new Node( "barrierop", "ish");}
 /   "ishst" { return new Node( "barrierop", "ishst");}
-/   "nsh" { return new Node( "barrierop", "sctlr");}
-/   "nshst" { return new Node( "barrierop", "sctlr");}
-/   "osh" { return new Node( "barrierop", "sctlr");}
-/   "oshst" { return new Node( "barrierop", "sctlr");}
+/   "nsh" { return new Node( "barrierop", "nsh");}
+/   "nshst" { return new Node( "barrierop", "nshst");}
+/   "osh" { return new Node( "barrierop", "osh");}
+/   "oshst" { return new Node( "barrierop", "oshst");}
 
 sysreg
 =   arg:"sctlr" { return new Node( "sysreg", "sctlr");}
