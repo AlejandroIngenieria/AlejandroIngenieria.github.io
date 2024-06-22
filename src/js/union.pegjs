@@ -378,38 +378,38 @@ branch_inst
     / tbz:tbz_inst { return new Node("tbz_inst", tbz);}
 
 b_inst 
-    = "b" _* r1:rel28 { return new Node( "b", r1);}
+    = "b" _* r1:rel28 { ArrCuad.push(new Cuadruplo("b",r1,null,null,null,r1));return new Node( "b", r1);}
 
 bcc_inst
-    = "bcc" _* r1:rel21 { return new Node("bcc", r1);}
+    = "bcc" _* r1:rel21 { ArrCuad.push(new Cuadruplo("bcc",r1,null,null,null,r1)); return new Node("bcc", r1);}
 
 bl_inst 
-    = "bl" _* r1:rel28 { return new Node("bl", r1);}
+    = "bl" _* r1:rel28 { ArrCuad.push(new Cuadruplo("bl",r1,null,null,null,r1)); return new Node("bl", r1);}
 
 blr_inst    
-    = "blr" _* r1:reg64 { return new Node("blr", r1);}
+    = "blr" _* r1:reg64 {ArrCuad.push(new Cuadruplo("blr",r1,null,null,null,r1)); return new Node("blr", r1);}
 
 br_inst  
-    = "br" _* r1:reg64 { return new Node("br", r1);}
+    = "br" _* r1:reg64 { ArrCuad.push(new Cuadruplo("br",r1,null,null,null,r1)); return new Node("br", r1);}
 
 cbnz_inst
-    = "cbnz" _* r5:reg64 "," _* r6:rel21 { return new Node( "cbnz", r5, r6);}
-    / "cbnz" _* r5:reg32 "," _* r6:rel21 { return new Node( "cbnz", r5, r6);}
+    = "cbnz" _* r5:reg64 "," _* r6:rel21 {ArrCuad.push(new Cuadruplo("cbnz",r5,r6,null,null,r5)); return new Node( "cbnz", r5, r6);}
+    / "cbnz" _* r5:reg32 "," _* r6:rel21 {ArrCuad.push(new Cuadruplo("cbnz",r5,r6,null,null,r5)); return new Node( "cbnz", r5, r6);}
 
 cbz_inst
-    = "cbz" _* r5:reg64 "," _* r6:rel21 { return new Node( "cbz", r5, r6);}
-    / "cbz" _* r5:reg32 "," _* r6:rel21 { return new Node( "cbz", r5, r6);}
+    = "cbz" _* r5:reg64 "," _* r6:rel21 { ArrCuad.push(new Cuadruplo("cbz",r5,r6,null,null,r5)); return new Node( "cbz", r5, r6);}
+    / "cbz" _* r5:reg32 "," _* r6:rel21 { ArrCuad.push(new Cuadruplo("cbz",r5,r6,null,null,r5)); return new Node( "cbz", r5, r6);}
 
 ret_inst 
-    = "ret" _* "{" r1:reg64 "}" { return new Node("bcc", r1);}
+    = "ret" _* "{" r1:reg64 "}" { return new Node(ArrCuad.push(new Cuadruplo("ret",r1,null,null,null,r1));"ret", r1);}
 
 tbnz_inst
-    = "tbnz" _* r1:reg64 "," _* r2:immediate "," _* r3:rel16 { return new Node( "tbnz", r1+","+r2 , r3);}
-    / "tbnz" _* r1:reg32 "," _* r2:immediate "," _* r3:rel16 { return new Node( "tbnz", r1+","+r2 , r3);}
+    = "tbnz" _* r1:reg64 "," _* r2:immediate "," _* r3:rel16 {ArrCuad.push(new Cuadruplo("tbnz",r1,r2,r3,null,r1)); return new Node( "tbnz", r1+","+r2 , r3);}
+    / "tbnz" _* r1:reg32 "," _* r2:immediate "," _* r3:rel16 {ArrCuad.push(new Cuadruplo("tbnz",r1,r2,r3,null,r1)); return new Node( "tbnz", r1+","+r2 , r3);}
 
 tbz_inst
-    = "tbz" r1:reg64 "," _* r2:immediate "," _* r3:rel16  { return new Node( "tbz", r1+","+r2 , r3);}
-    / "tbz" _* r1:reg32 "," _* r2:immediate "," _* r3:rel16 { return new Node( "tbz", r1+","+r2 , r3);}
+    = "tbz" r1:reg64 "," _* r2:immediate "," _* r3:rel16  {ArrCuad.push(new Cuadruplo("tbz",r1,r2,r3,null,r1)); return new Node( "tbz", r1+","+r2 , r3);}
+    / "tbz" _* r1:reg32 "," _* r2:immediate "," _* r3:rel16 {ArrCuad.push(new Cuadruplo("tbz",r1,r2,r3,null,r1));return new Node( "tbz", r1+","+r2 , r3);}
 
 // instrucciones atomic
 atomic_inst
@@ -419,26 +419,26 @@ atomic_inst
     / swp:swp_inst { return new Node("swp_inst", swp);}
 
 cas_inst
-    = "cas" ("a"/"l")? ("b"/"h") _* r1:reg32 "," _* r2:reg32 "," _* "[" r3:reg64"]" { return new Node( r1, r2, r3);}
-    / "cas" ("a"/"l")? "p" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:reg64 "," "["r5:reg64"]"  { return new Node("cas",r1+","+r2+","+r3,r4+","+r5); }
-    / "cas" ("a"/"l")? "p" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:reg32 "," "["r5:reg64"]"  { return new Node("cas",r1+","+r2+","+r3,r4+","+r5); }
-    / "cas" ("a"/"l")? _* r1:reg64 "," _* r2:reg64 "," _* "["r3:reg64"]" {return new Node( r1, r2, r3);}
-    / "cas" ("a"/"l")? _* r1:reg32 "," _* r2:reg32 "," _* "["r3:reg64"]" {return new Node( r1, r2, r3);}
+    = "cas" ("a"/"l")? ("b"/"h") _* r1:reg32 "," _* r2:reg32 "," _* "[" r3:reg64"]" { ArrCuad.push(new Cuadruplo("cas",r1,r2,r3,null,r1));return new Node( r1, r2, r3);}
+    / "cas" ("a"/"l")? "p" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:reg64 "," "["r5:reg64"]"  {ArrCuad.push(new Cuadruplo("casp",r1,r2,r3,r4,r1)); return new Node("cas",r1+","+r2+","+r3,r4+","+r5); }
+    / "cas" ("a"/"l")? "p" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:reg32 "," "["r5:reg64"]"  {ArrCuad.push(new Cuadruplo("casp",r1,r2,r3,r4,r1)); return new Node("cas",r1+","+r2+","+r3,r4+","+r5); }
+    / "cas" ("a"/"l")? _* r1:reg64 "," _* r2:reg64 "," _* "["r3:reg64"]" {ArrCuad.push(new Cuadruplo("cas",r1,r2,r3,null,r1));return new Node( r1, r2, r3);}
+    / "cas" ("a"/"l")? _* r1:reg32 "," _* r2:reg32 "," _* "["r3:reg64"]" {ArrCuad.push(new Cuadruplo("cas",r1,r2,r3,null,r1));return new Node( r1, r2, r3);}
 
 ldao_inst
-    = "ldao" ("a"/"l")? ("b"/"h") _* r1:reg32 "," _* r2:reg32 "," _* "["r3:reg64"]"  { return new Node( r1, r2, r3);}
-    / "ldao" ("a"/"l")? _* r1:reg64 "," _* r2:reg64 "," _* "["r3:reg64"]"  { return new Node( r1, r2, r3);}
-    / "ldao" ("a"/"l")? _* r1:reg32 "," _* r2:reg32 "," _* "["r3:reg64"]"  { return new Node( r1, r2, r3);}
+    = "ldao" ("a"/"l")? ("b"/"h") _* r1:reg32 "," _* r2:reg32 "," _* "["r3:reg64"]"  {ArrCuad.push(new Cuadruplo("ldao",r1,r2,r3,null,r1)); return new Node( r1, r2, r3);}
+    / "ldao" ("a"/"l")? _* r1:reg64 "," _* r2:reg64 "," _* "["r3:reg64"]"  { ArrCuad.push(new Cuadruplo("ldao",r1,r2,r3,null,r1));return new Node( r1, r2, r3);}
+    / "ldao" ("a"/"l")? _* r1:reg32 "," _* r2:reg32 "," _* "["r3:reg64"]"  { ArrCuad.push(new Cuadruplo("ldao",r1,r2,r3,null,r1));return new Node( r1, r2, r3);}
 
 stao_inst
-    = "stao" ("a"/"l")? ("b"/"h") _* r1:reg32 ","  _* "["r2:reg64"]"   { return new Node("stao",r1, r2);}
-    / "stao" ("a"/"l")? _* r1:reg64 "," _* r2:reg64 "," _* "["r3:reg64"]"   { return new Node(r1, r2, r3);}
-    / "stao" ("a"/"l")? _* r1:reg32 "," _* r2:reg32 "," _* "["r3:reg64"]"   { return new Node(r1, r2, r3);}
+    = "stao" ("a"/"l")? ("b"/"h") _* r1:reg32 ","  _* "["r2:reg64"]"   { ArrCuad.push(new Cuadruplo("stao",r1,r2,null,null,r1));return new Node("stao",r1, r2);}
+    / "stao" ("a"/"l")? _* r1:reg64 "," _* r2:reg64 "," _* "["r3:reg64"]"   { ArrCuad.push(new Cuadruplo("stao",r1,r2,r3,null,r1));return new Node(r1, r2, r3);}
+    / "stao" ("a"/"l")? _* r1:reg32 "," _* r2:reg32 "," _* "["r3:reg64"]"   { ArrCuad.push(new Cuadruplo("stao",r1,r2,r3,null,r1));return new Node(r1, r2, r3);}
 
 swp_inst
-    = "swp" ("a"/"l")? ("b"/"h") _* r1:reg32 "," _* r2:reg32 "," _* "["r3:reg64"]"   { return new Node( r1, r2, r3);}
-    / "swp" ("a"/"l")? _* r1:reg64 "," _* r2:reg64 "," _* "["r3:reg64"]"    { return new Node( r1, r2, r3);}
-    / "swp" ("a"/"l")? _* r1:reg32 "," _* r2:reg32 "," _* "["r3:reg64"]"    { return new Node( r1, r2, r3);}
+    = "swp" ("a"/"l")? ("b"/"h") _* r1:reg32 "," _* r2:reg32 "," _* "["r3:reg64"]"   {ArrCuad.push(new Cuadruplo("swp",r1,r2,r3,null,r1)); return new Node( r1, r2, r3);}
+    / "swp" ("a"/"l")? _* r1:reg64 "," _* r2:reg64 "," _* "["r3:reg64"]"    {ArrCuad.push(new Cuadruplo("swp",r1,r2,r3,null,r1)); return new Node( r1, r2, r3);}
+    / "swp" ("a"/"l")? _* r1:reg32 "," _* r2:reg32 "," _* "["r3:reg64"]"    {ArrCuad.push(new Cuadruplo("swp",r1,r2,r3,null,r1)); return new Node( r1, r2, r3);}
 
 //instrucciones condicionales
 cond_inst
@@ -455,52 +455,52 @@ cond_inst
     / csneg:csneg_inst { return new Node("csneg_inst", csneg);}
 
 ccmn_inst
-    = "ccmn" _* r1:reg64 "," _* r2:immediate "," _* r3:immediate "," _* cc { return new Node( r1, r2, r3);}
-    / "ccmn" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* cc { return new Node( r1, r2, r3);}
-    / "ccmn" _* r1:reg32 "," _* r2:immediate "," _* r3:immediate "," _* cc { return new Node( r1, r2, r3);}
-    / "ccmn" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate "," _* cc { return new Node( r1, r2, r3);}
+    = "ccmn" _* r1:reg64 "," _* r2:immediate "," _* r3:immediate "," _* r4:cc {ArrCuad.push(new Cuadruplo("ccmn",r1,r2,r3,r4,r1)); return new Node( r1, r2, r3);}
+    / "ccmn" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* r4:cc { ArrCuad.push(new Cuadruplo("ccmn",r1,r2,r3,r4,r1)); return new Node( r1, r2, r3);}
+    / "ccmn" _* r1:reg32 "," _* r2:immediate "," _* r3:immediate "," _* r4:cc { ArrCuad.push(new Cuadruplo("ccmn",r1,r2,r3,r4,r1));return new Node( r1, r2, r3);}
+    / "ccmn" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate "," _* r4:cc {ArrCuad.push(new Cuadruplo("ccmn",r1,r2,r3,r4,r1)); return new Node( r1, r2, r3);}
 
 ccmp_inst
-    = "ccmp" _* r1:reg64 "," _* r2:immediate "," _* r3:immediate "," _* cc { return new Node( r1, r2, r3);}
-    / "ccmp" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* cc { return new Node( r1, r2, r3);}
-    / "ccmp" _* r1:reg32 "," _* r2:immediate "," _* r3:immediate "," _* cc { return new Node( r1, r2, r3);}
-    / "ccmp" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate "," _* cc { return new Node( r1, r2, r3);}
+    = "ccmp" _* r1:reg64 "," _* r2:immediate "," _* r3:immediate "," _* r4:cc {ArrCuad.push(new Cuadruplo("ccmp",r1,r2,r3,r4,r1)); return new Node( r1, r2, r3);}
+    / "ccmp" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* r4:cc {ArrCuad.push(new Cuadruplo("ccmp",r1,r2,r3,r4,r1)); return new Node( r1, r2, r3);}
+    / "ccmp" _* r1:reg32 "," _* r2:immediate "," _* r3:immediate "," _* r4:cc {ArrCuad.push(new Cuadruplo("ccmp",r1,r2,r3,r4,r1)); return new Node( r1, r2, r3);}
+    / "ccmp" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate "," _* r4:cc {ArrCuad.push(new Cuadruplo("ccmp",r1,r2,r3,r4,r1)); return new Node( r1, r2, r3);}
 
 cinc_inst
-    = "cinc" _* r1:reg64 "," _* r2:reg64 "," _* r3:cc { return new Node( r1, r2, r3);}
-    / "cinc" _* r1:reg32 "," _* r2:reg32 "," _* r3:cc { return new Node( r1, r2, r3);}
+    = "cinc" _* r1:reg64 "," _* r2:reg64 "," _* r3:cc {ArrCuad.push(new Cuadruplo("cinc",r1,r2,r3,null,r1)); return new Node( r1, r2, r3);}
+    / "cinc" _* r1:reg32 "," _* r2:reg32 "," _* r3:cc {ArrCuad.push(new Cuadruplo("cinc",r1,r2,r3,null,r1)); return new Node( r1, r2, r3);}
 
 cinv_inst
-    = "cinv" _* r1:reg64 "," _* r2:reg64 "," _* r3:cc { return new Node( r1, r2, r3);}
-    / "cinv" _* r1:reg32 "," _* r2:reg32 "," _* r3:cc { return new Node( r1, r2, r3);}
+    = "cinv" _* r1:reg64 "," _* r2:reg64 "," _* r3:cc {ArrCuad.push(new Cuadruplo("cinv",r1,r2,r3,null,r1)); return new Node( r1, r2, r3);}
+    / "cinv" _* r1:reg32 "," _* r2:reg32 "," _* r3:cc {ArrCuad.push(new Cuadruplo("cinv",r1,r2,r3,null,r1)); return new Node( r1, r2, r3);}
 
 cneg_inst
-    = "cneg" _* r1:reg64 "," _* r2:reg64 "," _* r3:cc { return new Node( r1, r2, r3);}
-    / "cneg" _* r1:reg32 "," _* r2:reg32 "," _* r3:cc { return new Node( r1, r2, r3);}
+    = "cneg" _* r1:reg64 "," _* r2:reg64 "," _* r3:cc {ArrCuad.push(new Cuadruplo("cneg",r1,r2,r3,null,r1)); return new Node( r1, r2, r3);}
+    / "cneg" _* r1:reg32 "," _* r2:reg32 "," _* r3:cc {ArrCuad.push(new Cuadruplo("cneg",r1,r2,r3,null,r1)); return new Node( r1, r2, r3);}
 
 csel_inst
-    = "csel" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:cc { return new Node("csel", r1+","+r2 , r3+","+r4);}
-    / "csel" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:cc { return new Node("csel", r1+","+r2 , r3+","+r4);}
+    = "csel" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:cc {ArrCuad.push(new Cuadruplo("csel",r1,r2,r3,r4,r1)); return new Node("csel", r1+","+r2 , r3+","+r4);}
+    / "csel" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:cc {ArrCuad.push(new Cuadruplo("csel",r1,r2,r3,r4,r1)); return new Node("csel", r1+","+r2 , r3+","+r4);}
 
 cset_inst
-    = "cset" _* r1:reg64 "," _* r2:cc { return new Node("cset", r1, r2);}
-    / "cset" _* r1:reg32 "," _* r2:cc { return new Node("cset", r1, r2);}
+    = "cset" _* r1:reg64 "," _* r2:cc {ArrCuad.push(new Cuadruplo("cset",r1,r2,null,null,r1)); return new Node("cset", r1, r2);}
+    / "cset" _* r1:reg32 "," _* r2:cc {ArrCuad.push(new Cuadruplo("cset",r1,r2,null,null,r1)); return new Node("cset", r1, r2);}
 
 csetm_inst
-    = "csetm" _* r1:reg64 "," _* r2:cc { return new Node("csetm", r1, r2);}
-    / "csetm" _* r1:reg32 "," _* r2:cc { return new Node("csetm", r1, r2);}
+    = "csetm" _* r1:reg64 "," _* r2:cc {ArrCuad.push(new Cuadruplo("csetm",r1,r2,null,null,r1)); return new Node("csetm", r1, r2);}
+    / "csetm" _* r1:reg32 "," _* r2:cc {ArrCuad.push(new Cuadruplo("csetm",r1,r2,null,null,r1)); return new Node("csetm", r1, r2);}
 
 csinc_inst
-    = "csinc" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:cc { return new Node("csinc", r1+","+r2 , r3+","+r4);}
-    / "csinc" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:cc { return new Node("csinc", r1+","+r2 , r3+","+r4);}
+    = "csinc" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:cc {ArrCuad.push(new Cuadruplo("csinc",r1,r2,r3,r4,r1)); return new Node("csinc", r1+","+r2 , r3+","+r4);}
+    / "csinc" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:cc {ArrCuad.push(new Cuadruplo("csinc",r1,r2,r3,r4,r1)); return new Node("csinc", r1+","+r2 , r3+","+r4);}
 
 csinv_inst
-    = "csinv" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:cc { return new Node("csinv", r1+","+r2 , r3+","+r4);}
-    / "csinv" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:cc { return new Node("csinv", r1+","+r2 , r3+","+r4);}
+    = "csinv" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:cc {ArrCuad.push(new Cuadruplo("csinv",r1,r2,r3,r4,r1)); return new Node("csinv", r1+","+r2 , r3+","+r4);}
+    / "csinv" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:cc {ArrCuad.push(new Cuadruplo("csinv",r1,r2,r3,r4,r1)); return new Node("csinv", r1+","+r2 , r3+","+r4);}
 
 csneg_inst
-    = "csneg" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:cc { return new Node("csneg", r1+","+r2 , r3+","+r4);}
-    / "csneg" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:cc { return new Node("csneg", r1+","+r2 , r3+","+r4);}
+    = "csneg" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:cc {ArrCuad.push(new Cuadruplo("csneg",r1,r2,r3,r4,r1)); return new Node("csneg", r1+","+r2 , r3+","+r4);}
+    / "csneg" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:cc {ArrCuad.push(new Cuadruplo("csneg",r1,r2,r3,r4,r1)); return new Node("csneg", r1+","+r2 , r3+","+r4);}
 
 cc = "eq" { return new Node("cc", "eq");}
     / "ne" { return new Node("cc", "ne");}
@@ -538,40 +538,40 @@ loadnstore_inst
 
 
 ldpsw_inst 
-    = "ldpsw" _* r1:reg64 "," _* r2:reg64 "," _* "["r3:addr"]" { return new Node( r1, r2, r3);}
-    / "ldpsw" _* r1:reg32 "," _* r2:reg32 "," _* "["r3:addr"]" { return new Node( r1, r2, r3);}
+    = "ldpsw" _* r1:reg64 "," _* r2:reg64 "," _* "["r3:addr"]" {ArrCuad.push(new Cuadruplo("ldpsw",r1,r2,r3,null,r1)); return new Node( r1, r2, r3);}
+    / "ldpsw" _* r1:reg32 "," _* r2:reg32 "," _* "["r3:addr"]" {ArrCuad.push(new Cuadruplo("ldpsw",r1,r2,r3,null,r1)); return new Node( r1, r2, r3);}
 
 ldp_inst
-    = "ldp" _* r1:reg64 "," _* r2:reg64 "," _* "["r3:addr"]" { return new Node( r1, r2, r3);}
+    = "ldp" _* r1:reg64 "," _* r2:reg64 "," _* "["r3:addr"]" {ArrCuad.push(new Cuadruplo("ldp",r1,r2,r3,null,r1)); return new Node( r1, r2, r3);}
 
 ldursbh_inst
-    = "ld" ("u")? "rs" ("b"/"h") _* r1:reg64 "," _* "["r2:addr"]" { return new Node("ldr", r1, r2);}
-    / "ld" ("u")? "rs" ("b"/"h") _* r1:reg32 "," _* "["r2:addr"]" { return new Node("ldr", r1, r2);}
+    = "ld" ("u")? "rs" ("b"/"h") _* r1:reg64 "," _* "["r2:addr"]" {ArrCuad.push(new Cuadruplo("ldrs",r1,r2,null,null,r1)); return new Node("ldr", r1, r2);}
+    / "ld" ("u")? "rs" ("b"/"h") _* r1:reg32 "," _* "["r2:addr"]" {ArrCuad.push(new Cuadruplo("ldrs",r1,r2,null,null,r1)); return new Node("ldr", r1, r2);}
 
 ldurbh_inst
-    = "ld" ("u")? "r" ("b"/"h") _* r1:reg32 "," _* "["r2:addr"]"  { return new Node("ldr", r1, r2);}
+    = "ld" ("u")? "r" ("b"/"h") _* r1:reg32 "," _* "["r2:addr"]"  {ArrCuad.push(new Cuadruplo("ld",r1,r2,null,null,r1)); return new Node("ldr", r1, r2);}
 
 ldursw_inst
-    = "ld" ("u")? "rsw"  _* r1:reg64 "," _* "["r2:addr"]"  { return new Node("ldr", r1, r2);}
+    = "ld" ("u")? "rsw"  _* r1:reg64 "," _* "["r2:addr"]"  {ArrCuad.push(new Cuadruplo("ldrsw",r1,r2,null,null,r1)); return new Node("ldrsw", r1, r2);}
 
 ldur_inst 
-    = "ld" ("u")? "r"  _* r1:reg64 "," _* "["r2:addr"]"   { return new Node("ldr", r1, r2);}
-    / "ld" ("u")? "r"  _* r1:reg32 "," _* "["r2:addr"]"   { return new Node("ldr", r1, r2);}
+    = "ld" ("u")? "r"  _* r1:reg64 "," _* "["r2:addr"]"   {ArrCuad.push(new Cuadruplo("ldr",r1,r2,null,null,r1)); return new Node("ldr", r1, r2);}
+    / "ld" ("u")? "r"  _* r1:reg32 "," _* "["r2:addr"]"   {ArrCuad.push(new Cuadruplo("ldr",r1,r2,null,null,r1)); return new Node("ldr", r1, r2);}
 
 prfm_inst
-    = "prfm" r1:reg32 "," _* r2:addr { return new Node("prfm", r1, r2);}
-    / "prfm" r1:reg64 "," _* r2:addr { return new Node("prfm", r1, r2);}
+    = "prfm" r1:reg32 "," _* r2:addr {ArrCuad.push(new Cuadruplo("prfm",r1,r2,null,null,r1)); return new Node("prfm", r1, r2);}
+    / "prfm" r1:reg64 "," _* r2:addr {ArrCuad.push(new Cuadruplo("prfm",r1,r2,null,null,r1)); return new Node("prfm", r1, r2);}
 
 sturbh_inst
-    = "st" ("u")? "r" ("b"/"h") _* r1:reg64 "," _* "["r2:addr"]" { return new Node("str", r1, r2);}
+    = "st" ("u")? "r" ("b"/"h") _* r1:reg64 "," _* "["r2:addr"]" {ArrCuad.push(new Cuadruplo("str",r1,r2,null,null,r1)); return new Node("str", r1, r2);}
 
 stur_inst
-    = "st" ("u")? "r"  _* r1:reg64 "," _* "["r2:addr"]" { return new Node("str", r1, r2);}
-    / "st" ("u")? "r"  _* r1:reg32 "," _* "["r2:addr"]" { return new Node("str", r1, r2);}
+    = "st" ("u")? "r"  _* r1:reg64 "," _* "["r2:addr"]" {ArrCuad.push(new Cuadruplo("str",r1,r2,null,null,r1)); return new Node("str", r1, r2);}
+    / "st" ("u")? "r"  _* r1:reg32 "," _* "["r2:addr"]" {ArrCuad.push(new Cuadruplo("str",r1,r2,null,null,r1)); return new Node("str", r1, r2);}
 
 stp_inst
-    = "stp" _* r1:reg64 "," _* r2:reg64 "," _* "["r3:addr"]" { return new Node( r1, r2, r3);}
-    / "stp" _* r1:reg32 "," _* r2:reg32 "," _* "["r3:addr"]" { return new Node( r1, r2, r3);}
+    = "stp" _* r1:reg64 "," _* r2:reg64 "," _* "["r3:addr"]" {ArrCuad.push(new Cuadruplo("stp",r1,r2,r3,null,r1)); return new Node( r1, r2, r3);}
+    / "stp" _* r1:reg32 "," _* r2:reg32 "," _* "["r3:addr"]" {ArrCuad.push(new Cuadruplo("stp",r1,r2,r3,null,r1)); return new Node( r1, r2, r3);}
 
 
 
@@ -782,6 +782,7 @@ msr_rules
 reg64 
     = "x" arg:("30" / [12][0-9] / [0-9]) { return new Node( "reg64","x",arg);}
     / "sp" { return new Node( "reg64", "sp");}
+    / "=" l:label { return new Node("reg64", l);}
 
 reg32 = "w" arg:("30" / [12][0-9] / [0-9]) { return new Node( "reg32","w",arg);}
     / "sp" { return new Node( "reg32", "sp");}
