@@ -160,36 +160,36 @@ smnegl_inst
     = "smnegl" _* r4:reg64 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
 
 smsubl_inst
-    = "smsubl" _* reg64 "," _* reg32 "," _* reg32 "," _* reg64 { return new Node( r4, r5, r6);}
+    = "smsubl" _* r1:reg64 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:reg64 { return new Node( "smsubl", r1+","+r2 , r3+","+r4);}
 
 smulh_inst
-    = "smulh" _* reg64 "," _* reg64 "," _* reg64  { return new Node( r4, r5, r6);}
+    = "smulh" _* r4:reg64 "," _* r5:reg64 "," _* r6:reg64  { return new Node( r4, r5, r6);}
 
 smull_inst
-    = "smull" _* reg64 "," _* reg32 "," _* reg32 { return new Node( r4, r5, r6);}
+    = "smull" _* r4:reg64 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
 
 sub_inst
-    = "sub" ("s")? _* reg64 "," _* reg64 "," _* operando { return new Node( r4, r5, r6);}
-    / "sub" ("s")? _* reg32 "," _* reg32 "," _* operando { return new Node( r4, r5, r6);}
+    = "sub" ("s")? _* r4:reg64 "," _* r5:reg64 "," _* r6:operando { return new Node( r4, r5, r6);}
+    / "sub" ("s")? _* r4:reg32 "," _* r5:reg32 "," _* r6:operando { return new Node( r4, r5, r6);}
 
 udiv_inst
-    = "udiv" _* reg64 "," _* reg64 "," _* reg64 { return new Node( r4, r5, r6);}
-    / "udiv" _* reg32 "," _* reg32 "," _* reg32 { return new Node( r4, r5, r6);}
+    = "udiv" _* r4:reg64 "," _* r5:reg64 "," _* r6:reg64  { return new Node( r4, r5, r6);}
+    / "udiv" _* r4:reg32 "," _* r5:reg32 "," _* r6:reg32{ return new Node( r4, r5, r6);}
 
 umaddl_inst
-    = "umaddl" _* reg64 "," _* reg32 "," _* reg32 "," _* reg64 { return new Node( r4, r5, r6);}
+    = "umaddl" _* r1:reg64 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:reg64 { return new Node( "umaddl", r1+","+r2 , r3+","+r4);}
 
 umnegl_inst 
-    = "umnegl" _* reg64 "," _* reg32 "," _* reg32 { return new Node( r4, r5, r6);}
+    = "umnegl" _* r4:reg64 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
 
 umsubl_inst
-    = "umsubl" _* reg64 "," _* reg32 "," _* reg32 "," _* reg64 { return new Node( r4, r5, r6);}
+    = "umsubl" _* r1:reg64 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:reg64 { return new Node( "umsubl", r1+","+r2 , r3+","+r4);}
 
 umulh_inst
-    = "umulh" _* reg64 "," _* reg64 "," _* reg64 { return new Node( r4, r5, r6);}
+    = "umulh" _* r4:reg64 "," _* r5:reg64 "," _* r6:reg64 { return new Node( r4, r5, r6);}
 
 umull_inst
-    = "umull" _* reg64 "," _* reg32 "," _* reg32 { return new Node( r4, r5, r6);}
+    = "umull" _* r4:reg64 "," _* r5:reg32 "," _* r6:reg32 { return new Node( r4, r5, r6);}
 
 bitmanipulation_inst
     = bfi:bfi_inst  { return new Node("bfi_inst", bfi);}
@@ -207,50 +207,54 @@ bitmanipulation_inst
 //instruccion de manipulacion de bit
 bfi_inst
     = "bfi" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* r4:immediate { return new Node( "bfi", r1+","+r2 , r3+","+r4);}
-    / "bfi" _* reg32 "," _* reg32 "," _* immediate "," _* immediate
+    / "bfi" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate "," _* r4:immediate { return new Node( "bfi", r1+","+r2 , r3+","+r4);}
 
 bfxil_inst
-    = "bfxil" _* reg64 "," _* reg64 "," _* immediate "," _* immediate
-    / "bfxil" _* reg32 "," _* reg32 "," _* immediate "," _* immediate
+    = "bfxil" _* reg64 "," _* reg64 "," _* immediate "," _* immediate { return new Node( "bfxil", r1+","+r2 , r3+","+r4);}
+    / "bfxil" _* reg32 "," _* reg32 "," _* immediate "," _* immediate { return new Node( "bfxil", r1+","+r2 , r3+","+r4);}
 
 cls_inst
-    = "cls" _* reg64 "," _* reg64 
-    / "cls" _* reg32 "," _* reg32 
+    = "cls" _* r5:reg64 "," _* r6:reg64  { return new Node( "cls", r5, r6);}
+    / "cls" _* r5:reg32 "," _* r6:reg32  { return new Node( "cls", r5, r6);}
 
 clz_inst
-    = "clz" _* reg64 "," _* reg64 
-    / "clz" _* reg32 "," _* reg32 
+    = "clz" _* r5:reg64 "," _* r6:reg64 { return new Node( "clz", r5, r6);}
+    / "clz" _* r5:reg32 "," _* r6:reg32  { return new Node( "clz", r5, r6);}
 
 extr_inst
-    = "extr" _* reg64 "," _* reg64 "," _* reg64 "," _* immediate
-    / "extr" _* reg32 "," _* reg32 "," _* reg32 "," _* immediate
+    = "extr" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 "," _* r4:immediate { return new Node( "extr", r1+","+r2 , r3+","+r4);}
+    / "extr" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 "," _* r4:immediate { return new Node( "extr", r1+","+r2 , r3+","+r4);}
 
 rbit_inst
-    = "rbit" _* reg64 "," _* reg64 
-    / "rbit" _* reg32 "," _* reg32 
+    = "rbit" _* r5:reg64 "," _* r6:reg64 { return new Node( "rbit", r5, r6);}
+    / "rbit" _* r5:reg32 "," _* r6:reg32 { return new Node( "rbit", r5, r6);}
 
 rev_inst
-    = "rev" _* reg64 "," _* reg64 
-    / "rev" _* reg32 "," _* reg32 
+    = "rev" _* r5:reg64 "," _* r6:reg64 { return new Node( "rev", r5, r6);}
+    / "rev" _* r5:reg32 "," _* r6:reg32 { return new Node( "rev", r5, r6);}
 
 rev16_inst
-    = "rev16" _* reg64 "," _* reg64 
-    / "rev16" _* reg32 "," _* reg32 
+    = "rev16" _* r5:reg64 "," _* r6:reg64 { return new Node( "rev16", r5, r6);}
+    / "rev16" _* r5:reg32 "," _* r6:reg32 { return new Node( "rev16", r5, r6);}
 
 rev32_inst
-    = "rev32" _* reg64 "," _* reg64 
+    = "rev32" _* r5:reg64 "," _* r6:reg64 { return new Node( "rev32", r5, r6);}
 
 bfiz_inst
-    = ("s"/"u") "bfiz" _* reg64 "," _* reg64 "," _* immediate "," _* immediate
-    / ("s"/"u") "bfiz" _* reg32 "," _* reg32 "," _* immediate "," _* immediate
+    = ("s"/"u") "bfiz" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* r4:immediate { return new Node( "bfiz", r1+","+r2 , r3+","+r4);}
+
+    / ("s"/"u") "bfiz" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate "," _* r4:immediate{ return new Node( "bfiz", r1+","+r2 , r3+","+r4);}
+
 
 bfx_inst
-    = ("s"/"u") "bfx" _* reg64 "," _* reg64 "," _* immediate "," _* immediate
-    / ("s"/"u") "bfx" _* reg32 "," _* reg32 "," _* immediate "," _* immediate
+    = ("s"/"u") "bfx" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* r4:immediate { return new Node( "bfx", r1+","+r2 , r3+","+r4);}
+
+    / ("s"/"u") "bfx" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate "," _* r4:immediate { return new Node( "bfx", r1+","+r2 , r3+","+r4);}
+
 
 xt_inst
-    = ("s"/"u") "xt" ("b"/"h")? _* reg64 "," _* reg32
-    / ("s"/"u") "xt" ("b"/"h")? _* reg32 "," _* reg32
+    = ("s"/"u") "xt" ("b"/"h")? _* reg64 "," _* reg32 { return new Node( r4, r5, r6);}
+    / ("s"/"u") "xt" ("b"/"h")? _* reg32 "," _* reg32 { return new Node( r4, r5, r6);}
 
 //instrucciones logicas
 logica_inst 
@@ -272,68 +276,68 @@ logica_inst
     / tst:tst_inst { return new Node("tst_inst", tst);}
 
 and_inst
-    = "and" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:operando { return new Node( r1, r2, r3);}
-    / "and" ("s")? _* reg32 "," _* reg32 "," _* operando
+    = "and" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:operando { return new Node( "and", r1+","+r2 , r3);}
+    / "and" ("s")? _* reg32 "," _* reg32 "," _* operando { return new Node( "and", r1+","+r2 , r3);}
 
 asr_inst
-    = "asr" _* reg64 "," _* reg64 "," _* (reg64 / immediate)
-    / "asr" _* reg32 "," _* reg32 "," _* (reg32 / immediate)
+    = "asr" _* r1:reg64 "," _* r2:reg64 "," _* r3:(reg64 / immediate) { return new Node( "asr", r1+","+r2 , r3);}
+    / "asr" _* r1:reg32 "," _* r2:reg32 "," _* r3:(reg32 / immediate) { return new Node( "asr", r1+","+r2 , r3);}
 
 bic_inst
-    = "bic" ("s")? _* reg64 "," _* reg64 "," _* operando
-    / "bic" ("s")? _* reg32 "," _* reg32 "," _* operando
+    = "bic" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:operando { return new Node( "bic", r1+","+r2 , r3 );}
+    / "bic" ("s")? _* reg32 "," _* reg32 "," _* operando { return new Node( "bic", r1+","+r2 , r3+","+r4);}
 
 eon_inst
-    = "eon" _* reg64 "," _* reg64 "," _* operando
-    / "eon" _* reg32 "," _* reg32 "," _* operando
+    = r1:"eon" _* r2:reg64 "," _* r3:reg64 "," _* r4:operando { return new Node( "eon", r1+","+r2 , r3+","+r4);}
+    / r1:"eon" _* r2:reg32 "," _* r3:reg32 "," _* r4:operando { return new Node( "eon", r1+","+r2 , r3+","+r4);}
 
 eor_inst
-    = "eor" _* reg64 "," _* reg64 "," _* operando
-    / "eor" _* reg32 "," _* reg32 "," _* operando
+    = r1:"eor" _* r2:reg64 "," _* r3:reg64 "," _* r4:operando { return new Node( "eor", r1+","+r2 , r3+","+r4);}
+    / r1:"eor" _* r2:reg32 "," _* r3:reg32 "," _* r4:operando { return new Node( "eor", r1+","+r2 , r3+","+r4);}
 
 lsl_inst
-    = "lsl" _* reg64 "," _* reg64 "," _* (reg64 / immediate)
-    / "lsl" _* reg32 "," _* reg32 "," _* (reg32 / immediate)
+    = "lsl" _* reg64 "," _* reg64 "," _* (reg64 / immediate) { return new Node( "lsl", r1+","+r2 , r3+","+r4);}
+    / "lsl" _* reg32 "," _* reg32 "," _* (reg32 / immediate) { return new Node( "lsl", r1+","+r2 , r3+","+r4);}
 
 lsr_inst
-    = "lsr" _* reg64 "," _* reg64 "," _* (reg64 / immediate)
-    / "lsr" _* reg32 "," _* reg32 "," _* (reg32 / immediate)
+    = "lsr" _* reg64 "," _* reg64 "," _* (reg64 / immediate) { return new Node( "lsr", r1+","+r2 , r3+","+r4);}
+    / "lsr" _* reg32 "," _* reg32 "," _* (reg32 / immediate) { return new Node( "lsr", r1+","+r2 , r3+","+r4);}
 
 mov_inst
-    = "mov" _* reg64 "," _* (reg64 / immediate)*  
-    / "mov" _* reg32 "," _* (reg32 / immediate)* 
+    = "mov" _* reg64 "," _* (reg64 / immediate)*  { return new Node( "mov", r1+","+r2 , r3);}
+    / "mov" _* reg32 "," _* (reg32 / immediate)*  { return new Node( "mov", r1+","+r2 , r3);}
 
 movk_inst
-    = "movk" _* reg64 "," _* immediate ("["entero"]"/"{"entero"}")?
-    / "movk" _* reg32 "," _* immediate ("["entero"]"/"{"entero"}")?
+    = "movk" _* reg64 "," _* immediate ("["entero"]"/"{"entero"}")? { return new Node( "movk", r1+","+r2 , r3+","+r4);}
+    / "movk" _* reg32 "," _* immediate ("["entero"]"/"{"entero"}")? { return new Node( "movk", r1+","+r2 , r3+","+r4);}
 
 movn_inst
-    = "movn" _* reg64 "," _* immediate ("["entero"]"/"{"entero"}")?
-    / "movn" _* reg32 "," _* immediate ("["entero"]"/"{"entero"}")?
+    = "movn" _* reg64 "," _* immediate ("["entero"]"/"{"entero"}")? { return new Node( "movn", r1+","+r2 , r3+","+r4);}
+    / "movn" _* reg32 "," _* immediate ("["entero"]"/"{"entero"}")? { return new Node( "movn", r1+","+r2 , r3+","+r4);}
 
 movz_inst
-    = "movz" _* reg64 "," _* immediate ("["entero"]"/"{"entero"}")?
-    / "movz" _* reg32 "," _* immediate ("["entero"]"/"{"entero"}")?
+    = "movz" _* reg64 "," _* immediate ("["entero"]"/"{"entero"}")? { return new Node( "bfx", r1+","+r2 , r3+","+r4);}
+    / "movz" _* reg32 "," _* immediate ("["entero"]"/"{"entero"}")? { return new Node( "bfx", r1+","+r2 , r3+","+r4);}
 
 mvn_inst
-    = "mvn" _* reg64 "," _* operando
-    / "mvn" _* reg32 "," _* operando
+    = "mvn" _* reg64 "," _* operando { return new Node( "and", r1+","+r2 , r3);}
+    / "mvn" _* reg32 "," _* operando { return new Node( "and", r1+","+r2 , r3);}
 
 orn_inst
-    = "orn" _* reg64 "," _* reg64 "," _* operando
-    / "orn" _* reg32 "," _* reg32 "," _* operando
+    = "orn" _* reg64 "," _* reg64 "," _* operando { return new Node( "and", r1+","+r2 , r3);}
+    / "orn" _* reg32 "," _* reg32 "," _* operando { return new Node( "and", r1+","+r2 , r3);}
 
 orr_inst
-    = "orr" _* reg64 "," _* reg64 "," _* operando
-    / "orr" _* reg32 "," _* reg32 "," _* operando   
+    = "orr" _* reg64 "," _* reg64 "," _* operando { return new Node( "and", r1+","+r2 , r3);}
+    / "orr" _* reg32 "," _* reg32 "," _* operando    { return new Node( "and", r1+","+r2 , r3);}
 
 ror_inst
-    = "ror" _* reg64 "," _* reg64 "," _* (reg64 / immediate)
-    / "ror" _* reg32 "," _* reg32 "," _* (reg32 / immediate)
+    = "ror" _* reg64 "," _* reg64 "," _* (reg64 / immediate) { return new Node( "and", r1+","+r2 , r3);}
+    / "ror" _* reg32 "," _* reg32 "," _* (reg32 / immediate) { return new Node( "and", r1+","+r2 , r3);}
 
 tst_inst
-    = "tst" _* reg64 "," _* reg64 "," _* operando
-    / "tst" _* reg32 "," _* reg32 "," _* operando
+    = "tst" _* reg64 "," _* reg64 "," _* operando { return new Node( "and", r1+","+r2 , r3);}
+    / "tst" _* reg32 "," _* reg32 "," _* operando { return new Node( "and", r1+","+r2 , r3);}
 
 
 // instrucciones branch
