@@ -20,11 +20,8 @@ Puedes encontrar el repositorio en GitHub en el siguiente enlace:
 
 ## Integrantes
 
-- **Nombre:** Josue Perez
-- **Carne:** 201712602
-- **Nombre:** Karina Ramirez
-- **Carne:** 201900957
-- **Nombre:** Rodrigo Carcuz
-- **Carne:** 201700633
+- **Nombre:** Josue Perez       | **Carne:** 201712602
+- **Nombre:** Karina Ramirez    | **Carne:** 201900957
+- **Nombre:** Rodrigo Carcuz    | **Carne:** 201700633
 
 ¡Gracias por tu interés en nuestro proyecto!
