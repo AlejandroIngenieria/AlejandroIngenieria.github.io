@@ -18,11 +18,13 @@ Puedes encontrar el repositorio en GitHub en el siguiente enlace:
 
 [Repositorio en GitHub](https://github.com/AlejandroIngenieria/AlejandroIngenieria.github.io.git)
 
-## Contacto
-Si tienes alguna pregunta o inquietud, no dudes en ponerte en contacto con nosotros a través de los siguientes medios:
+## Integrantes
 
-- **Nombre:** [Tu Nombre]
-- **Correo Electrónico:** [Tu Correo Electrónico]
+- **Nombre:** Josue Perez
+- **Carne:** 201712602
+- **Nombre:** Karina Ramirez
+- **Carne:** 201900957
+- **Nombre:** Rodrigo Carcuz
+- **Carne:** 201700633
 
 ¡Gracias por tu interés en nuestro proyecto!
-l
