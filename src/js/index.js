@@ -5,6 +5,7 @@ let editor
 let download = document.getElementById('download')
 let upload = document.getElementById('upload')
 let tabs = document.getElementById('tabs');
+let cuadruplo = document.getElementById('cuadruplo')
 
 let filesContent = {};
 
@@ -82,3 +83,4 @@ download.addEventListener('click', function () {
     // Elimina el enlace del documento
     document.body.removeChild(downloadLink);
 });
+
