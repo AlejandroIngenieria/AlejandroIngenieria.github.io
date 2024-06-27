@@ -14,11 +14,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/monokai.min.css">
     <!-- mi CSS -->
     <link rel="stylesheet" href="./src/css/style.css">
-    <!-- Parser -->
-    <script type="text/javascript" src="./src/js/parser.js"></script>
-    <script type="text/javascript" src="./src/js/vis-network.min.js"></script>
-    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="./src/js/vtree.js"></script>
     <title>ARM64 Simulator</title>
 </head>
 
@@ -32,25 +27,23 @@
         <!-- editor de texto -->
         <div class="container editor py-4">
             <div class="editor_group1">
-                <h2 class="mx-2">Editor</h2>
-                <button class="btns" id="play"><img src="./src/assets/play.png" alt="play"></button>
-                <button class="btns" id="clear"><img src="./src/assets/clear.png" alt="limpiar"></button>
-                <button class="btns" id="ast"><img src="./src/assets/graph.png" alt="ast"></button>
-                <button class="btns" id="cuadruplo"><img src="./src/assets/table.png" alt="ast"></button>
-                <button class="btns" id="upload"><img src="./src/assets/upload.png" alt="upload"></button>
+                <button class="btns" id="play">Ejecutar <img src="./src/assets/play.png" alt="play"></button>
+                <button class="btns" id="clear">Limpiar <img src="./src/assets/clear.png" alt="limpiar"></button>
+                <button class="btns" id="ast">CST <img src="./src/assets/graph.png" alt="ast"></button>
+                <button class="btns" id="cuadruplo">Cuadruplos <img src="./src/assets/table.png" alt="ast"></button>
+                <button class="btns" id="upload">Cargar <img src="./src/assets/upload.png" alt="upload"></button>
                 <input placeholder="cargar" type="file" id="file-input" accept=".s">
-                <button class="btns" id="download"><img src="./src/assets/downloads.png" alt="download"></button>
+                <button class="btns" id="download">Descargar <img src="./src/assets/downloads.png" alt="download"></button>
+                <button class="btns" id="ram">Memoria <img src="./src/assets/ram.png" alt="memory"></button>
+                <h3 id="time" class="bg-dark text-white"></h3>
             </div>
             <div id="tabs"></div> <!-- Contenedor para las pestañas -->
             <textarea id="editor" cols="30" rows="10" placeholder="Ingrese su texto aqui"></textarea>
             <br>
             <!-- terminal -->
-            <div class="editor_group2">
-                <h2 class="mx-2">Terminal</h2>
-            </div>
-            <div id="terminal" class="editor_terminal py-2" contenteditable="false"></div>
+            <div id="terminal" class="editor_terminal" contenteditable="false"></div>
         </div>
-        <div id="innertable">
+        <div id="mynetwork">
         </div>
     </section>
     <!-- Pie de pagina -->
@@ -73,23 +66,58 @@
         </div>
     </footer>
 
-    <!-- Scripts -->
+    <!-- JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
-    <!-- CodeMirror JS -->
+    <!-- CodeMirror -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
-    <!-- Include the mode you want to use -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
-    <!-- Optionally include addons -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/closetag.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/matchbrackets.min.js"></script>
     <!-- sweetalert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- personal JS -->
-    <script src="./src/js/index.js"></script>
-    <script src="./src/js/ast.js"></script>
+    <!-- Parser -->
+    <script type="text/javascript" src="./src/js/parser/parserGrafos.js"></script>
+    <script type="text/javascript" src="./src/js/parser/parser2.js"></script>
+    <script type="text/javascript" src="./src/js/parser/vis-network.min.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="./src/js/parser/vtree.js"></script>
+    <!-- scripts -->
+    <script src="./src/js/parser/index.js"></script>
+    <script src="./src/js/parser/ast.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- interfaces -->
+    <script src="./src/js/interfaz/expression.js"></script>
+    <script src="./src/js/interfaz/instruction.js"></script>
+    <!-- environment -->
+    <script src="./src/js/environment/ast.js"></script>
+    <script src="./src/js/environment/cst.js"></script>
+    <script src="./src/js/environment/environment.js"></script>
+    <script src="./src/js/environment/registers.js"></script>
+    <script src="./src/js/environment/symbol.js"></script>
+    <script src="./src/js/environment/type.js"></script>
+    <!-- execute -->
+    <script src="./src/js/execute/executer.js"></script>
+    <script src="./src/js/execute/root.js"></script>
+    <script src="./src/js/execute/textSection.js"></script>
+    <!-- expressions -->
+    <script src="./src/js/expressions/operation.js"></script>
+    <script src="./src/js/expressions/primitive.js"></script>
+    <!-- instructions -->
+    <script src="./src/js/ instructions/declaration.js"></script>
+    <script src="./src/js/ instructions/move.js"></script>
+    <script src="./src/js/ instructions/systemCall.js"></script>
+    <!-- generator -->
+     <script src="./src/js/generator/generator.js"></script>
+    <!-- analisis -->
+    <script type="text/javascript" src="./src/js/parser/ejecucion.js"></script>
+
+
+
+
+
+
 
 
 </body>

@@ -1,4 +1,3 @@
-let playbtn = document.getElementById('play')
 let clearbtn = document.getElementById('clear')
 let terminal = document.getElementById('terminal')
 let editor
