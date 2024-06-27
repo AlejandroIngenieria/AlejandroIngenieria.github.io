@@ -27,10 +27,10 @@ const analysis = async () => {
         // Generando gráfica
         generateCst(result.CstTree);
         // Generando cuádruplos
-        
+        console.log(ast.getErrors());
         // Agregando salida válida en consola
-        if (ast.getErrors()?.length === 0) terminal.setValue(ast.getConsole());
-        else consoleResult.setValue('Se encontraron algunos errores en la ejecución.');
+        if (ast.getErrors()?.length === 0) terminal.innerHTML=ast.getConsole();
+        else terminal.innerHTML ='Se encontraron algunos errores en la ejecución.';
     } catch (e) {
         if (e instanceof PEGGY.SyntaxError) {
             if (isLexicalError(e)) {
@@ -44,12 +44,7 @@ const analysis = async () => {
     }
 
     
-    let generalTime = (end - start).toFixed(2);
-    // Mostrar mensaje en pantalla
-    mostrarToast(`
-        <span><i class="material-icons left">access_time</i>
-            Tiempo de ejecución: ${generalTime} ms.
-        </span>`, 5000, 'rounded red');
+   
 }
 
 // Función para agregar datos a la tabla de cuadruplos

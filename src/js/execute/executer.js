@@ -1,7 +1,10 @@
 const RootExecuter = (root, ast, env, gen) => {
     const instructions = root?.textSection?.instructions ?? [];
     instructions.forEach(inst => {
-        inst.execute(ast, env, gen);       
+        if (inst != undefined){
+            inst.execute(ast, env, gen);  
+        }
+             
     });
 }
 
