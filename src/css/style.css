@@ -446,3 +446,12 @@ li input:checked+ol>li:last-child {
     color: #999 !important;
     background-color: transparent !important
 }
+
+.workspace{
+    display: flex;
+    flex-direction: row;
+}
+
+.memory{
+    width: 300px;
+}
