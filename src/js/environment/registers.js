@@ -10,8 +10,10 @@ class Registers {
                 return null;
             }
             let regNumber = parseInt(registerIndex.replace('x', ''));
+           
             // Obtiene el valor de un registro
             if (regNumber >= 0 && regNumber < 32) {
+                
                 return this.registers[regNumber];
             } else {
                 return null;

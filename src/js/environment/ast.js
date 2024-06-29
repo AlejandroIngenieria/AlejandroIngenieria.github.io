@@ -4,6 +4,7 @@ class Ast {
         this.errors = [];
         this.registers = new Registers()
         this.registersw = new Registers()
+        this.consola = "";
     }
 
     setNewError(err){

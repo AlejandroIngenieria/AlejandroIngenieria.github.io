@@ -84,11 +84,11 @@ etiq
 instruccion 
     = ari:arithmetic_inst _*            {}
     / bitman:bitmanipulation_inst _*    {}
-    / logi:logica_inst _*               { return logi}
+    / logi:logica_inst _*               { return logi;}
     / atom:atomic_inst _*               {}
     / bran:branch_inst _*               {}
     / cond:cond_inst _*                 {}
-    / load:loadnstore_inst _*           {}
+    / load:loadnstore_inst _*           {return load;}
     / inst:instSalto _*                 {}
     
 instSalto = "beq" _* b1:label   {}
@@ -557,7 +557,7 @@ loadnstore_inst
     / r10:stp_inst      {}
     / r11:crc_inst      {}
     / r12:loadAlm_inst  {}
-    / r13:system_inst   {}
+    / r13:system_inst   {return r13;}
 
 
 ldpsw_inst 
@@ -721,7 +721,7 @@ system_inst
 /   arg:SEV_inst    {}
 /   arg:SEVL_inst   {}
 /   arg:SMC_inst    {}
-/   arg:SVC_inst    {}
+/   arg:SVC_inst    {return arg;}
 /   arg:WFE_inst    {}
 /   arg:WFI_inst    {}
 /   arg:YIELD_inst  {}

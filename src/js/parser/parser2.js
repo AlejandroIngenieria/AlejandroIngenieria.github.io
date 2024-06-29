@@ -694,11 +694,11 @@ function peg$parse(input, options) {
   var peg$f8 = function(ins) {};
   var peg$f9 = function(ari) {};
   var peg$f10 = function(bitman) {};
-  var peg$f11 = function(logi) { return logi};
+  var peg$f11 = function(logi) { return logi;};
   var peg$f12 = function(atom) {};
   var peg$f13 = function(bran) {};
   var peg$f14 = function(cond) {};
-  var peg$f15 = function(load) {};
+  var peg$f15 = function(load) {return load;};
   var peg$f16 = function(inst) {};
   var peg$f17 = function(b1) {};
   var peg$f18 = function(b2) {};
@@ -979,7 +979,7 @@ function peg$parse(input, options) {
   var peg$f278 = function(r10) {};
   var peg$f279 = function(r11) {};
   var peg$f280 = function(r12) {};
-  var peg$f281 = function(r13) {};
+  var peg$f281 = function(r13) {return r13;};
   var peg$f282 = function(r1, r2, r3) {};
   var peg$f283 = function(r1, r2, r3) {};
   var peg$f284 = function(r1, r2, r3) {};
@@ -1083,7 +1083,7 @@ function peg$parse(input, options) {
   var peg$f382 = function(arg) {};
   var peg$f383 = function(arg) {};
   var peg$f384 = function(arg) {};
-  var peg$f385 = function(arg) {};
+  var peg$f385 = function(arg) {return arg;};
   var peg$f386 = function(arg) {};
   var peg$f387 = function(arg) {};
   var peg$f388 = function(arg) {};
