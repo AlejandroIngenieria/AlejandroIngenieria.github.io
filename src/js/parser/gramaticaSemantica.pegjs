@@ -308,8 +308,10 @@ and_inst
     / "and" ("s")? _* r1:reg32 "," _* r2:reg32 "," _* r3:operando {}
 
 asr_inst
-    = "asr" _* r1:reg64 "," _* r2:reg64 "," _* r3:(reg64 / immediate) {}
-    / "asr" _* r1:reg32 "," _* r2:reg32 "," _* r3:(reg32 / immediate) {}
+    = "asr" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64  {}
+    / "asr" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate {}
+    / "asr" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32  {}
+    / "asr" _* r1:reg32 "," _* r2:reg32 "," _* r3: immediate {}
 
 bic_inst
     = "bic" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:operando {}
@@ -324,12 +326,16 @@ eor_inst
     / r1:"eor" _* r2:reg32 "," _* r3:reg32 "," _* r4:operando {}
 
 lsl_inst
-    = "lsl" _* r1:reg64 "," _* r2:reg64 "," _* r3:(reg64 / immediate) {}
-    / "lsl" _* r1:reg32 "," _* r2:reg32 "," _* r3:(reg32 / immediate) {}
+    = "lsl" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64 {}
+    / "lsl" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate {}
+    / "lsl" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 {}
+    / "lsl" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate {}
 
 lsr_inst
-    = "lsr" _* r1:reg64 "," _* r2:reg64 "," _* r3:(reg64 / immediate) {}
-    / "lsr" _* r1:reg32 "," _* r2:reg32 "," _* r3:(reg32 / immediate) {}
+    = "lsr" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64  {}
+    / "lsr" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate {}
+    / "lsr" _* r1:reg32 "," _* r2:reg32 "," _* r3:reg32 {}
+    / "lsr" _* r1:reg32 "," _* r2:reg32 "," _* r3:immediate {}
 
 mov_inst
     = mov:"mov" _* r1:reg64 "," _* r2:reg64  
@@ -346,13 +352,20 @@ mov_inst
     newPath(idRoot, 'Move', ['mov', r1, 'COMA', r2]);
     return new Move(loc?.line, loc?.column, idRoot, r1.name, r2.name);
     }
-    / mov:"mov" _* r1:reg32 "," _* r2:(reg32 / immediate)* 
+    / mov:"mov" _* r1:reg32 "," _* r2:reg32  
     {
     const loc = location()?.start;
     const idRoot = cst.newNode();
     newPath(idRoot, 'Move', ['mov', r1, 'COMA', r2]);
     return new Move(loc?.line, loc?.column, idRoot, r1.name, r2.name);
-  }
+    }
+    / mov:"mov" _* r1:reg32 "," _* r2:immediate  
+    {
+    const loc = location()?.start;
+    const idRoot = cst.newNode();
+    newPath(idRoot, 'Move', ['mov', r1, 'COMA', r2]);
+    return new Move(loc?.line, loc?.column, idRoot, r1.name, r2.name);
+    }
 
 movk_inst
     = "movk" _* r1:reg64 "," _* r2:immediate r3:("["entero"]"/"{"entero"}")? {}
@@ -823,7 +836,11 @@ reg64
     / "=" l:label                                   
     
 
-reg32 = "w" arg:("30" / [12][0-9] / [0-9])          {}
+reg32 = "w" arg:("30" / [12][0-9] / [0-9])          {
+    let idRoot = cst.newNode(); 
+    //newPath(idRoot, 'register', [text()]);
+    return { id: idRoot, name: text() }
+}
     / "sp"                                          {}
 
 operando = arg:reg64                                {}
