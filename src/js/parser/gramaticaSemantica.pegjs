@@ -563,7 +563,7 @@ loadnstore_inst
     / r3:ldursbh_inst   {}
     / r4:ldurbh_inst    {}
     / r5:ldursw_inst    {}
-    / r6:ldur_inst      {}
+    / r6:ldur_inst      {return r6;}
     / r7:prfm_inst      {}
     / r8:sturbh_inst    {}
     / r9:stur_inst      {}
@@ -571,6 +571,7 @@ loadnstore_inst
     / r11:crc_inst      {}
     / r12:loadAlm_inst  {}
     / r13:system_inst   {return r13;}
+    
 
 
 ldpsw_inst 
@@ -593,7 +594,20 @@ ldursw_inst
 ldur_inst 
     = "ld" ("u")? "r"  _* r1:reg64 "," _* "["r2:addr"]"   {}
     / "ld" ("u")? "r"  _* r1:reg32 "," _* "["r2:addr"]"   {}
-    / "ld" ("u")? "r"  _* r1:reg64 "," _* r2:addr         {}
+    / "ld" ("u")? "r"  _* r1:reg64 "," _* r2:addr         
+    {
+        const loc = location()?.start;
+        let idRoot = cst.newNode();
+        newPath(idRoot, 'Load', ['ldr', r1, ',', r2]);
+        return new Ldr(loc?.line, loc?.column, idRoot, r1.name, r2);
+    }
+    / "ld" ("u")? "r"  _* r1:reg32 "," _* r2:addr         
+    {
+        const loc = location()?.start;
+        let idRoot = cst.newNode();
+        newPath(idRoot, 'Load', ['ldr', r1, ',', r2]);
+        return new Ldr(loc?.line, loc?.column, idRoot, r1.name, r2);
+    }
 prfm_inst
     = "prfm" r1:reg32 "," _* r2:addr {}
     / "prfm" r1:reg64 "," _* r2:addr {}
@@ -612,14 +626,15 @@ stp_inst
 
 
 addr 
-    = "=" l:label                                                                   {}
-    /  r1:reg32 _* "," _* r2:reg32 _* "," _* s:shift_op _* i2:immediate _*          {}                
+    = 
+     r1:reg32 _* "," _* r2:reg32 _* "," _* s:shift_op _* i2:immediate _*          {}                
     /  r1:reg64 _* "," _* r2:reg64 _* "," _* s:shift_op _* i2:immediate _*          {}                
     /   r1:reg64 _* "," _* i:immediate _* "," _* s:shift_op _* i2:immediate _*      {}                
     /   r1:reg64 _* "," _* i:immediate _* "," _* e:extend_op _*                     {}                
     /   r1:reg64 _* "," _* i:immediate _*                                           {}                
     /   r1:reg64 _* "," _* i:reg64 _*                                               {}                  
-    /   r1:reg64 _*                                                                 {}                
+    /   r1:reg64 _*                                                                 {}        
+    / "=" l:label                                                                   {return l;}        
 /* -------------------------------------------------------------------------- */
 /*                    Instrucciones de suma de comprobacion                   */
 /* -------------------------------------------------------------------------- */
@@ -915,8 +930,8 @@ shift_op "Operador de Desplazamiento"
 label "Etiqueta"
     = id:([a-zA-Z_][a-zA-Z0-9_]*) 
     {
-    let completeId = id[0]+id[1]?.join('');
-    return completeId; 
+        let completeId = id[0]+id[1]?.join('');
+        return completeId; 
     }
 
 letter

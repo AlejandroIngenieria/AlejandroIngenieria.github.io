@@ -35,9 +35,9 @@ const analysis = async () => {
     } catch (e) {
         if (e instanceof PEGGY.SyntaxError) {
             if (isLexicalError(e)) {
-                consoleResult.setValue('Error Léxico: ' + e.message);
+                console.log('Error Léxico: ' + e.message);
             } else {
-                consoleResult.setValue('Error Sintáctico: ' + e.message);
+                console.log('Error Sintáctico: ' + e.message);
             }
         } else {
             console.error('Error desconocido:', e);

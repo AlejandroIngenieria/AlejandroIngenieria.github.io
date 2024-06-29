@@ -13,9 +13,12 @@ class SystemCall extends Instruction {
         // Obteniendo parámetros de la llamada
        
         let regtemp8 = ast?.registers?.getRegister('x8');
-        
+        let regtem1 = ast?.registers?.getRegister('x0') ;
+        if  (regtem1 === 1){
+            this.stdout(ast,env,gen);
+        }
         // Validar número de llamada al sistema
-        if(regtemp8 === 64){ // write
+        else if(regtemp8 === 64){ // write
             let msg = ast?.registers?.getRegister('x1');
             let length = ast?.registers?.getRegister('x2');
             let strMsg = msg.value;
