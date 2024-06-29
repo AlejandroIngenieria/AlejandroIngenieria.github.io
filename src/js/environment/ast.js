@@ -3,6 +3,7 @@ class Ast {
         this.console = "VALIDO";
         this.errors = [];
         this.registers = new Registers()
+        this.registersw = new Registers()
     }
 
     setNewError(err){

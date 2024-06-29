@@ -13,7 +13,9 @@ class Move extends Instruction {
         let newValue
         // Validar tipo de valor
         if (this.value instanceof Expression) newValue = this.value?.execute(ast, env, gen);
+        else if(!this.value.includes('x')) newValue = parseInt( this.value, 10);
         else newValue = ast.registers?.getRegister(this.value);
+        
         // Validaciones
         if (newValue === null) ast.setNewError({ msg: `El valor de asignación es incorrecto.`, line: this.line, col: this.col });
         // Set register

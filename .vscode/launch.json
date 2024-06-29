@@ -1,0 +1,11 @@
+{
+    "configurations": [
+
+        {
+            "type": "chrome",
+            "name": "http://file:///C:/Users/carcu/Documents/SanJuanAPP/OCL2_ARM64_Simulator/index.html",
+            "request": "launch",
+            "url": "C:/Users/carcu/Documents/SanJuanAPP/OCL2_ARM64_Simulator/index.html"
+        }
+    ]
+}

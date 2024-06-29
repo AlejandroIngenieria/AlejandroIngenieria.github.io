@@ -1101,7 +1101,12 @@ function peg$parse(input, options) {
   var peg$f400 = function() {};
   var peg$f401 = function() {};
   var peg$f402 = function(arg) {};
-  var peg$f403 = function(arg) {};
+  var peg$f403 = function(arg) {
+    const loc = location()?.start;
+    let idRoot = cst.newNode();
+    newPath(idRoot, 'SystemCall', ["svc", arg]);
+    return new SystemCall(loc?.line, loc?.column, idRoot, arg);
+};
   var peg$f404 = function() {};
   var peg$f405 = function() {};
   var peg$f406 = function() {};
@@ -23472,7 +23477,7 @@ function peg$parse(input, options) {
         s2.push(s3);
         s3 = peg$parse_();
       }
-      s3 = peg$parseimmediate();
+      s3 = peg$parseinteger();
       if (s3 !== peg$FAILED) {
         peg$savedPos = s0;
         s0 = peg$f403(s3);

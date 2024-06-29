@@ -25,6 +25,7 @@ const analysis = async () => {
         console.log(result);
         RootExecuter(result, ast, env, gen);
         // Generando gráfica
+        console.log(ast);
         generateCst(result.CstTree);
         // Generando cuádruplos
         console.log(ast.getErrors());

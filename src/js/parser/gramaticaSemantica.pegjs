@@ -741,7 +741,13 @@ NOP_inst    = "nop"                                                     {}
 SEV_inst    = "sev"                                                     {}
 SEVL_inst   = "sevl"                                                    {}
 SMC_inst    = "smc" _* arg:immediate                                    {}
-SVC_inst    = "svc" _* arg:immediate                                    {}
+SVC_inst    = "svc" _* arg:integer                                    
+{
+    const loc = location()?.start;
+    let idRoot = cst.newNode();
+    newPath(idRoot, 'SystemCall', ["svc", arg]);
+    return new SystemCall(loc?.line, loc?.column, idRoot, arg);
+}
 WFE_inst    = "wfe"                                                     {}
 WFI_inst    = "wfi"                                                     {}
 YIELD_inst  = "yield"                                                   {}
