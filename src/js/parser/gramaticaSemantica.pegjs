@@ -598,8 +598,20 @@ ldursbh_inst
     / "ld" ("u")? "rs" ("b"/"h") _* r1:reg32 "," _* "["r2:addr"]" {}
 
 ldurbh_inst
-    = "ld" ("u")? "r" ("b"/"h") _* r1:reg32 "," _* "["r2:addr"]"    {}
-    / "ld" ("u")? "r" ("b"/"h") _* r1:reg32 "," _* r2:addr          {}
+    = "ld" ("u")? "r" ("b"/"h") _* r1:reg32 "," _* "["r2:addr"]"    
+    {
+        const loc = location()?.start;
+        let idRoot = cst.newNode();
+        newPath(idRoot, 'Load', ['ldrb', r1, ',', r2]);
+        return new Ldrb(loc?.line, loc?.column, idRoot, r1.name, r2);
+    }
+    / "ld" ("u")? "r" ("b"/"h") _* r1:reg32 "," _* r2:addr         
+     {
+        const loc = location()?.start;
+        let idRoot = cst.newNode();
+        newPath(idRoot, 'Load', ['ldrb', r1, ',', r2]);
+        return new Ldrb(loc?.line, loc?.column, idRoot, r1.name, r2);
+     }
 ldursw_inst
     = "ld" ("u")? "rsw"  _* r1:reg64 "," _* "["r2:addr"]"  {}
 
