@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
 clearbtn.addEventListener('click', function () {
     editor.setValue('')
     terminal.innerText = ""
+    document.getElementById('registros').innerHTML = ""
 });
 
 // Obtener el botón upload y abrir el selector de archivos

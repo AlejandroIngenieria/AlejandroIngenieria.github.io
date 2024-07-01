@@ -1,27 +1,3 @@
-async function obtenerValor() {
-    return new Promise((resolve, reject) => {
-        Swal.fire({
-            title: 'Input your value',
-            input: 'text',
-            inputPlaceholder: 'Enter something',
-            showCancelButton: true,
-            confirmButtonText: 'Submit',
-            cancelButtonText: 'Cancel',
-            inputValidator: (value) => {
-                if (!value) {
-                    return 'You need to enter something!'
-                }
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                resolve(result.value); // Resuelve la promesa con el valor ingresado
-            } else {
-                reject('User canceled'); // En caso de cancelación por el usuario
-            }
-        });
-    });
-}
-
 class SystemCall extends Instruction {
 
     constructor(line, col, id, arg) {
@@ -38,16 +14,19 @@ class SystemCall extends Instruction {
         if (regtemp8 === 63) { // read
             try {
                 // Espera la entrada del usuario de manera síncrona
-                const stdInputText = await obtenerValor();
-                const idBuffer = ast?.registers?.getRegister('x1')?.id;
+                let stdInputText = prompt("ingrese dato");
+                let idBuffer = ast?.registers?.getRegister('x1')?.id;
                 let length = ast?.registers?.getRegister('x2');
                 // Creando nuevo símbolo
                 let sym = new Symbol(this.line, this.col, idBuffer, Type.ASCIZ, '');
+                console.log("SYM = "+sym.value)
+                sym.value = ''
                 // Agregando valores según tamaño
-                for (let i = 0; i < length.value; i++) {
-                    sym.value += stdInputText[i] ?? '0';
+                for (let i = 0; i < length; i++) {
+                    sym.value += stdInputText[i] ?? '';
                 }
                 // Guardando la data obtenida
+                console.log("SYM = "+sym.value)
                 env.setVariable(ast, this.line, this.col, idBuffer, sym);
             } catch (error) {
                 // Manejo de error si el usuario cancela

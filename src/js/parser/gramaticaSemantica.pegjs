@@ -27,7 +27,7 @@ function reportError(tipo, mensaje, location) {
 
 // Grammar
  Start
-  = gs:GlobalSection _? ds1:DataSection? _? bs1:BssSection? _? ts:TextSection _? ds2:DataSection? _? bs2:BssSection?{
+  = gs:GlobalSection _? ds1:DataSection? _* bs1:BssSection? _* ts:TextSection _* ds2:DataSection? _* bs2:BssSection?{
     let dataSectionConcat = []
     if (ds1 != null) dataSectionConcat = dataSectionConcat.concat(ds1.value);
     if (ds2 != null) dataSectionConcat = dataSectionConcat.concat(ds2.value);
@@ -137,8 +137,8 @@ etiq
     = ins:label ":" _* {}
 
 instruccion 
-    = ari:arithmetic_inst _*            {}
-    / bitman:bitmanipulation_inst _*    {}
+    = ari:arithmetic_inst _*            {return ari}
+    / bitman:bitmanipulation_inst _*    {return bitman}
     / logi:logica_inst _*               { return logi;}
     / atom:atomic_inst _*               {}
     / bran:branch_inst _*               {}
@@ -157,7 +157,7 @@ instSalto = "beq" _* b1:label   {}
           
 arithmetic_inst 
     = adc:adc_inst          {}
-     /add:add_inst          {}
+     /add:add_inst          {return add}
      /adr:adr_inst          {}
      /adrp:adrp_inst        {}
      /cmn:cmn_inst          {}
@@ -175,7 +175,7 @@ arithmetic_inst
      /smsubl:smsubl_inst    {}
      /smulh:smulh_inst      {}
      /smull:smull_inst      {}
-     /sub:sub_inst          {}
+     /sub:sub_inst          {return sub}
      /udiv:udiv_inst        {}
      /umaddl:umaddl_inst    {}
      /umnegl:umnegl_inst    {}
@@ -202,7 +202,7 @@ add_inst
     const loc = location()?.start;
     const idRoot = cst.newNode();
     newPath(idRoot, 'Add', ['add', r4, 'COMA', r5, 'COMA', r6]);
-    return new Add(loc?.line, loc?.column, idRoot, r1.name, r2.name, r3.name);
+    return new Add(loc?.line, loc?.column, idRoot, r4.name, r5.name, r6.name);
     }
 adr_inst
     = "adr" _* r5:reg64 "," _* r6:rel21 {}
@@ -266,8 +266,20 @@ smull_inst
     = "smull" _* r4:reg64 "," _* r5:reg32 "," _* r6:reg32  {}
 
 sub_inst
-    = "sub" ("s")? _* r4:reg64 "," _* r5:reg64 "," _* r6:operando {}
-    / "sub" ("s")? _* r4:reg32 "," _* r5:reg32 "," _* r6:operando {}
+    = "sub" ("s")? _* r4:reg64 "," _* r5:reg64 "," _* r6:operando 
+    {
+    const loc = location()?.start;
+    const idRoot = cst.newNode();
+    newPath(idRoot, 'Sub', ['sub', r4, 'COMA', r5, 'COMA', r6]);
+    return new Sub(loc?.line, loc?.column, idRoot, r4.name, r5.name, r6.name);
+    }
+    / "sub" ("s")? _* r4:reg32 "," _* r5:reg32 "," _* r6:operando 
+    {
+    const loc = location()?.start;
+    const idRoot = cst.newNode();
+    newPath(idRoot, 'Sub', ['sub', r4, 'COMA', r5, 'COMA', r6]);
+    return new Sub(loc?.line, loc?.column, idRoot, r4.name, r5.name, r6.name);
+    }
 
 udiv_inst
     = "udiv" _* r4:reg64 "," _* r5:reg64 "," _* r6:reg64  {}
@@ -300,7 +312,7 @@ bitmanipulation_inst
     /r8:rev32_inst      {}
     /r9:bfiz_inst       {}
     /r10:bfx_inst       {} 
-    /r11:xt_inst        {}
+    /r11:xt_inst        {return r11}
 //instruccion de manipulacion de bit
 bfi_inst
     = "bfi" _* r1:reg64 "," _* r2:reg64 "," _* r3:immediate "," _* r4:immediate {}
@@ -948,9 +960,9 @@ reg32 = "w" arg:("30" / [12][0-9] / [0-9])          {
 }
     / "sp"                                          {}
 
-operando = arg:reg64                                {}
-        / arg:reg32                                 {}
-        / arg:immediate                             {}
+operando = arg:reg64                                {return arg}
+        / arg:reg32                                 {return arg}
+        / arg:immediate                             {return arg}
 
 rel16 = sign? [0-9]{1,16}
 rel21 = sign? [0-9]{1,21}

@@ -136,7 +136,7 @@ function AddRegistros(data1, data2) {
     tr.appendChild(td1);
 
     const td2 = document.createElement('td');
-    td2.textContent = 'Pendiente'
+    td2.textContent = ''
     tr.appendChild(td2);
 
     tbody.appendChild(tr);

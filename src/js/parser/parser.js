@@ -744,8 +744,8 @@ function peg$parse(input, options) {
   var peg$f14 = function(ins) { return ins };
   var peg$f15 = function(sss) {};
   var peg$f16 = function(ins) {};
-  var peg$f17 = function(ari) {};
-  var peg$f18 = function(bitman) {};
+  var peg$f17 = function(ari) {return ari};
+  var peg$f18 = function(bitman) {return bitman};
   var peg$f19 = function(logi) { return logi;};
   var peg$f20 = function(atom) {};
   var peg$f21 = function(bran) {};
@@ -761,7 +761,7 @@ function peg$parse(input, options) {
   var peg$f31 = function(b6) {};
   var peg$f32 = function(b7) {};
   var peg$f33 = function(adc) {};
-  var peg$f34 = function(add) {};
+  var peg$f34 = function(add) {return add};
   var peg$f35 = function(adr) {};
   var peg$f36 = function(adrp) {};
   var peg$f37 = function(cmn) {};
@@ -779,7 +779,7 @@ function peg$parse(input, options) {
   var peg$f49 = function(smsubl) {};
   var peg$f50 = function(smulh) {};
   var peg$f51 = function(smull) {};
-  var peg$f52 = function(sub) {};
+  var peg$f52 = function(sub) {return sub};
   var peg$f53 = function(udiv) {};
   var peg$f54 = function(umaddl) {};
   var peg$f55 = function(umnegl) {};
@@ -798,7 +798,7 @@ function peg$parse(input, options) {
     const loc = location()?.start;
     const idRoot = cst.newNode();
     newPath(idRoot, 'Add', ['add', r4, 'COMA', r5, 'COMA', r6]);
-    return new Add(loc?.line, loc?.column, idRoot, r1.name, r2.name, r3.name);
+    return new Add(loc?.line, loc?.column, idRoot, r4.name, r5.name, r6.name);
     };
   var peg$f63 = function(r5, r6) {};
   var peg$f64 = function(r5, r6) {};
@@ -827,8 +827,18 @@ function peg$parse(input, options) {
   var peg$f87 = function(r1, r2, r3, r4) {};
   var peg$f88 = function(r4, r5, r6) {};
   var peg$f89 = function(r4, r5, r6) {};
-  var peg$f90 = function(r4, r5, r6) {};
-  var peg$f91 = function(r4, r5, r6) {};
+  var peg$f90 = function(r4, r5, r6) {
+    const loc = location()?.start;
+    const idRoot = cst.newNode();
+    newPath(idRoot, 'Sub', ['sub', r4, 'COMA', r5, 'COMA', r6]);
+    return new Sub(loc?.line, loc?.column, idRoot, r4.name, r5.name, r6.name);
+    };
+  var peg$f91 = function(r4, r5, r6) {
+    const loc = location()?.start;
+    const idRoot = cst.newNode();
+    newPath(idRoot, 'Sub', ['sub', r4, 'COMA', r5, 'COMA', r6]);
+    return new Sub(loc?.line, loc?.column, idRoot, r4.name, r5.name, r6.name);
+    };
   var peg$f92 = function(r4, r5, r6) {};
   var peg$f93 = function(r4, r5, r6) {};
   var peg$f94 = function(r1, r2, r3, r4) {};
@@ -847,7 +857,7 @@ function peg$parse(input, options) {
   var peg$f107 = function(r8) {};
   var peg$f108 = function(r9) {};
   var peg$f109 = function(r10) {};
-  var peg$f110 = function(r11) {};
+  var peg$f110 = function(r11) {return r11};
   var peg$f111 = function(r1, r2, r3, r4) {};
   var peg$f112 = function(r1, r2, r3, r4) {};
   var peg$f113 = function(r1, r2, r3, r4) {};
@@ -1272,9 +1282,9 @@ function peg$parse(input, options) {
     return { id: idRoot, name: text() }
 };
   var peg$f467 = function() {};
-  var peg$f468 = function(arg) {};
-  var peg$f469 = function(arg) {};
-  var peg$f470 = function(arg) {};
+  var peg$f468 = function(arg) {return arg};
+  var peg$f469 = function(arg) {return arg};
+  var peg$f470 = function(arg) {return arg};
   var peg$f471 = function() {1,16};
   var peg$f472 = function() {1,21};
   var peg$f473 = function() {1,28};
@@ -1521,31 +1531,39 @@ function peg$parse(input, options) {
       if (s3 === peg$FAILED) {
         s3 = null;
       }
-      s4 = peg$parse_();
-      if (s4 === peg$FAILED) {
-        s4 = null;
+      s4 = [];
+      s5 = peg$parse_();
+      while (s5 !== peg$FAILED) {
+        s4.push(s5);
+        s5 = peg$parse_();
       }
       s5 = peg$parseBssSection();
       if (s5 === peg$FAILED) {
         s5 = null;
       }
-      s6 = peg$parse_();
-      if (s6 === peg$FAILED) {
-        s6 = null;
+      s6 = [];
+      s7 = peg$parse_();
+      while (s7 !== peg$FAILED) {
+        s6.push(s7);
+        s7 = peg$parse_();
       }
       s7 = peg$parseTextSection();
       if (s7 !== peg$FAILED) {
-        s8 = peg$parse_();
-        if (s8 === peg$FAILED) {
-          s8 = null;
+        s8 = [];
+        s9 = peg$parse_();
+        while (s9 !== peg$FAILED) {
+          s8.push(s9);
+          s9 = peg$parse_();
         }
         s9 = peg$parseDataSection();
         if (s9 === peg$FAILED) {
           s9 = null;
         }
-        s10 = peg$parse_();
-        if (s10 === peg$FAILED) {
-          s10 = null;
+        s10 = [];
+        s11 = peg$parse_();
+        while (s11 !== peg$FAILED) {
+          s10.push(s11);
+          s11 = peg$parse_();
         }
         s11 = peg$parseBssSection();
         if (s11 === peg$FAILED) {

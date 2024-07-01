@@ -476,3 +476,7 @@ li input:checked+ol>li:last-child {
         /* Asegura que el encabezado esté por encima del cuerpo */
     }
 }
+
+#mynetwork{
+    display: none;
+}
