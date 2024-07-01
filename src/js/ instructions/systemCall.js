@@ -1,3 +1,27 @@
+async function obtenerValor() {
+    return new Promise((resolve, reject) => {
+        Swal.fire({
+            title: 'Input your value',
+            input: 'text',
+            inputPlaceholder: 'Enter something',
+            showCancelButton: true,
+            confirmButtonText: 'Submit',
+            cancelButtonText: 'Cancel',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'You need to enter something!'
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                resolve(result.value); // Resuelve la promesa con el valor ingresado
+            } else {
+                reject('User canceled'); // En caso de cancelación por el usuario
+            }
+        });
+    });
+}
+
 class SystemCall extends Instruction {
 
     constructor(line, col, id, arg) {
@@ -13,7 +37,8 @@ class SystemCall extends Instruction {
         let regtemp8 = ast?.registers?.getRegister('x8');
         if (regtemp8 === 63) { // read
             // realizando una lectura en el sistema
-            const stdInputText = await window.openModal();
+            const stdInputText = await obtenerValor();
+            console.log("Valor ingresado = "+stdInputText)
             const idBuffer = ast?.registers?.getRegister('x1')?.id;
             let length = ast?.registers?.getRegister('x2');
             // Creando nuevo simbolo
@@ -39,3 +64,4 @@ class SystemCall extends Instruction {
 
     }
 }
+

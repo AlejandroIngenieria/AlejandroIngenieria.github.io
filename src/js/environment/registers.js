@@ -6,14 +6,14 @@ class Registers {
     getRegister(registerIndex) {
         try {
             // Validaciones
-            if (!registerIndex.includes('x')){
+            if (!registerIndex.includes('x')) {
                 return null;
             }
             let regNumber = parseInt(registerIndex.replace('x', ''));
-           
+
             // Obtiene el valor de un registro
             if (regNumber >= 0 && regNumber < 32) {
-                
+
                 return this.registers[regNumber];
             } else {
                 return null;
@@ -26,7 +26,7 @@ class Registers {
     setRegister(registerIndex, value) {
         try {
             // Validaciones
-            if (!registerIndex.includes('x')){
+            if (!registerIndex.includes('x')) {
                 return null;
             }
             let regNumber = parseInt(registerIndex.replace('x', ''));
@@ -45,14 +45,14 @@ class Registers {
         console.log('entro')
         try {
             // Validaciones
-            if (!registerIndex.includes('w')){
+            if (!registerIndex.includes('w')) {
                 return null;
             }
             let regNumber = parseInt(registerIndex.replace('w', ''));
             console.log(regNumber)
             // Obtiene el valor de un registro
             if (regNumber >= 0 && regNumber < 32) {
-                
+
                 return this.registers[regNumber];
             } else {
                 return null;
@@ -65,7 +65,7 @@ class Registers {
     setRegister2(registerIndex, value) {
         try {
             // Validaciones
-            if (!registerIndex.includes('w')){
+            if (!registerIndex.includes('w')) {
                 return null;
             }
             let regNumber = parseInt(registerIndex.replace('w', ''));
@@ -80,11 +80,15 @@ class Registers {
         }
     }
 
-    getRegisterHexa(){
-        //ToDo:
+    getRegisterHexa() {
+        let hexaArr = [];
+        for (let i = 0; i < this.registers.length; i++) {
+            hexaArr.push({ Register: `X${i}`, Data: this.registers[i]?.value?.toString(16) ?? '0x000000' });
+        }
+        return hexaArr;
     }
 
-    getAllRegisters(){
+    getAllRegisters() {
         return this.registers;
     }
 }

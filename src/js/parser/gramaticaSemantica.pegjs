@@ -26,10 +26,12 @@ function reportError(tipo, mensaje, location) {
 
 // Grammar
  Start
-  = gs:GlobalSection _? ds1:DataSection? _? ts:TextSection _? ds2:DataSection? {
+  = gs:GlobalSection _? ds1:DataSection? _? bs1:BssSection? _? ts:TextSection _? ds2:DataSection? _? bs2:BssSection?{
     let dataSectionConcat = []
     if (ds1 != null) dataSectionConcat = dataSectionConcat.concat(ds1.value);
     if (ds2 != null) dataSectionConcat = dataSectionConcat.concat(ds2.value);
+    if (bs1 != null) dataSectionConcat = dataSectionConcat.concat(bs1.value);
+    if (bs2 != null) dataSectionConcat = dataSectionConcat.concat(bs2.value);
     // Agregando raiz cst
     let idRoot = cst.newNode();
     newPath(idRoot, 'Start', [gs, ds1, ts, ds2]);
@@ -45,20 +47,72 @@ GlobalSection
     return { id: idRoot, name: id};
   }
   
-
+BssSection
+= ".section .bss" _* dec:Declarations*
+  {
+    let idRoot = cst.newNode();
+    newPath(idRoot, 'BssSection', ['.section', '.bss'].concat(dec));
+    return { id: idRoot, value: dec};
+  }
+  / ".bss" _* dec:Declarations*
+  {
+    let idRoot = cst.newNode();
+    newPath(idRoot, 'BssSection', ['.bss'].concat(dec));
+    return { id: idRoot, value: dec};
+  }
+  
 DataSection
-  = ".section .data" _ dec:etiq*
+  = ".section .data" _* dec:Declarations*
   {
     let idRoot = cst.newNode();
     newPath(idRoot, 'DataSection', ['.section', '.data'].concat(dec));
     return { id: idRoot, value: dec};
   }
-  / ".data" _ dec:etiq*
+  / ".data" _* dec:Declarations*
   {
     let idRoot = cst.newNode();
     newPath(idRoot, 'DataSection', ['.data'].concat(dec));
     return { id: idRoot, value: dec};
   }
+
+  Declarations
+  = id:label ":" _* type:TYPE _* exp:primitive
+  {
+    const loc = location()?.start;
+    let idRoot = cst.newNode();
+    newPath(idRoot, 'Declaration', [id, ":", type, exp]);
+    return new Declaration(loc?.line, loc?.column, idRoot, id, type.value, exp);
+  }
+
+  TYPE
+  = ".asciz"
+  {
+    let idRoot = cst.newNode();
+    newPath(idRoot, 'TYPE', ['asciz']);
+    return { id: idRoot, value: Type.ASCIZ }
+  }
+  / ".ascii"
+  {
+    let idRoot = cst.newNode();
+    newPath(idRoot, 'TYPE', ['ascii']);
+    return { id: idRoot, value: Type.ASCIZ }
+  }
+  / ".space"
+  {
+    let idRoot = cst.newNode();
+    newPath(idRoot, 'TYPE', ['space']);
+    return { id: idRoot, value: Type.SPACE }
+  }
+  / ".skip"
+  {
+    let idRoot = cst.newNode();
+    newPath(idRoot, 'TYPE', ['skip']);
+    return { id: idRoot, value: Type.SKIP }
+  }
+
+primitive
+  = str:string { return str }
+  / int:integer { return int }
 
 TextSection
   = ".section"? ".text"? _? ident:label ":" _* ins:linea*
@@ -73,7 +127,6 @@ TextSection
 
 linea =  ins:instruccion _*  { return ins }
 	  / sss:comentario _*  {}
-      / etiq:etiq      _*  {}
 
 comentario  
     = "//" [^\n]* 
@@ -82,7 +135,7 @@ etiq
     = ins:label ":" _* {}
 
 instruccion 
-    = ari:arithmetic_inst _*            {return ari}
+    = ari:arithmetic_inst _*            {}
     / bitman:bitmanipulation_inst _*    {}
     / logi:logica_inst _*               { return logi;}
     / atom:atomic_inst _*               {}
@@ -102,7 +155,7 @@ instSalto = "beq" _* b1:label   {}
           
 arithmetic_inst 
     = adc:adc_inst          {}
-     /add:add_inst          {return add}
+     /add:add_inst          {}
      /adr:adr_inst          {}
      /adrp:adrp_inst        {}
      /cmn:cmn_inst          {}
@@ -307,7 +360,6 @@ xt_inst
         newPath(idRoot, name, [name, r5, 'COMA', r6]);
         return new Uxtb(loc?.line, loc?.column, idRoot, r5.name, r6.name);
     }
-
 //instrucciones logicas
 logica_inst 
     = and:and_inst      {}
@@ -663,14 +715,14 @@ stp_inst
 
 addr 
     = 
-     r1:reg32 _* "," _* r2:reg32 _* "," _* s:shift_op _* i2:immediate _*          {}                
-    /  r1:reg64 _* "," _* r2:reg64 _* "," _* s:shift_op _* i2:immediate _*          {}                
+    "=" l:label                                                                     {return l;}        
+    /   r1:reg32 _* "," _* r2:reg32 _* "," _* s:shift_op _* i2:immediate _*         {}                
+    /   r1:reg64 _* "," _* r2:reg64 _* "," _* s:shift_op _* i2:immediate _*         {}                
     /   r1:reg64 _* "," _* i:immediate _* "," _* s:shift_op _* i2:immediate _*      {}                
-    /   r1:reg64 _* "," _* i:immediate _* "," _* e:bitmanipulation_inst _*                     {}                
+    /   r1:reg64 _* "," _* i:immediate _* "," _* e:extend_op _*                     {}                
     /   r1:reg64 _* "," _* i:immediate _*                                           {}                
     /   r1:reg64 _* "," _* i:reg64 _*                                               {}                  
     /   r1:reg64 _*                                                                 {}        
-    / "=" l:label                                                                   {return l;}        
 /* -------------------------------------------------------------------------- */
 /*                    Instrucciones de suma de comprobacion                   */
 /* -------------------------------------------------------------------------- */
@@ -894,9 +946,9 @@ reg32 = "w" arg:("30" / [12][0-9] / [0-9])          {
 }
     / "sp"                                          {}
 
-operando = arg:reg64                                {return arg}
-        / arg:reg32                                 {return arg}
-        / arg:immediate                             {return arg}
+operando = arg:reg64                                {}
+        / arg:reg32                                 {}
+        / arg:immediate                             {}
 
 rel16 = sign? [0-9]{1,16}
 rel21 = sign? [0-9]{1,21}
@@ -928,8 +980,6 @@ immediate "Inmediato"
       {
           let idRoot = cst.newNode(); 
           //newPath(idRoot, 'register', [text()]);
-          if (text().includes('#')) return {id: idRoot, name:registerIndex.replace('#', '') }
-            
           return { id: idRoot, name: text() }
       }
     / ("#")? sign arg:integer                           
@@ -940,15 +990,15 @@ immediate "Inmediato"
       }
 
 
-// extend_op "Operador de Extensión"
-//     = "UXTB"i {}
-//     / "UXTH"i {}
-//     / "UXTW"i {}
-//     / "UXTX"i {}
-//     / "SXTB"i {}
-//     / "SXTH"i {}
-//     / "SXTW"i {}
-//     / "SXTX"i {}
+extend_op "Operador de Extensión"
+    = "UXTB"i {}
+    / "UXTH"i {}
+    / "UXTW"i {}
+    / "UXTX"i {}
+    / "SXTB"i {}
+    / "SXTH"i {}
+    / "SXTW"i {}
+    / "SXTX"i {}
 
 integer 
     = arg: [0-9]+ 
@@ -984,7 +1034,7 @@ hex_literal
     = arg:[0-9a-fA-F]+  {}
 
 string "string"
-  = "\"" chars:[^\"]* "\"" _ 
+  = "\"" chars:[^\"]* "\"" _* 
   {
     const loc = location()?.start;
     let idRoot = cst.newNode();

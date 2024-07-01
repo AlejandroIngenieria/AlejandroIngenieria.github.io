@@ -6,31 +6,6 @@ let upload = document.getElementById('upload')
 let tabs = document.getElementById('tabs');
 let cuadruplo = document.getElementById('cuadruplo')
 
-async function mostrarAlerta() {
-    try {
-        const { value: inputValue } = await Swal.fire({
-            title: 'Ingrese un valor',
-            input: 'text',
-            inputAttributes: {
-                autocapitalize: 'off'
-            },
-            showCancelButton: true,
-            confirmButtonText: 'Confirmar'
-        });
-
-        if (inputValue) {
-            console.log('Valor ingresado:', inputValue);
-        } else {
-            console.log('No se ingresó ningún valor.');
-        }
-    } catch (error) {
-        console.error('Error al mostrar la alerta:', error);
-    }
-}
-
-document.getElementById('step').addEventListener('click', mostrarAlerta);
-
-
 let filesContent = {};
 
 
