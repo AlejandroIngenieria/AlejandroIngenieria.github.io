@@ -14,8 +14,6 @@ class Declaration extends Instruction {
         // Obtener valor
         let sym = this.exp.execute(ast, env, gen);
         // Validar tipo
-        console.log("TIPO QUE TRAE = " + this.type)
-        console.log("SYM QUE TRAE = " + sym?.type)
         if (this.type !== sym?.type) {
             ast.setNewError({
                 msg: `El tipo de dato de ${this.name} es incorrecto.`,

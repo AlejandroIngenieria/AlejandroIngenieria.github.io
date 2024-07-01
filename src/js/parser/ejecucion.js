@@ -97,4 +97,4 @@ const generateCst = (CstObj) => {
 
 
 
-playbtn.addEventListener('click', () => analysis());
+playbtn.addEventListener('click', async () => await analysis());

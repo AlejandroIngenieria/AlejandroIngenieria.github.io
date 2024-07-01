@@ -19,6 +19,7 @@
   }
 
 const errores = [];
+let space = false;
 function reportError(tipo, mensaje, location) {
     errores.push({ tipo:tipo, mensaje:mensaje, fila:location.start.line, columna:location.start.column });
   }
@@ -97,8 +98,9 @@ DataSection
     newPath(idRoot, 'TYPE', ['ascii']);
     return { id: idRoot, value: Type.ASCIZ }
   }
-  / ".space"
+  / ".space" 
   {
+    space = true;
     let idRoot = cst.newNode();
     newPath(idRoot, 'TYPE', ['space']);
     return { id: idRoot, value: Type.SPACE }
@@ -1006,7 +1008,12 @@ integer
     const loc = location()?.start;
     let idRoot = cst.newNode();
     newPath(idRoot, 'integer', [text()]);
-    return new Primitive(loc?.line, loc?.column, idRoot, Type.WORD, parseInt(text(), 10));
+    if (space) {
+        space = false; 
+        return new Primitive(loc?.line, loc?.column, idRoot, Type.SPACE, parseInt(text(), 10));
+    }else{
+        return new Primitive(loc?.line, loc?.column, idRoot, Type.WORD, parseInt(text(), 10));
+    }
   }
 
 
