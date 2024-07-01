@@ -666,7 +666,7 @@ addr
      r1:reg32 _* "," _* r2:reg32 _* "," _* s:shift_op _* i2:immediate _*          {}                
     /  r1:reg64 _* "," _* r2:reg64 _* "," _* s:shift_op _* i2:immediate _*          {}                
     /   r1:reg64 _* "," _* i:immediate _* "," _* s:shift_op _* i2:immediate _*      {}                
-    /   r1:reg64 _* "," _* i:immediate _* "," _* e:extend_op _*                     {}                
+    /   r1:reg64 _* "," _* i:immediate _* "," _* e:bitmanipulation_inst _*                     {}                
     /   r1:reg64 _* "," _* i:immediate _*                                           {}                
     /   r1:reg64 _* "," _* i:reg64 _*                                               {}                  
     /   r1:reg64 _*                                                                 {}        
@@ -940,15 +940,15 @@ immediate "Inmediato"
       }
 
 
-extend_op "Operador de Extensión"
-    = "UXTB"i {}
-    / "UXTH"i {}
-    / "UXTW"i {}
-    / "UXTX"i {}
-    / "SXTB"i {}
-    / "SXTH"i {}
-    / "SXTW"i {}
-    / "SXTX"i {}
+// extend_op "Operador de Extensión"
+//     = "UXTB"i {}
+//     / "UXTH"i {}
+//     / "UXTW"i {}
+//     / "UXTX"i {}
+//     / "SXTB"i {}
+//     / "SXTH"i {}
+//     / "SXTW"i {}
+//     / "SXTX"i {}
 
 integer 
     = arg: [0-9]+ 
