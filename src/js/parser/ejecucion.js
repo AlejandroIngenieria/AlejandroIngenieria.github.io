@@ -4,7 +4,7 @@ let quadTable, symbolTable, Arm64Editor, consoleResult;
 
 const analysis = async () => {
 
-    
+
     try {
         // Creando ast auxiliar
         let ast = new Ast();
@@ -27,11 +27,12 @@ const analysis = async () => {
         // Generando gráfica
         console.log(ast);
         generateCst(result.CstTree);
+        AddRegistros(ast.registers, ast.registersw)
         // Generando cuádruplos
         console.log(ast.getErrors());
         // Agregando salida válida en consola
-        if (ast.getErrors()?.length === 0) terminal.innerHTML=ast.consola;
-        else terminal.innerHTML ='Se encontraron algunos errores en la ejecución.';
+        if (ast.getErrors()?.length === 0) terminal.innerHTML = ast.consola;
+        else terminal.innerHTML = 'Se encontraron algunos errores en la ejecución.';
     } catch (e) {
         if (e instanceof PEGGY.SyntaxError) {
             if (isLexicalError(e)) {
@@ -44,8 +45,8 @@ const analysis = async () => {
         }
     }
 
-    
-   
+
+
 }
 
 // Función para agregar datos a la tabla de cuadruplos
@@ -59,7 +60,7 @@ const addDataToQuadTable = (data) => {
 
 // Función para mostrar un toast
 function mostrarToast(mensaje, duracion, type) {
-    M.toast({html: mensaje, displayLength: duracion, classes: type});
+    M.toast({ html: mensaje, displayLength: duracion, classes: type });
 }
 
 
@@ -86,7 +87,7 @@ const generateCst = (CstObj) => {
         nodes: {
             shape: "box"
         },
-        edges: { 
+        edges: {
             arrows: "to",
         },
     };
@@ -95,6 +96,50 @@ const generateCst = (CstObj) => {
     let network = new vis.Network(container, data, options);
 }
 
+function AddRegistros(data1, data2) {
+    const tbody = document.getElementById('registros');
+    tbody.innerHTML = '';
+    data1.registers.forEach((item, index) => {
+        const tr = document.createElement('tr');
 
+        const td1 = document.createElement('td');
+        td1.textContent = 'X' + index;
+        tr.appendChild(td1);
+
+        const td2 = document.createElement('td');
+        td2.textContent = typeof (item) === 'object' ? item.value : item;
+        tr.appendChild(td2);
+
+        tbody.appendChild(tr);
+
+
+    }
+    );
+    data2.registers.forEach((item, index) => {
+        const tr = document.createElement('tr');
+
+        const td1 = document.createElement('td');
+        td1.textContent = 'W' + index;
+        tr.appendChild(td1);
+
+        const td2 = document.createElement('td');
+        td2.textContent = typeof (item) === 'object' ? item.value : item;
+        tr.appendChild(td2);
+
+        tbody.appendChild(tr);
+    });
+
+    const tr = document.createElement('tr');
+
+    const td1 = document.createElement('td');
+    td1.textContent = 'SP'
+    tr.appendChild(td1);
+
+    const td2 = document.createElement('td');
+    td2.textContent = 'Pendiente'
+    tr.appendChild(td2);
+
+    tbody.appendChild(tr);
+}
 
 playbtn.addEventListener('click', async () => await analysis());
