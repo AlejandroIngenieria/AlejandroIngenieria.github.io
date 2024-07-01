@@ -293,8 +293,20 @@ bfx_inst
 
 
 xt_inst
-    = ("s"/"u") "xt" ("b"/"h")? _* r5:reg64 "," _* r6:reg32 {}
-    / ("s"/"u") "xt" ("b"/"h")? _* r5:reg32 "," _* r6:reg32 {}
+    = name:(("s"/"u") "xt" ("b"/"h")?) _* r5:reg64 "," _* r6:reg32 
+    {
+        const loc = location()?.start;
+        const idRoot = cst.newNode();
+        newPath(idRoot, name, [name, r5, 'COMA', r6]);
+        return new Uxtb(loc?.line, loc?.column, idRoot, r5.name, r6.name);
+    }
+    / ("s"/"u") "xt" ("b"/"h")? _* r5:reg32 "," _* r6:reg32 
+    {
+        const loc = location()?.start;
+        const idRoot = cst.newNode();
+        newPath(idRoot, name, [name, r5, 'COMA', r6]);
+        return new Uxtb(loc?.line, loc?.column, idRoot, r5.name, r6.name);
+    }
 
 //instrucciones logicas
 logica_inst 
