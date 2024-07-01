@@ -82,7 +82,7 @@ etiq
     = ins:label ":" _* {}
 
 instruccion 
-    = ari:arithmetic_inst _*            {}
+    = ari:arithmetic_inst _*            {return ari}
     / bitman:bitmanipulation_inst _*    {}
     / logi:logica_inst _*               { return logi;}
     / atom:atomic_inst _*               {}
@@ -102,7 +102,7 @@ instSalto = "beq" _* b1:label   {}
           
 arithmetic_inst 
     = adc:adc_inst          {}
-     /add:add_inst          {}
+     /add:add_inst          {return add}
      /adr:adr_inst          {}
      /adrp:adrp_inst        {}
      /cmn:cmn_inst          {}
@@ -135,8 +135,20 @@ adc_inst
      /"adc" ("s")? _* r4:reg32 "," _* r5:reg32 "," _* r6:reg32 {}
 
 add_inst 
-    = "add" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:operando {}
-    / "add" ("s")? _* r4:reg32 "," _* r5:reg32 "," _* r6:operando {}
+    = "add" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:operando 
+    {
+    const loc = location()?.start;
+    const idRoot = cst.newNode();
+    newPath(idRoot, 'Add', ['add', r1, 'COMA', r2, 'COMA', r3]);
+    return new Add(loc?.line, loc?.column, idRoot, r1.name, r2.name, r3.name);
+    }
+    / "add" ("s")? _* r4:reg32 "," _* r5:reg32 "," _* r6:operando
+    {
+    const loc = location()?.start;
+    const idRoot = cst.newNode();
+    newPath(idRoot, 'Add', ['add', r4, 'COMA', r5, 'COMA', r6]);
+    return new Add(loc?.line, loc?.column, idRoot, r1.name, r2.name, r3.name);
+    }
 adr_inst
     = "adr" _* r5:reg64 "," _* r6:rel21 {}
 
@@ -858,9 +870,9 @@ reg32 = "w" arg:("30" / [12][0-9] / [0-9])          {
 }
     / "sp"                                          {}
 
-operando = arg:reg64                                {}
-        / arg:reg32                                 {}
-        / arg:immediate                             {}
+operando = arg:reg64                                {return arg}
+        / arg:reg32                                 {return arg}
+        / arg:immediate                             {return arg}
 
 rel16 = sign? [0-9]{1,16}
 rel21 = sign? [0-9]{1,21}
@@ -892,6 +904,8 @@ immediate "Inmediato"
       {
           let idRoot = cst.newNode(); 
           //newPath(idRoot, 'register', [text()]);
+          if (text().includes('#')) return {id: idRoot, name:registerIndex.replace('#', '') }
+            
           return { id: idRoot, name: text() }
       }
     / ("#")? sign arg:integer                           

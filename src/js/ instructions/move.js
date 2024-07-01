@@ -14,7 +14,7 @@ class Move extends Instruction {
         // Validar tipo de valor
         if (this.value instanceof Expression) newValue = this.value?.execute(ast, env, gen);
         else if(!this.value.includes('x') && !this.value.includes('w')) newValue = parseInt( this.value, 10);
-        else if (!this.value.includes('w')) newValue = ast.registersw?.getRegister2(this.value);
+        else if (this.value.includes('w')) newValue = ast.registersw?.getRegister2(this.value);
         else newValue = ast.registers?.getRegister(this.value);
         console.log(newValue);
         

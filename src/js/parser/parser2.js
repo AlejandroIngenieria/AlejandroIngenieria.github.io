@@ -692,7 +692,7 @@ function peg$parse(input, options) {
   var peg$f6 = function(sss) {};
   var peg$f7 = function(etiq) {};
   var peg$f8 = function(ins) {};
-  var peg$f9 = function(ari) {};
+  var peg$f9 = function(ari) {return ari};
   var peg$f10 = function(bitman) {};
   var peg$f11 = function(logi) { return logi;};
   var peg$f12 = function(atom) {};
@@ -709,7 +709,7 @@ function peg$parse(input, options) {
   var peg$f23 = function(b6) {};
   var peg$f24 = function(b7) {};
   var peg$f25 = function(adc) {};
-  var peg$f26 = function(add) {};
+  var peg$f26 = function(add) {return add};
   var peg$f27 = function(adr) {};
   var peg$f28 = function(adrp) {};
   var peg$f29 = function(cmn) {};
@@ -736,7 +736,12 @@ function peg$parse(input, options) {
   var peg$f50 = function(umull) {};
   var peg$f51 = function(r1, r2, r3) {};
   var peg$f52 = function(r4, r5, r6) {};
-  var peg$f53 = function(r1, r2, r3) {};
+  var peg$f53 = function(r1, r2, r3) {
+    const loc = location()?.start;
+    const idRoot = cst.newNode();
+    newPath(idRoot, 'Add', ['add', r1, 'COMA', r2, 'COMA', r3]);
+    return new Add(loc?.line, loc?.column, idRoot, r1.name, r2.name, r3.name);
+    };
   var peg$f54 = function(r4, r5, r6) {};
   var peg$f55 = function(r5, r6) {};
   var peg$f56 = function(r5, r6) {};
@@ -1190,9 +1195,9 @@ function peg$parse(input, options) {
     return { id: idRoot, name: text() }
 };
   var peg$f459 = function() {};
-  var peg$f460 = function(arg) {};
-  var peg$f461 = function(arg) {};
-  var peg$f462 = function(arg) {};
+  var peg$f460 = function(arg) {return arg};
+  var peg$f461 = function(arg) {return arg};
+  var peg$f462 = function(arg) {return arg};
   var peg$f463 = function() {1,16};
   var peg$f464 = function() {1,21};
   var peg$f465 = function() {1,28};
@@ -1215,6 +1220,8 @@ function peg$parse(input, options) {
   var peg$f470 = function(arg) {
           let idRoot = cst.newNode(); 
           //newPath(idRoot, 'register', [text()]);
+          if (text().includes('#')) return {id: idRoot, name:registerIndex.replace('#', '') }
+            
           return { id: idRoot, name: text() }
       };
   var peg$f471 = function(arg) {
