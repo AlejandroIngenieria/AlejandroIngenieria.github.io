@@ -476,3 +476,7 @@ li input:checked+ol>li:last-child {
 #mynetwork{
     display: none;
 }
+
+.errorTable{
+    width: 100%;
+}
