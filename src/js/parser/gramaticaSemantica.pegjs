@@ -651,7 +651,7 @@ loadnstore_inst
     = r1:ldpsw_inst     {}
     / r2:ldp_inst       {}
     / r3:ldursbh_inst   {}
-    / r4:ldurbh_inst    {}
+    / r4:ldurbh_inst    {return r4;}
     / r5:ldursw_inst    {}
     / r6:ldur_inst      {return r6;}
     / r7:prfm_inst      {}

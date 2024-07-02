@@ -1064,7 +1064,7 @@ function peg$parse(input, options) {
   var peg$f284 = function(r1) {};
   var peg$f285 = function(r2) {};
   var peg$f286 = function(r3) {};
-  var peg$f287 = function(r4) {};
+  var peg$f287 = function(r4) {return r4;};
   var peg$f288 = function(r5) {};
   var peg$f289 = function(r6) {return r6;};
   var peg$f290 = function(r7) {};
