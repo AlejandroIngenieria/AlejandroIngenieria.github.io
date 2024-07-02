@@ -1120,7 +1120,7 @@ function peg$parse(input, options) {
   var peg$f320 = function(r1, i, e) {};
   var peg$f321 = function(r1, i) {};
   var peg$f322 = function(r1, i) {};
-  var peg$f323 = function(r1) {};
+  var peg$f323 = function(r1) {return r1;};
   var peg$f324 = function(r1) {};
   var peg$f325 = function(r2) {};
   var peg$f326 = function(r3) {};
