@@ -9,22 +9,39 @@ class Strb extends Instruction {
     }
 
     execute(ast, env, gen) {
-        // Obtener el valor del registro
-        let regValue = ast.registers?.getRegister(this.reg);
-
-        // Validar que el valor no sea nulo y que sea un byte válido
-        if (!regValue || typeof regValue.value !== 'number' || regValue.value < 0 || regValue.value > 255) {
-            ast.setNewError({ msg: `El valor en el registro no es un byte válido.`, line: this.line, col: this.col });
-            return;
+        // Obteniendo valor
+        let newvalue
+        if (this.reg.includes('x')){
+            newvalue = ast.registers?.getRegister(this.reg);
+        }else{
+            newvalue = ast.registersw?.getRegister2(this.reg); 
         }
 
-        // Obtener la variable de destino
-        let destinationVar = env?.getVariable(ast, this.line, this.col, this.variable);
+        console.log("valor: "+ newvalue)
+        console.log("reg: "+ this.variable.name)
         
-        // Validar que la variable de destino exista
-        if (destinationVar.type === Type.NULL) return;
 
-        // Almacenar el byte en la variable de destino
-        env.setVariable(ast, this.line, this.col, this.variable, { type: 'byte', value: regValue.value });
+        let setReg = '';
+
+        
+
+        if (this.variable.name.includes('x')) {
+            setReg = ast.registers?.setRegister(this.variable.name,newvalue);
+        }else {
+            setReg = ast.registersw?.setRegister2(this.variable.name, newvalue);
+        }
+
+        if (setReg === null) ast.setNewError({ msg: `El registro de destino es incorrecto.`, line: this.line, col: this.col });
+
+
+
+       /* if (this.reg.includes('w')){
+            index = parseInt(this.reg.replace('w', '')) - 1 
+            
+        }else{
+            index = parseInt(this.reg.replace('x', '')) - 1  
+        }*/
+         
+        
     }
 }

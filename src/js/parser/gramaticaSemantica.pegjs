@@ -376,7 +376,7 @@ xt_inst
     }
 //instrucciones logicas
 logica_inst 
-    = and:and_inst      {}
+    = and:and_inst      {return and}
     / asr:asr_inst      {}
     / bic:bic_inst      {}
     / eon:eon_inst      {}
@@ -394,8 +394,21 @@ logica_inst
     / tst:tst_inst      {}
 
 and_inst
-    = "and" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:operando {}
-    / "and" ("s")? _* r1:reg32 "," _* r2:reg32 "," _* r3:operando {}
+    = "and" ("s")? _* r1:reg64 "," _* r2:reg64 "," _* r3:operando 
+      {
+    const loc = location()?.start;
+    const idRoot = cst.newNode();
+    newPath(idRoot, 'And', ['and', r1, 'COMA', r2, 'COMA', r3]);
+    return new And(loc?.line, loc?.column, idRoot, r1.name, r2.name, r3.name);
+    }  
+    
+    / "and" ("s")? _* r1:reg32 "," _* r2:reg32 "," _* r3:operando 
+    {
+    const loc = location()?.start;
+    const idRoot = cst.newNode();
+    newPath(idRoot, 'And', ['and', r1, 'COMA', r2, 'COMA', r3]);
+    return new And(loc?.line, loc?.column, idRoot, r1.name, r2.name, r3.name);
+    } 
 
 asr_inst
     = "asr" _* r1:reg64 "," _* r2:reg64 "," _* r3:reg64  {}
@@ -655,7 +668,7 @@ loadnstore_inst
     / r5:ldursw_inst    {}
     / r6:ldur_inst      {return r6;}
     / r7:prfm_inst      {}
-    / r8:sturbh_inst    {}
+    / r8:sturbh_inst    {return r8;}
     / r9:stur_inst      {}
     / r10:stp_inst      {}
     / r11:crc_inst      {}
@@ -715,7 +728,20 @@ prfm_inst
     / "prfm" r1:reg64 "," _* r2:addr {}
 
 sturbh_inst
-    = "st" ("u")? "r" ("b"/"h") _* r1:reg64 "," _* "["r2:addr"]" {}
+    = "st" ("u")? "r" ("b"/"h") _* r1:reg64 "," _* "["r2:addr"]" 
+    {
+        const loc = location()?.start;
+        let idRoot = cst.newNode();
+        newPath(idRoot, 'Load', ['Strb', r1, ',', r2]);
+        return new Strb(loc?.line, loc?.column, idRoot, r1.name, r2);
+    }
+    / "st" ("u")? "r" ("b"/"h") _* r1:reg32 "," _* "["r2:addr"]" 
+    {
+        const loc = location()?.start;
+        let idRoot = cst.newNode();
+        newPath(idRoot, 'Load', ['Strb', r1, ',', r2]);
+        return new Strb(loc?.line, loc?.column, idRoot, r1.name, r2);
+    }
 
 stur_inst
     = "st" ("u")? "r"  _* r1:reg64 "," _* "["r2:addr"]" {}
@@ -781,7 +807,6 @@ loadAlm_inst
     /   r13:STNP_inst   {}
     /   r14:STTR_inst   {}
     /   r15:STTRB_inst  {}
-    /   r16:STRB_inst   {}
     /   r17:STR_inst    {}
     /   r18:STP_inst    {}
 
@@ -827,8 +852,6 @@ STTR_inst
 
 STTRB_inst
      =   "sttr" ("b"/"h")? _* r1:reg32 "," _* "["r2:reg64 ("," r3:operando )?"]" {}
-STRB_inst
-	=  "strb"  _* r1:reg32 "," _* "["r2:reg64 ("," _* r7:operando)?"]" {}
 STR_inst
 	= "str" _* r2:reg64 "," _* "["r3:reg64 ("," operando )?"]" {}
 STP_inst

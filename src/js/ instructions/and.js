@@ -1,4 +1,4 @@
-class Add extends Instruction {
+class And extends Instruction {
 
     constructor(line, col, id, obj, value1, value2) {
         super();
@@ -34,21 +34,19 @@ class Add extends Instruction {
        // Validaciones
        if (newValue2 === null) ast.setNewError({ msg: `El valor2 de asignación es incorrecto.`, line: this.line, col: this.col });
        
-       let setReg = '';
-        let result=0;
-        console.log(newValue2)
-       if (newValue2 == 48){
-            
-            result = newValue1
-       }else{
-            result = newValue1 + newValue2
-       }
 
-        console.log(result)
+        // Set register
+        let setReg = '';
+        let result=0;
+
+        result = newValue1 & newValue2
+
+        console.log("Resultado: "+result)
 
         if (this.obj.includes('x')) setReg = ast.registers?.setRegister(this.obj, result);
         else setReg = ast.registersw?.setRegister2(this.obj, result);
         
         if (setReg === null) ast.setNewError({ msg: `El registro de destino es incorrecto.`, line: this.line, col: this.col });
+        
     }
 }
