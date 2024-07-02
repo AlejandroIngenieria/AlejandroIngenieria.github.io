@@ -39,7 +39,10 @@ class Sub extends Instruction {
         let setReg = '';
         let result=0;
 
-        result = newValue1 - newValue2
+
+        let num1 = String(newValue1).charCodeAt(0);
+
+        result = num1 - newValue2
 
         console.log(result)
 
