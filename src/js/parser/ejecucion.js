@@ -18,7 +18,19 @@ const analysis = async () => {
         let result = PEGGY.parse(text);
         const tiempoFin = performance.now();
         const tiempoTranscurrido = tiempoFin - tiempoInicio;
-        document.getElementById('time').innerHTML = `Tiempo: ${tiempoTranscurrido}`
+        Swal.fire({
+            toast: true,
+            position: 'top-end', // Puedes cambiar la posición: 'top', 'top-start', 'top-end', 'center', 'center-start', 'center-end', 'bottom', 'bottom-start', 'bottom-end'
+            icon: 'success', // Cambia el ícono a 'success', 'error', 'warning', 'info', o 'question'
+            title: `Tiempo: ${tiempoTranscurrido} ms`,
+            showConfirmButton: false, // Oculta el botón de confirmación
+            timer: 3000, // Duración en milisegundos (3000 ms = 3 segundos)
+            timerProgressBar: true, // Muestra una barra de progreso
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer);
+                toast.addEventListener('mouseleave', Swal.resumeTimer);
+            }
+        });
         // Guardando data (variables)
         DataSectionExecuter(result, ast, env, gen);
         // Ejecutando instrucciones
