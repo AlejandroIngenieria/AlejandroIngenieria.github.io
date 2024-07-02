@@ -1,10 +1,49 @@
 let playbtn = document.getElementById('play')
 let quadTable, symbolTable, Arm64Editor, consoleResult;
+let tbody = document.getElementById('registros');
+if (tbody) {
+    for (let index = 0; index < 32; index++) {
+        const tr = document.createElement('tr');
 
+        const td1 = document.createElement('td');
+        td1.textContent = 'X' + index;
+        tr.appendChild(td1);
+
+        const td2 = document.createElement('td');
+        td2.textContent = '';
+        tr.appendChild(td2);
+
+        tbody.appendChild(tr);
+    }
+
+    for (let index = 0; index < 32; index++) {
+        const tr = document.createElement('tr');
+
+        const td1 = document.createElement('td');
+        td1.textContent = 'W' + index;
+        tr.appendChild(td1);
+
+        const td2 = document.createElement('td');
+        td2.textContent = '';
+        tr.appendChild(td2);
+
+        tbody.appendChild(tr);
+    }
+
+    const tr = document.createElement('tr');
+
+    const td1 = document.createElement('td');
+    td1.textContent = 'SP';
+    tr.appendChild(td1);
+
+    const td2 = document.createElement('td');
+    td2.textContent = '';
+    tr.appendChild(td2);
+
+    tbody.appendChild(tr);
+}
 
 const analysis = async () => {
-
-
     try {
         // Creando ast auxiliar
         let ast = new Ast();
@@ -48,12 +87,54 @@ const analysis = async () => {
     } catch (e) {
         if (e instanceof PEGGY.SyntaxError) {
             if (isLexicalError(e)) {
-                console.log('Error Léxico: ' + e.message);
+                terminal.innerHTML = `<table class="errorTable">
+                                          <thead>
+                                            <tr>
+                                              <th>Tipo de error</th>
+                                              <th>Mensaje</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr>
+                                              <td>Error Léxico</td>
+                                              <td>${e.message}</td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                        `
             } else {
-                console.log('Error Sintáctico: ' + e.message);
+                terminal.innerHTML = `<table>
+                                          <thead>
+                                            <tr>
+                                              <th>Tipo de error</th>
+                                              <th>Mensaje</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr>
+                                              <td>Error Sintáctico</td>
+                                              <td>${e.message}</td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                        `
             }
         } else {
-            console.error('Error desconocido:', e);
+            terminal.innerHTML = `<table>
+                                          <thead>
+                                            <tr>
+                                              <th>Tipo de error</th>
+                                              <th>Mensaje</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr>
+                                              <td>Error desconocido</td>
+                                              <td>${e.message}</td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                        `
         }
     }
 
@@ -109,7 +190,6 @@ const generateCst = (CstObj) => {
 }
 
 function AddRegistros(data1, data2) {
-    const tbody = document.getElementById('registros');
     tbody.innerHTML = '';
     data1.registers.forEach((item, index) => {
         const tr = document.createElement('tr');
