@@ -30,6 +30,23 @@ class Environment {
         ast?.setNewError({ msg: `La variable ${id} no existe.`, line, col });
         return new Symbol(0, 0, '', Type.NULL, null)
     }
+    changeVariable(ast, line, col, id,nval) {
+        let tmpEnv = this;
+        while (true) {
+            if (id in tmpEnv.table) {
+                tmpEnv.table[id].symbol.value = nval
+                return ;
+            }
+            if (tmpEnv.previous == null) {
+                break;
+            }
+            else {
+                tmpEnv = tmpEnv.previous;
+            }
+        }
+        ast?.setNewError({ msg: `La variable ${id} no existe.`, line, col });
+        return new Symbol(0, 0, '', Type.NULL, null)
+    }
 
     setVariable(ast, line, col, id, sym) {
         let tmpEnv = this;

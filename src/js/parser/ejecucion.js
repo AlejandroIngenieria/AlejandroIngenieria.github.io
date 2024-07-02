@@ -293,11 +293,8 @@ async function steps() {
       console.log(ast);
       generateCst(resultB.CstTree);
       AddRegistros(ast.registers, ast.registersw)
-      // Generando cuádruplos
-      console.log(ast.getErrors());
-      // Agregando salida válida en consola
       if (ast.getErrors()?.length === 0) terminal.innerHTML = ast.consola;
-      else terminal.innerHTML = 'Se encontraron algunos errores en la ejecución.';
+      
     }
   } catch (error) {
     Swal.fire({
@@ -313,6 +310,7 @@ async function steps() {
         toast.addEventListener('mouseleave', Swal.resumeTimer);
       }
     });
+    terminal.innerHTML=''
     counter = -1
   }
 

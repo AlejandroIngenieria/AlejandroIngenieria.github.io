@@ -22,8 +22,8 @@ class Strb extends Instruction {
         
 
         let setReg = '';
-
         
+               
 
         if (this.variable.name.includes('x')) {
             setReg = ast.registers?.setRegister(this.variable.name,newvalue);
