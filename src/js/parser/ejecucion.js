@@ -81,11 +81,28 @@ const analysis = async () => {
     console.log(ast);
     generateCst(result.CstTree);
     AddRegistros(ast.registers, ast.registersw)
-    // Generando cuádruplos
-    console.log(ast.getErrors());
-    // Agregando salida válida en consola
+    // Errores semanticos
     if (ast.getErrors()?.length === 0) terminal.innerHTML = ast.consola;
-    else terminal.innerHTML = 'Se encontraron algunos errores en la ejecución.';
+    else {
+      const tableRows = ast.getErrors().map(item => `
+  <tr>
+    <td>Semantico</td>
+    <td>${item.msg}, linea ${item.line}, columna ${item.col}</td>
+  </tr>
+`).join('');
+      terminal.innerHTML = `<table class="errorTable">
+                                          <thead>
+                                            <tr>
+                                              <th>Tipo de error</th>
+                                              <th>Mensaje</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            ${tableRows}
+                                          </tbody>
+                                        </table>
+                                        `
+    }
   } catch (e) {
     if (e instanceof PEGGY.SyntaxError) {
       if (isLexicalError(e)) {
