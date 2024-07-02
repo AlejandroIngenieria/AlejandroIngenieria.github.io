@@ -65,10 +65,6 @@
     }
 }
 
-#time {
-    font-family: "Cairo Play", sans-serif;
-}
-
 .btns:hover {
     background-color: #E2BBE9;
     border-radius: 20px;
