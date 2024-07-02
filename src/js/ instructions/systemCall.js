@@ -36,10 +36,16 @@ class SystemCall extends Instruction {
             let msg = ast?.registers?.getRegister('x1');
             let length = ast?.registers?.getRegister('x2');
             let strMsg = msg.value;
-            for (let i = 0; i < length; i++) {
-                if (strMsg[i] !== undefined) ast.consola += strMsg[i];
-                
+            if (length == 2){
+                ast.consola += strMsg;
+            }else{
+                for (let i = 0; i < length; i++) {
+                    if (strMsg[i] !== undefined) ast.consola += strMsg[i];
+                    
+                    
+                }
             }
+            
             ast.consola += "<br>";
         } else if (regtemp8 === 93) { // end
             ast.consola += ast?.registers?.getRegister('x0') + "<br>";

@@ -18,21 +18,24 @@ class Strb extends Instruction {
         }
 
         console.log("valor: "+ newvalue)
-        console.log("reg: "+ this.variable.name)
+        console.log("valor2: "+ ast.registers.getRegister(this.variable.name).value)
+        
         
 
         let setReg = '';
-        
-               
 
+               
+        
         if (this.variable.name.includes('x')) {
-            setReg = ast.registers?.setRegister(this.variable.name,newvalue);
+            ast.registers.getRegister(this.variable.name).value = newvalue
+            setReg = ast.registers.getRegister(this.variable.name)
         }else {
-            setReg = ast.registersw?.setRegister2(this.variable.name, newvalue);
+            ast.registers.getRegister2(this.variable.name).value = newvalue
+            setReg = ast.registers.getRegister2(this.variable.name)
         }
 
         if (setReg === null) ast.setNewError({ msg: `El registro de destino es incorrecto.`, line: this.line, col: this.col });
-
+        
 
 
        /* if (this.reg.includes('w')){

@@ -18,14 +18,32 @@ class Ldrb extends Instruction {
         let valor
         try{
             let cadena = newvalue.value.toString()
-            valor = cadena.charAt(0);
-            cadena = cadena.slice(1);
-            newvalue = parseInt(cadena,10)
+            let num = 0
+            if (this.reg.includes('x')){
+                num = parseInt(this.reg.replace('x', ''))
+            }else{
+                num = parseInt(this.reg.replace('w', ''))
+            }
+            while (num != 0){
+                valor = cadena.charAt(0);
+                cadena = cadena.slice(1);
+                console.log("nvalor: " + valor)
+                num = num-1
+            }
+            
         }catch{
             let cadena = newvalue.toString()
-            valor= cadena.charAt(0);
-            cadena = cadena.slice(1);
-            newvalue = parseInt(cadena,10) 
+            let num
+            if (this.reg.includes('x')){
+                num = parseInt(this.reg.replace('x', ''))
+            }else{
+                num = parseInt(this.reg.replace('w', ''))
+            }
+            while (num != 0){
+                valor = cadena.charAt(0);
+                cadena = cadena.slice(1);
+                num = num-1
+            }
         }
         
         console.log("valor: "+ valor)
@@ -33,17 +51,12 @@ class Ldrb extends Instruction {
         
 
         let setReg = '';
-        let nuReg =''
         
 
         if (this.reg.includes('x')) {
-            let nreg = this.variable.name
             setReg = ast.registers?.setRegister(this.reg, parseInt(valor,10));
-            nuReg = ast.registers?.setRegister(nreg, newvalue);
         }else {
-            let nreg = this.variable.name
             setReg = ast.registersw?.setRegister2(this.reg, parseInt(valor,10));
-            nuReg = ast.registers?.setRegister(nreg, newvalue);
         }
 
         if (setReg === null) ast.setNewError({ msg: `El registro de destino es incorrecto.`, line: this.line, col: this.col });
