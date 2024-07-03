@@ -24,6 +24,8 @@ clearbtn.addEventListener('click', function () {
     editor.setValue('')
     terminal.innerText = ""
     document.getElementById('registros').innerHTML = ""
+    counter =-1
+    document.getElementById('linea').innerHTML = ''
 });
 
 // Obtener el botón upload y abrir el selector de archivos

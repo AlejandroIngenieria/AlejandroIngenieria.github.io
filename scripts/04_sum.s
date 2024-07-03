@@ -25,10 +25,8 @@ _start:
     ldr x0, =input  // load input
     ldrb w1, [x0]   // load 1st digit
     sub w1, w1, 48  // ascii to num
-    add x0, x0, 1   // input offset
     ldrb w2, [x0]   // load 2nd digit
     sub w2, w2, 48  // ascii to num
-    add x0, x0, 1   // input offset
     ldrb w3, [x0]   // load 3rd digit
     sub w3, w3, 48  // ascii to num
     add w4, w1, w2  // sum two digit
